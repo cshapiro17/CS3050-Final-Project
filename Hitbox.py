@@ -1,12 +1,20 @@
 import arcade
 import os
 
-# --- Constants ---
-SPRITE_SCALING_PLAYER = 0.1
+#  TODO / Important Stuff:
+#       Currently Hit-stun doesn't work, as well as attack delay (doesn't work), need to find work-arounds for that
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+# --- Constants ---
+TEST_SCALING_PLAYER = 0.2
+SPRITE_PLAYER_WIDTH = 80
+SPRITE_PLAYER_HEIGHT = 200
+
+SCREEN_WIDTH = 1400
+SCREEN_HEIGHT = 700
 SCREEN_TITLE = "Hitbox Testing"
+
+HIT_LENGTH = 25
+STUN_TIME = 10  # This is the amount of tics before the Player can land another hit on the Test Dummy
 
 
 class Stencil(arcade.Window):
@@ -26,16 +34,19 @@ class Stencil(arcade.Window):
         # directory this .py file is in. You can leave this out of your own
         # code, but it is needed to easily run the examples using "python -m"
         # as mentioned at the top of this program.
+        self.hit_counter = 0
+        self.test_dummy_stun = 0
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 
         # Variables that will hold sprite lists
-        self.player_list = None
+        self.player_body_list = None
         self.coin_list = None
 
         # Set up the player info
-        self.player_sprite = None
-        self.player_sprite_2 = None
+        self.player_sprite_body = None
+        self.player_sprite_hit = None
+        self.test_dummy_body = None
         self.score = 0
 
         # Don't show the mouse cursor
@@ -49,20 +60,26 @@ class Stencil(arcade.Window):
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
         # Create your sprites and sprite lists here
-        self.player_list = arcade.SpriteList()
+        self.player_body_list = arcade.SpriteList()
 
-        # Set up the player, specifically placing it at these coordinates.
-        image_source = "./ex_sprite_sheet.png"
-        self.player_sprite = arcade.Sprite(image_source, SPRITE_SCALING_PLAYER)
-        self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 128
-        self.player_list.append(self.player_sprite)
+        self.player_sprite_body = arcade.SpriteSolidColor(SPRITE_PLAYER_WIDTH,  # Player Health/Body Hit Box
+                                                          SPRITE_PLAYER_HEIGHT,
+                                                          [0, 255, 0])
+        self.player_sprite_body.center_x = -64
+        self.player_sprite_body.center_y = -64
+        self.player_body_list.append(self.player_sprite_body)
+        self.player_sprite_hit = arcade.SpriteSolidColor(SPRITE_PLAYER_WIDTH,  # Player Hit/Damage Hit Box
+                                                         int(SPRITE_PLAYER_HEIGHT/3),
+                                                         [255, 0, 0])
+        self.player_sprite_hit.center_x = 64
+        self.player_sprite_hit.center_y = 128
 
-        image_source_2 = "./ex_sprite_sheet.png"
-        self.player_sprite_2 = arcade.Sprite(image_source_2, SPRITE_SCALING_PLAYER)
-        self.player_sprite_2.center_x = 128
-        self.player_sprite_2.center_y = 64
-        self.player_list.append(self.player_sprite_2)
+        self.test_dummy_body = arcade.SpriteSolidColor(SPRITE_PLAYER_WIDTH,  # Test Dummy Health/Body Hit Box
+                                                            SPRITE_PLAYER_HEIGHT,
+                                                            [0, 0, 250])
+        self.test_dummy_body.center_x = SCREEN_WIDTH/5
+        self.test_dummy_body.center_y = 2*SCREEN_HEIGHT/5
+        self.player_body_list.append(self.test_dummy_body)
 
     def on_draw(self):
         """
@@ -73,8 +90,13 @@ class Stencil(arcade.Window):
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
 
-        self.player_list.draw()
         # Call draw() on all your sprite lists below
+        self.player_body_list.draw()  # Draws the Health/Body Hit Boxes for both the Player and Test Dummy
+        # TODO: THE BELOW IF STATEMENT SHOULD ONLY STARTUP THE HIT/DAMAGE BOX LOOP IF IT HAS NOT ALREADY STARTED AND
+        #       THE TEST DUMMY'S STUN IS NOT ACTIVE, HOWEVER THIS IS NOT WORKING
+        #       (LOOPS START TOO FAST/ CAN BE STARTED DURING STUN)
+        if self.hit_counter != 0 & self.test_dummy_stun == 0:
+            self.player_sprite_hit.draw()
 
     def on_update(self, delta_time):
         """
@@ -82,14 +104,49 @@ class Stencil(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        self.player_list.update()
+        self.player_body_list.update()
+        self.player_sprite_hit.update()
 
-        # Generate a list of all sprites that collided with the player.
-        hit = (arcade.check_for_collision(self.player_sprite, self.player_sprite_2))
-        if hit:
-            arcade.set_background_color(arcade.color.RED)
+        if self.hit_counter != 0:  # If a hit tic cycle/ animation is started
+            if self.hit_counter == HIT_LENGTH:  # If tic cycle has completed and is at max length
+                self.hit_counter = 0  # Reset cycle so it can be started again
+            else:  # Move the player_sprite_hit to the correct spot and 'animate' it
+                self.player_sprite_hit.center_x = self.player_sprite_body.center_x - 6*self.hit_counter
+                self.player_sprite_hit.center_y = self.player_sprite_body.center_y + self.hit_counter
+                self.player_sprite_hit.width = 15*self.hit_counter
+                self.player_sprite_hit.height = 7*self.hit_counter
+                self.hit_counter += 1  # Increment cycle
+
+        # Check to see if the player has attacked the dummy
+        if self.test_dummy_stun == 0:  # 1st see if Dummy is already stunned
+            hit_on_dummy = (arcade.check_for_collision(self.player_sprite_hit, self.test_dummy_body))
+            if hit_on_dummy:
+                arcade.set_background_color(arcade.color.YELLOW)
+                self.test_dummy_body.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
+                self.hit_counter = 0  # TODO: This line may not be working? May not be resetting the hit loop
+                self.player_sprite_hit.center_x = 0  # Move Hit/Damage box away to avoid...
+                self.player_sprite_hit.center_y = 0  # accidentally registering attacks 2x.
+                self.player_sprite_hit.width = 0.1   # Set the width and height to 0 to avoid...
+                self.player_sprite_hit.height = 0.1  # accidentally registering attacks 2x.
+                self.test_dummy_stun = STUN_TIME  # Set stun time to max to start that loop
+            else:
+                if self.test_dummy_stun > 0:
+                    self.test_dummy_stun -= 1
+                    arcade.set_background_color(arcade.color.YELLOW)
+                    self.test_dummy_body.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
+                else:
+                    self.test_dummy_stun = 0
+                    arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                    self.test_dummy_body.COLOR = [0, 0, 255]
         else:
-            arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+            if self.test_dummy_stun > 0:
+                self.test_dummy_stun -= 1
+                arcade.set_background_color(arcade.color.YELLOW)
+                self.test_dummy_body.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
+            else:
+                self.test_dummy_stun = 0
+                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                self.test_dummy_body.COLOR = [0, 0, 255]
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -110,14 +167,15 @@ class Stencil(arcade.Window):
         """ Handle Mouse Motion """
 
         # Move the center of the player sprite to match the mouse x, y
-        self.player_sprite.center_x = x
-        self.player_sprite.center_y = y
+        self.player_sprite_body.center_x = x
+        self.player_sprite_body.center_y = y
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
         Called when the user presses a mouse button.
         """
-        pass
+        if self.hit_counter == 0:
+            self.hit_counter = 1
 
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
