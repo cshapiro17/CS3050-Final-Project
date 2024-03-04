@@ -1,5 +1,7 @@
 import arcade
 import os
+import datetime as dt  # If we operate off of datetime, we can ~kinda~ account for frame-dropping on intensive actions??
+                       # This may also be a terrible idea, I honestly have no clue lol
 
 #  TODO / Important Stuff:
 #       Currently Hit-stun doesn't work, as well as attack delay (doesn't work), need to find work-arounds for that
@@ -14,7 +16,9 @@ SCREEN_HEIGHT = 700
 SCREEN_TITLE = "Hitbox Testing"
 
 HIT_LENGTH = 25
-STUN_TIME = 10  # This is the amount of tics before the Player can land another hit on the Test Dummy
+STUN_TIME = 20  # This is the amount of tics before the Player can land another hit on the Test Dummy.
+                    # For balance purposes, I think this should generally be less than hit_length, considering:
+                    # startup frames and stunlock
 
 
 class Stencil(arcade.Window):
@@ -118,27 +122,24 @@ class Stencil(arcade.Window):
                 self.hit_counter += 1  # Increment cycle
 
         # Check to see if the player has attacked the dummy
-        if self.test_dummy_stun == 0:  # 1st see if Dummy is already stunned
+        if self.test_dummy_stun == 0:  # 1st see if Dummy isn't already stunned
             hit_on_dummy = (arcade.check_for_collision(self.player_sprite_hit, self.test_dummy_body))
-            if hit_on_dummy:
+            if hit_on_dummy:  # IF HIT AND ~NOT STUNNED~
+                print("HIT ON " + str(dt.datetime.now()))
+                self.player_sprite_hit.hit_box_algorithm = 'None'
                 arcade.set_background_color(arcade.color.YELLOW)
                 self.test_dummy_body.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
-                self.hit_counter = 0  # TODO: This line may not be working? May not be resetting the hit loop
                 self.player_sprite_hit.center_x = 0  # Move Hit/Damage box away to avoid...
                 self.player_sprite_hit.center_y = 0  # accidentally registering attacks 2x.
                 self.player_sprite_hit.width = 0.1   # Set the width and height to 0 to avoid...
                 self.player_sprite_hit.height = 0.1  # accidentally registering attacks 2x.
                 self.test_dummy_stun = STUN_TIME  # Set stun time to max to start that loop
-            else:
-                if self.test_dummy_stun > 0:
-                    self.test_dummy_stun -= 1
-                    arcade.set_background_color(arcade.color.YELLOW)
-                    self.test_dummy_body.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
-                else:
-                    self.test_dummy_stun = 0
-                    arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
-                    self.test_dummy_body.COLOR = [0, 0, 255]
-        else:
+            else:  # IF NOT HIT AND ~NOT STUNNED~
+                self.player_sprite_hit.hit_box_algorithm = 'Simple'
+                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                self.test_dummy_body.COLOR = [0, 0, 255]
+        else:  # IF STUNNED
+            self.player_sprite_hit.hit_box_algorithm = 'None'
             if self.test_dummy_stun > 0:
                 self.test_dummy_stun -= 1
                 arcade.set_background_color(arcade.color.YELLOW)
