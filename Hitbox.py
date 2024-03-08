@@ -22,17 +22,6 @@ STUN_TIME = 20  # This is the amount of tics before the Player can land another 
 #   For balance purposes, I think this should generally be less than hit_length, considering:
 #   startup frames and stunlock
 
-attack_type_matrix = [
-    # Q, E
-    [0, 0],  # W
-    [0, 0],  # aL
-    [0, 0],  # aR
-    [0, 0],  # S
-    [0, 0],  # dL
-    [0, 0],  # dR
-    [0, 0]  # None
-]
-
 
 class Stencil(arcade.Window):
     """
@@ -139,6 +128,65 @@ class Stencil(arcade.Window):
         """
         self.player_1.update()
         self.dummy.update()
+
+        # Now the hard part: retooling hit detection for the new inputs
+        #   - We don't need to check for moves from the dummy (it doesn't even have inputs)
+        #     or the stun on player_1 (it literally can't be hit)
+
+        if self.player_1.hit_counter != 0:
+            # THIS WILL TRACK PLAYER MOVES AND CALL FUNCTIONS FROM PLAYER
+            #   TO 'ANIMATE' AND MOVE THE BOXES AND SPRITES
+            # TODO: Get the old hitbox testing code working with only one move before expanding it to more moves.
+            # TODO: Work on the animation. It should not be displayed in terms of hit_counter, but rather in terms
+            #   of SCREEN_WIDTH and SCREEN_HEIGHT (or self.sprite_hit.width and self.sprite_hit.height)
+            #   WE ALSO HAVE 2 BUTTONS NOW, MIGHT AS WELL THROW THAT ALL IN HERE
+
+            # EXAMPLE HIT:
+            pass
+
+        # Check to see if the player has attacked the dummy,
+        #   THIS HAS BEEN RETOOLED FOR NEW CHANGES (constants.py and player.py usage)
+        if self.dummy.stun == 0:  # 1st see if Dummy isn't already stunned
+            hit_on_dummy = (arcade.check_for_collision_with_lists(self.player_1.player_hitboxes,
+                                                                  self.dummy.player_hurtboxes))
+            if hit_on_dummy:  # IF HIT AND ~NOT STUNNED~
+                print("HIT ON " + str(dt.datetime.now()))
+                for hitbox in self.player_1.player_hitboxes:
+                    hitbox.hit_box_algorithm = 'None'
+                    hitbox.center_x = 0  # Move Hit/Damage box away to avoid...
+                    hitbox.center_y = 0  # accidentally registering attacks 2x.
+                    hitbox.width = 0.1  # Set the width and height to 0 to avoid...
+                    hitbox.height = 0.1  # accidentally registering attacks 2x.
+                arcade.set_background_color(arcade.color.YELLOW)
+                for hurtbox in self.dummy.player_hurtboxes:
+                    hurtbox.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
+                if self.player_1.state == State.h_kick | self.player_1.state == State.h_punch:
+                    self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                elif ((self.player_1.state == State.aa_punch | self.player_1.state == State.aa_kick) |
+                      (self.player_1.state == State.lp_punch | self.player_1.state == State.lp_kick)):
+                    self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                else:
+                    self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
+            else:  # IF NOT HIT AND ~NOT STUNNED~
+                for hitbox in self.player_1.player_hitboxes:
+                    hitbox.hit_box_algorithm = 'Simple'
+                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                for hurtbox in self.dummy.player_hurtboxes:
+                    hurtbox.COLOR = [0, 0, 250]
+        else:  # IF STUNNED
+            for hitbox in self.player_1.player_hitboxes:
+                hitbox.hit_box_algorithm = 'None'
+            if self.dummy.stun > 0:
+                self.dummy.stun -= 1
+                arcade.set_background_color(arcade.color.YELLOW)
+                for hurtbox in self.dummy.player_hurtboxes:
+                    hurtbox.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
+            else:
+                self.dummy.stun = 0
+                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                for hurtbox in self.dummy.player_hurtboxes:
+                    hurtbox.COLOR = [0, 0, 250]
+
         """
         if self.hit_counter != 0:  # If a hit tic cycle/ animation is started
             # Move the player_sprite_hit to the correct spot and 'animate' it
