@@ -8,7 +8,7 @@ import datetime as dt  # If we operate off of datetime, we can ~kinda~ account f
 # This may also be a terrible idea, I honestly have no clue lol
 # TODO: Def bring this up to the group to talk about
 
-#  TODO / Important Stuff:
+# TODO / Important Stuff:
 #       Divide up into separate classes (hitbox, hurtbox, master, etc)
 #       Hit-stun doesn't work (Dbl hits)
 #       Slow-down from collision detection makes tics vary in speed, which can vary the speed of attacks based on
@@ -133,17 +133,6 @@ class Stencil(arcade.Window):
         #   - We don't need to check for moves from the dummy (it doesn't even have inputs)
         #     or the stun on player_1 (it literally can't be hit)
 
-        if self.player_1.hit_counter != 0:
-            # THIS WILL TRACK PLAYER MOVES AND CALL FUNCTIONS FROM PLAYER
-            #   TO 'ANIMATE' AND MOVE THE BOXES AND SPRITES
-            # TODO: Get the old hitbox testing code working with only one move before expanding it to more moves.
-            # TODO: Work on the animation. It should not be displayed in terms of hit_counter, but rather in terms
-            #   of SCREEN_WIDTH and SCREEN_HEIGHT (or self.sprite_hit.width and self.sprite_hit.height)
-            #   WE ALSO HAVE 2 BUTTONS NOW, MIGHT AS WELL THROW THAT ALL IN HERE
-
-            # EXAMPLE HIT:
-            pass
-
         # Check to see if the player has attacked the dummy,
         #   THIS HAS BEEN RETOOLED FOR NEW CHANGES (constants.py and player.py usage)
         if self.dummy.stun == 0:  # 1st see if Dummy isn't already stunned
@@ -192,84 +181,8 @@ class Stencil(arcade.Window):
                 for hurtbox in self.dummy.player_hurtboxes:
                     hurtbox.COLOR = [0, 0, 250]
 
-        """
-        if self.hit_counter != 0:  # If a hit tic cycle/ animation is started
-            # Move the player_sprite_hit to the correct spot and 'animate' it
-            # TODO: Work on the animation. It should not be displayed in terms of hit_counter, but rather in terms
-            #   of SCREEN_WIDTH and SCREEN_HEIGHT (or self.sprite_hit.width and self.sprite_hit.height)
-            #   WE ALSO HAVE 2 BUTTONS NOW, MIGHT AS WELL THROW THAT ALL IN HERE
-
-            # EXAMPLE HIT:
-            #self.player_hitbox.center_x = self.player_hurtbox.center_x - 6*self.hit_counter
-            #self.player_hitbox.center_y = self.player_hurtbox.center_y + self.hit_counter
-            #self.player_hitbox.width = 15*self.hit_counter
-            #self.player_hitbox.height = 7*self.hit_counter
-            # TODO: Setup animations in chunks based on hit_counter
-            if self.attack_type == 'punch':  # PUNCH MOVE
-                if self.hit_counter > 15:  # Startup:
-                    self.render_hitbox = False
-                    # Player Hurtbox Setup:
-                    self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH + (self.hit_counter_MAX-self.hit_counter)*5
-                    self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT - (self.hit_counter_MAX-self.hit_counter)*4
-                elif self.hit_counter > 9:  # Active:
-                    # Player Hurtbox Setup:
-                    self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH + (self.hit_counter_MAX-self.hit_counter)*5
-                    self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT - (self.hit_counter_MAX-self.hit_counter)
-                    # Player Hitbox Setup:
-                    self.player_hitbox.center_x = self.player_hurtbox.center_x - 10*(self.hit_counter_MAX -
-                                                                                     self.hit_counter)
-                    self.player_hitbox.center_y = self.player_hurtbox.center_y + (self.hit_counter_MAX -
-                                                                                  self.hit_counter)
-                    self.player_hitbox.width = 15*(self.hit_counter_MAX-self.hit_counter)
-                    self.player_hitbox.height = 7*(self.hit_counter_MAX-self.hit_counter)
-                    self.render_hitbox = True
-                elif self.hit_counter > 0:  # Recovery:
-                    self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH
-                    self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT
-                    self.render_hitbox = False
-            if self.attack_type == 'kick':  # KICK MOVE
-                if self.hit_counter > 17:  # Startup:
-                    self.render_hitbox = False
-                elif self.hit_counter > 11:  # Active pt1:
-                    self.render_hitbox = True
-                elif self.hit_counter > 5:  # Active pt2:
-                    self.render_hitbox = True
-                elif self.hit_counter > 0:  # Recovery:
-                    self.render_hitbox = False
-            self.hit_counter -= 1  # Increment cycle
-        elif self.hit_counter == 0 | self.hit_counter < 0:
-            self.hit_counter = 0  # Reset cycle so it can be started again
-            self.hit_counter_MAX = 0
-            self.attack_type = ''
-
-        # Check to see if the player has attacked the dummy
-        if self.dummy_stun == 0:  # 1st see if Dummy isn't already stunned
-            hit_on_dummy = (arcade.check_for_collision(self.player_hitbox, self.dummy_hurtbox))
-            if hit_on_dummy:  # IF HIT AND ~NOT STUNNED~
-                print("HIT ON " + str(dt.datetime.now()))
-                self.player_hitbox.hit_box_algorithm = 'None'
-                arcade.set_background_color(arcade.color.YELLOW)
-                self.dummy_hurtbox.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
-                self.player_hitbox.center_x = 0  # Move Hit/Damage box away to avoid...
-                self.player_hitbox.center_y = 0  # accidentally registering attacks 2x.
-                self.player_hitbox.width = 0.1   # Set the width and height to 0 to avoid...
-                self.player_hitbox.height = 0.1  # accidentally registering attacks 2x.
-                self.dummy_stun = STUN_TIME  # Set stun time to max to start that loop
-            else:  # IF NOT HIT AND ~NOT STUNNED~
-                self.player_hitbox.hit_box_algorithm = 'Simple'
-                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
-                self.dummy_hurtbox.COLOR = [0, 0, 255]
-        else:  # IF STUNNED
-            self.player_hitbox.hit_box_algorithm = 'None'
-            if self.dummy_stun > 0:
-                self.dummy_stun -= 1
-                arcade.set_background_color(arcade.color.YELLOW)
-                self.dummy_hurtbox.COLOR = [255, 174, 66]  # TODO: The Dummy color is not set when taking this hit
-            else:
-                self.dummy_stun = 0
-                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
-                self.dummy_body.COLOR = [0, 0, 255]
-        """
+        self.player_1.hit_cycle()
+        self.player_1.hurt_cycle()
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -281,63 +194,68 @@ class Stencil(arcade.Window):
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
-        if self.player_1.hit_counter == 0:  # LET'S BE REAL, THIS SUCKS TO LOOK AT. DECISION MATRIX???
+        if self.player_1.state_counter == 0:  # LET'S BE REAL, THIS SUCKS TO LOOK AT. DECISION MATRIX???
             if not (self.player_1.keymap is None):
                 match key:
                     case self.player_1.JUMP:
                         print("JUMPING")
                         self.player_1.jumping = True
+                        # JUMP BEHAVIOR GOES HERE
                     case self.player_1.DAFOE:
                         print("DAFOEING")
                         self.player_1.dafoeing = True
                         print(self.player_1.dafoeing)
+                        # LOOK UP BEHAVIOR GOES HERE
                     case self.player_1.CROUCH:
                         print("CROUCHING")
                         self.player_1.crouching = True
+                        # CROUCH BEHAVIOR GOES HERE
                     case self.player_1.LEFT:
                         print("LEFTING")
                         self.player_1.lefting = True
+                        # MOVE LEFT BEHAVIOR GOES HERE
                     case self.player_1.RIGHT:
                         print("RIGHTING")
                         self.player_1.righting = True
+                        # MOVE RIGHT BEHAVIOR GOES HERE
                     case self.player_1.PUNCH:
                         print("PUNCH")
                         self.player_1.punching = True
-                        print(str(self.player_1.right & self.player_1.lefting) + " " +
-                              str((not self.player_1.right) & self.player_1.righting) + " " +
-                              str(self.player_1.dafoeing) + " " +
-                              str(self.player_1.crouching))
                         if self.player_1.righting | self.player_1.lefting:
                             print("light punch")
                             self.player_1.state = State.l_punch  # LIGHT PUNCH
+                            self.player_1.state_counter = cn.L_HIT_LENGTH
                         elif self.player_1.dafoeing:
                             print("anti-air punch")
                             self.player_1.state = State.aa_punch  # ANTI-AIR PUNCH
+                            self.player_1.state_counter = cn.S_HIT_LENGTH
                         elif self.player_1.crouching:
                             print("low-profile punch")
                             self.player_1.state = State.lp_punch  # LOW-PROFILE PUNCH
+                            self.player_1.state_counter = cn.L_HIT_LENGTH
                         else:
                             print("heavy punch")
                             self.player_1.state = State.h_punch  # HEAVY PUNCH
+                            self.player_1.state_counter = cn.H_HIT_LENGTH
                     case self.player_1.KICK:
                         print("KICKING")
                         self.player_1.kicking = True
-                        print(str(self.player_1.right & self.player_1.lefting) + " " +
-                              str((not self.player_1.right) & self.player_1.righting) + " " +
-                              str(self.player_1.dafoeing) + " " +
-                              str(self.player_1.crouching))
                         if self.player_1.righting | self.player_1.lefting:
                             print("light kick")
                             self.player_1.state = State.l_kick  # LIGHT KICK
+                            self.player_1.state_counter = cn.L_HIT_LENGTH
                         elif self.player_1.dafoeing:
                             print("anti-air kick")
                             self.player_1.state = State.aa_kick  # ANTI-AIR KICK
+                            self.player_1.state_counter = cn.S_HIT_LENGTH
                         elif self.player_1.crouching:
                             print("low-profile kick")
                             self.player_1.state = State.lp_kick  # LOW-PROFILE KICK
+                            self.player_1.state_counter = cn.S_HIT_LENGTH
                         else:
                             print("heavy kick")
                             self.player_1.state = State.h_kick  # HEAVY KICK
+                            self.player_1.state_counter = cn.H_HIT_LENGTH
 
     def on_key_release(self, key, key_modifiers):
         """

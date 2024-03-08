@@ -1,7 +1,7 @@
 Example Ideas for control schema:
 w-a-s-d: Classic controls (jump-left-right-crouch)
 Blocking: To block, walk backwards (away from enemy)
-shift: Dashws
+###shift: Dash
 q: punch (faster startup and recovery than kick)
     _-q: heavy punch
     d/a(side-dependent_-q: light punch (poke)
@@ -13,3 +13,7 @@ e: kick (longer range, (heavier damage?) than punch)
     w-q: anti-air kick
     s-q: low-profile kick
 f: super move
+
+HOW TO CHEESE THE HITBOXES TO MAKE MY LIFE EASIER:
+- THE POKES ARE JUST FASTER, LOWER DAMAGE HEAVIES
+- ANTI-AIR AND LOW-PROFILE ARE JUST MATHEMATICALLY OPPOSITE WHERE APPLICABLE

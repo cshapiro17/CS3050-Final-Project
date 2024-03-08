@@ -10,9 +10,9 @@ SPRITE_PLAYER_HEIGHT = int(2*SCREEN_HEIGHT/7)
 
 # Balance-based Constants:
 PLAYER_HEALTH = 100
-H_HIT_LENGTH = 25  # Heavy Move Hit Length
-L_HIT_LENGTH = 10  # Light Move Hit Length
-S_HIT_LENGTH = 20  # Special Move Hit Length (Anti-air and Low-profile)
+H_HIT_LENGTH = 30  # Heavy Move Hit Length
+L_HIT_LENGTH = 15  # Light Move Hit Length
+S_HIT_LENGTH = 25  # Special Move Hit Length (Anti-air and Low-profile)
 H_STUN_TIME = 35  # Heavy Move Stun Time
 L_STUN_TIME = 15  # Light Move Stun Time
 S_STUN_TIME = 25  # Special Move Stun Time (Anti-air and Low-profile)
