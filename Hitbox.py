@@ -147,8 +147,13 @@ class Stencil(arcade.Window):
         # Check to see if the player has attacked the dummy,
         #   THIS HAS BEEN RETOOLED FOR NEW CHANGES (constants.py and player.py usage)
         if self.dummy.stun == 0:  # 1st see if Dummy isn't already stunned
-            hit_on_dummy = (arcade.check_for_collision_with_lists(self.player_1.player_hitboxes,
-                                                                  self.dummy.player_hurtboxes))
+            hit_on_dummy = 0
+            for hitbox in self.player_1.player_hitboxes:
+                if arcade.check_for_collision_with_list(hitbox, self.dummy.player_hurtboxes):
+                    hit_on_dummy += 1
+            # I will admit the below if statement is a bit wack, as it functions off the fact that
+            #   for ints to booleans, 0 will show as False and any other number will show as True,
+            #   but, y'know, it works, and I just explained it, so we're good I guess
             if hit_on_dummy:  # IF HIT AND ~NOT STUNNED~
                 print("HIT ON " + str(dt.datetime.now()))
                 for hitbox in self.player_1.player_hitboxes:
