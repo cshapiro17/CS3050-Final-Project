@@ -1,0 +1,15 @@
+Example Ideas for control schema:
+w-a-s-d: Classic controls (jump-left-right-crouch)
+Blocking: To block, walk backwards (away from enemy)
+shift: Dashws
+q: punch (faster startup and recovery than kick)
+    _-q: heavy punch
+    d/a(side-dependent_-q: light punch (poke)
+    w-q: anti-air punch
+    s-q: low-profile punch
+e: kick (longer range, (heavier damage?) than punch)
+    _-q: heavy kick
+    d/a(side-dependent_-q: light kick (poke)
+    w-q: anti-air kick
+    s-q: low-profile kick
+f: super move
