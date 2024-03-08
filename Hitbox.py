@@ -129,6 +129,8 @@ class Stencil(arcade.Window):
         self.player_1.update()
         self.dummy.update()
 
+        self.whos_on_first()
+
         # Now the hard part: retooling hit detection for the new inputs
         #   - We don't need to check for moves from the dummy (it doesn't even have inputs)
         #     or the stun on player_1 (it literally can't be hit)
@@ -285,16 +287,16 @@ class Stencil(arcade.Window):
                 self.player_1.kicking = False
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
+        # TODO: SCRAP THIS (IT'S JUST TEMP MOVEMENT), AND IMPLEMENT ACTUALLY WORKING MOVEMENT
         """ Handle Mouse Motion """
 
         # Move the center of the player sprite to match the mouse x, y
-        for hurtbox in self.player_1.player_hurtboxes:
-            hurtbox.center_x = x
-            hurtbox.center_y = y
-            if int(self.player_1.state) > 2:
-                for hitbox in self.player_1.player_hitboxes:
-                    hitbox.center_x = x
-                    hitbox.center_y = y
+        self.player_1.center_x = x
+        self.player_1.center_y = y
+        if int(self.player_1.state) > 2:
+            for hitbox in self.player_1.player_hitboxes:
+                hitbox.center_x = x
+                hitbox.center_y = y
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
@@ -307,6 +309,14 @@ class Stencil(arcade.Window):
         Called when a user releases a mouse button.
         """
         pass
+
+    def whos_on_first(self):
+        if self.player_1.center_x >= self.dummy.center_x:
+            self.player_1.right = True
+            self.dummy.right = False
+        else:
+            self.player_1.right = False
+            self.dummy.right = True
 
 
 def main():

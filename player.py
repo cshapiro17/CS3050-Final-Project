@@ -70,10 +70,18 @@ class Player(object):
             self.keymap = None
 
     def update(self):
+        # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
+        # Main body tracking
+        self.player_hurtboxes[0].center_y = self.center_y
+        self.player_hurtboxes[0].center_x = self.center_x
+        self.player_hurtboxes[0].change_y = self.change_y
+        self.player_hurtboxes[0].change_x = self.change_x
+        self.player_hurtboxes[0].height = self.height
+        self.player_hurtboxes[0].width = self.width
 
-    def hit_cycle(self):
+    def hit_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
         if self.state_counter != 0:
             # THIS WILL TRACK PLAYER MOVES TO 'ANIMATE' AND MOVE HITBOXES
             # TODO: Get the old hitbox testing code working with only one move (LIGHT PUNCH) before expanding it to
@@ -88,37 +96,38 @@ class Player(object):
             # self.player_hitbox.width = 15*self.state_counter
             # self.player_hitbox.height = 7*self.state_counter
             # TODO: Setup animations in chunks (START-UP, ACTIVE, AND RECOVERY FRAMES) based on state_counter
+            #   THIS SECTION ~ONLY~ DOES HITBOXES
             if self.state == State.l_punch:  # LIGHT PUNCH
                 # START-UP:
-                if self.state_counter > 15:
-                    self.render_hitbox = False
-                    # Player Hurtbox Setup:
-                    ###self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH + (self.hit_counter_MAX-self.hit_counter)*5
-                    ###self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT - (self.hit_counter_MAX-self.hit_counter)*4
+                if self.state_counter > 10:
+                    self.player_hitboxes[0].center_x = 0
+                    self.player_hitboxes[0].center_y = 0
+                    self.player_hitboxes[0].width = 1
+                    self.player_hitboxes[0].height = 1
+                    self.player_hitboxes[0].render_hitbox = False
                 # ACTIVE:
-                elif self.state_counter > 9:
-                    # Player Hurtbox Setup:
-                    ###self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH + (self.hit_counter_MAX-self.hit_counter)*5
-                    ###self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT - (self.hit_counter_MAX-self.hit_counter)
+                elif self.state_counter > 5:
                     # Player Hitbox Setup:
-                    ###self.player_hitbox.center_x = self.player_hurtbox.center_x - 10*(self.hit_counter_MAX -
-                    ###                                                                 self.hit_counter)
-                    ###self.player_hitbox.center_y = self.player_hurtbox.center_y + (self.hit_counter_MAX -
-                    ###                                                              self.hit_counter)
-                    ###self.player_hitbox.width = 15*(self.hit_counter_MAX-self.hit_counter)
-                    ###self.player_hitbox.height = 7*(self.hit_counter_MAX-self.hit_counter)
-                    self.render_hitbox = True
+                    self.player_hitboxes[0].center_x = self.center_x - 10*(cn.L_HIT_LENGTH -
+                                                                           self.state_counter)
+                    self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
+                                                                        self.state_counter)
+                    self.player_hitboxes[0].width = 15*(cn.L_HIT_LENGTH-self.state_counter)
+                    self.player_hitboxes[0].height = 7*(cn.L_HIT_LENGTH-self.state_counter)
+                    self.player_hitboxes[0].render_hitbox = True
                 # RECOVERY:
                 elif self.state_counter > 0:
-                    ###self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH
-                    ###self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT
-                    self.render_hitbox = False
+                    self.player_hitboxes[0].center_x = 0
+                    self.player_hitboxes[0].center_y = 0
+                    self.player_hitboxes[0].width = 1
+                    self.player_hitboxes[0].height = 1
+                    self.player_hitboxes[0].render_hitbox = False
             self.state_counter -= 1  # Increment cycle
         elif self.state_counter == 0 | self.state_counter < 0:
             self.state_counter = 0  # Reset cycle so it can be started again
             self.state = State.idle
 
-    def hurt_cycle(self):
+    def hurt_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
         if self.state_counter != 0:
             # THIS WILL TRACK PLAYER MOVES TO 'ANIMATE' AND MOVE HURTBOXES
             # TODO: Get the old hurtbox testing code working with only one move (LIGHT PUNCH) before expanding it to
@@ -128,31 +137,38 @@ class Player(object):
             #   WE ALSO HAVE 2 BUTTONS NOW, MIGHT AS WELL THROW THAT ALL IN HERE
 
             # TODO: Setup animations in chunks (START-UP, ACTIVE, AND RECOVERY FRAMES) based on state_counter
+            #   THIS SECTION ~ONLY~ DOES HURTBOXES
             if self.state == State.l_punch:  # LIGHT PUNCH
-                # START-UP:
-                if self.state_counter > 10:
-                    self.render_hitbox = False
-                    # Player Hurtbox Setup:
-                    ###self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH + (self.hit_counter_MAX-self.hit_counter)*5
-                    ###self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT - (self.hit_counter_MAX-self.hit_counter)*4
-                # ACTIVE:
-                elif self.state_counter > 5:
-                    # Player Hurtbox Setup:
-                    ###self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH + (self.hit_counter_MAX-self.hit_counter)*5
-                    ###self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT - (self.hit_counter_MAX-self.hit_counter)
-                    # Player Hitbox Setup:
-                    ###self.player_hitbox.center_x = self.player_hurtbox.center_x - 10*(self.hit_counter_MAX -
-                    ###                                                                 self.hit_counter)
-                    ###self.player_hitbox.center_y = self.player_hurtbox.center_y + (self.hit_counter_MAX -
-                    ###                                                              self.hit_counter)
-                    ###self.player_hitbox.width = 15*(self.hit_counter_MAX-self.hit_counter)
-                    ###self.player_hitbox.height = 7*(self.hit_counter_MAX-self.hit_counter)
-                    self.render_hitbox = True
-                # RECOVERY:
-                elif self.state_counter > 0:
-                    ###self.player_hurtbox.width = cn.SPRITE_PLAYER_WIDTH
-                    ###self.player_hurtbox.height = cn.SPRITE_PLAYER_HEIGHT
-                    self.render_hitbox = False
+                if self.right:  # IF THE PLAYER IS ON THE RIGHT SIDE OF THE SCREEN
+                    # START-UP:
+                    if self.state_counter > 10:
+                        # Player Hurtbox Setup:
+                        self.width = cn.SPRITE_PLAYER_WIDTH + (cn.L_HIT_LENGTH - self.state_counter) * 5
+                        self.height = cn.SPRITE_PLAYER_HEIGHT - (cn.L_HIT_LENGTH - self.state_counter) * 4
+                    # ACTIVE:
+                    elif self.state_counter > 5:
+                        # Player Hurtbox Setup:
+                        self.width = cn.SPRITE_PLAYER_WIDTH + (cn.L_HIT_LENGTH-self.state_counter)*5
+                        self.height = cn.SPRITE_PLAYER_HEIGHT - (cn.L_HIT_LENGTH-self.state_counter)
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.width = cn.SPRITE_PLAYER_WIDTH
+                        self.height = cn.SPRITE_PLAYER_HEIGHT
+                else:  # IF THE PLAYER IS ON THE LEFT SIDE OF THE SCREEN
+                    # START-UP:
+                    if self.state_counter > 10:
+                        # Player Hurtbox Setup:
+                        self.width = cn.SPRITE_PLAYER_WIDTH + (cn.L_HIT_LENGTH - self.state_counter) * 5
+                        self.height = cn.SPRITE_PLAYER_HEIGHT - (cn.L_HIT_LENGTH - self.state_counter) * 4
+                    # ACTIVE:
+                    elif self.state_counter > 5:
+                        # Player Hurtbox Setup:
+                        self.width = cn.SPRITE_PLAYER_WIDTH + (cn.L_HIT_LENGTH - self.state_counter) * 5
+                        self.height = cn.SPRITE_PLAYER_HEIGHT - (cn.L_HIT_LENGTH - self.state_counter)
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.width = cn.SPRITE_PLAYER_WIDTH
+                        self.height = cn.SPRITE_PLAYER_HEIGHT
             self.state_counter -= 1  # Increment cycle
         elif self.state_counter == 0 | self.state_counter < 0:
             self.state_counter = 0  # Reset cycle so it can be started again
