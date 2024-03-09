@@ -204,14 +204,14 @@ class Stencil(arcade.Window):
                     if self.player_1.SPRINT == key:
                         if self.player_1.right & self.player_1.lefting:
                             print("LEFTING SPRINTING")
-                            self.player_1.lefting = True
                             self.player_1.sprinting = True
+                            #self.player_1.change_x_L -= cn.PLAYER_SPEED/2  # TODO: Movement
                             # SPRINT LEFT BEHAVIOR GOES HERE
                         elif (not self.player_1.right) & self.player_1.righting:
                             print("RIGHTING SPRINTING")
-                            self.player_1.righting = True
                             self.player_1.sprinting = True
                             # SPRINT RIGHT BEHAVIOR GOES HERE
+                            #self.player_1.change_x_R += cn.PLAYER_SPEED/2  # TODO: Movement
                         else:
                             print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
                             self.player_1.sprinting = False
@@ -220,7 +220,8 @@ class Stencil(arcade.Window):
                             case self.player_1.JUMP:
                                 print("JUMPING")
                                 self.player_1.jumping = True
-                                # JUMP BEHAVIOR GOES HERE
+                                # JUMP BEHAVIOR DOESN'T GO HERE, IT WILL GO IN UPDATE IN player.py,
+                                #   due to the nature of the '1-press-and-done' of the jump key
                             case self.player_1.DAFOE:
                                 print("DAFOEING")
                                 self.player_1.dafoeing = True
@@ -233,17 +234,23 @@ class Stencil(arcade.Window):
                             case self.player_1.LEFT:
                                 print("LEFTING")
                                 self.player_1.lefting = True
+                                # MOVE LEFT BEHAVIOR GOES HERE
                                 if not self.player_1.right:
                                     self.player_1.state = State.blocking
                                     print("BLOCKING")
-                                # MOVE LEFT BEHAVIOR GOES HERE
+                                    self.player_1.change_x_L -= cn.PLAYER_SPEED / 2  # TODO: Movement
+                                else:
+                                    self.player_1.change_x_L -= cn.PLAYER_SPEED  # TODO: Movement
                             case self.player_1.RIGHT:
                                 print("RIGHTING")
                                 self.player_1.righting = True
+                                # MOVE RIGHT BEHAVIOR GOES HERE
                                 if self.player_1.right:
                                     self.player_1.state = State.blocking
                                     print("BLOCKING")
-                                # MOVE RIGHT BEHAVIOR GOES HERE
+                                    self.player_1.change_x_R += cn.PLAYER_SPEED/2  # TODO: Movement
+                                else:
+                                    self.player_1.change_x_R += cn.PLAYER_SPEED  # TODO: Movement
                             case self.player_1.PUNCH:
                                 print("PUNCH")
                                 self.player_1.punching = True
@@ -296,6 +303,7 @@ class Stencil(arcade.Window):
             case self.player_1.JUMP:
                 print("NO JUMPING")
                 self.player_1.jumping = False
+                self.player_1.change_y_J = 0
             case self.player_1.DAFOE:
                 print("NO DAFOEING")
                 self.player_1.dafoeing = False
@@ -305,12 +313,14 @@ class Stencil(arcade.Window):
             case self.player_1.LEFT:
                 print("NO LEFTING")
                 self.player_1.lefting = False
+                self.player_1.change_x_L = 0
                 if self.player_1.state == State.blocking:
                     self.player_1.state = State.idle
                     print("NO BLOCKING")
             case self.player_1.RIGHT:
                 print("NO RIGHTING")
                 self.player_1.righting = False
+                self.player_1.change_x_R = 0
                 if self.player_1.state == State.blocking:
                     self.player_1.state = State.idle
                     print("NO BLOCKING")
@@ -326,12 +336,14 @@ class Stencil(arcade.Window):
         """ Handle Mouse Motion """
 
         # Move the center of the player sprite to match the mouse x, y
+        """
         self.player_1.center_x = x
         self.player_1.center_y = y
         if int(self.player_1.state) > 2:
             for hitbox in self.player_1.player_hitboxes:
                 hitbox.center_x = x
                 hitbox.center_y = y
+        """
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """

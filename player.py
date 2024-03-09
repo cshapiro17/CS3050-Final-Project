@@ -47,6 +47,10 @@ class Player(object):
         self.punching = False
         self.kicking = False
         self.sprinting = False
+        # Move Inputs accel_vals accounting:
+        self.change_x_L = 0  # The change_x value taken from the LEFT key
+        self.change_x_R = 0  # The change_x value taken from the RIGHT key
+        self.change_y_J = 0  # The change_x value taken from the JUMP key
 
         # Hurt/Hitbox Setup:
         #   Hurt/Hitbox Lists:
@@ -77,11 +81,19 @@ class Player(object):
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
+        # Movement tracking
+        self.change_x = self.change_x_L + self.change_x_R
+        # TODO: Jump Behavior
+        #  (this'll be hard cuz it'll likely cause some wacky interactions with other moves)
+        """
+        if self.jumping:
+            self.change_y = self.change_y_J
+        """
+        self.center_x += self.change_x
+        self.center_y += self.change_y
         # Main body tracking
         self.player_hurtboxes[0].center_y = self.center_y
         self.player_hurtboxes[0].center_x = self.center_x
-        self.player_hurtboxes[0].change_y = self.change_y
-        self.player_hurtboxes[0].change_x = self.change_x
         self.player_hurtboxes[0].height = self.height
         self.player_hurtboxes[0].width = self.width
 

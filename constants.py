@@ -4,12 +4,13 @@ from enum import IntEnum
 # Display-based Constants:
 SCREEN_WIDTH = 1400
 SCREEN_HEIGHT = 700
-SPRITE_PLAYER_WIDTH = int(SCREEN_WIDTH/14)
-SPRITE_PLAYER_HEIGHT = int(2*SCREEN_HEIGHT/7)
+SPRITE_PLAYER_WIDTH = int(SCREEN_WIDTH/20)
+SPRITE_PLAYER_HEIGHT = int(1*SCREEN_HEIGHT/5)
 
 
 # Balance-based Constants:
 PLAYER_HEALTH = 100
+PLAYER_SPEED = 7
 H_HIT_LENGTH = 60  # Heavy Move Hit Length
 L_HIT_LENGTH = 30  # Light Move Hit Length
 S_HIT_LENGTH = 50  # Special Move Hit Length (Anti-air and Low-profile)
