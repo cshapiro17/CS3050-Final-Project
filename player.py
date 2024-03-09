@@ -1,4 +1,6 @@
 import arcade
+from arcade import check_for_collision_with_lists, check_for_collision
+
 import constants as cn
 from constants import State
 
@@ -31,8 +33,8 @@ class Player(object):
 
         # State Accounting:
         self.state = cn.State.idle
-        self.health = cn.PLAYER_HEALTH
-        self.block_health = int(cn.PLAYER_HEALTH/2)
+        self.health = cn.PLAYER_HEALTH               # UI will grab these in stage for bars
+        self.block_health = int(cn.PLAYER_HEALTH/2)  # UI will grab these in stage for bars
         self.alive = True
         self.right = True
         # More Precise State Accounting
@@ -77,34 +79,38 @@ class Player(object):
         else:
             self.keymap = None
 
-    def update(self):
+    def update(self, floors):
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
         # Movement tracking
         self.change_x = self.change_x_L + self.change_x_R
-        # TODO: Jump Behavior
-        #  (this'll be hard cuz it'll likely cause some wacky interactions with other moves)
-        """
-        if self.jumping:
-            self.change_y = self.change_y_J
-        """
+        # Jump Behavior
+        self.grav_cycle(floors)
+        self.change_y = self.change_y_J
+
         self.center_x += self.change_x
         self.center_y += self.change_y
         if self.dafoeing:
-            if self.height + 5 < int(cn.SPRITE_PLAYER_HEIGHT*1.3):
-                self.height += 5
-            elif self.height - 5 > int(cn.SPRITE_PLAYER_HEIGHT*1.3):
-                self.height -= 5
+            if self.height + 3 < int(cn.SPRITE_PLAYER_HEIGHT*1.2):
+                self.height += 3
+            elif self.height - 3 > int(cn.SPRITE_PLAYER_HEIGHT*1.2):
+                self.height -= 3
             else:
-                self.height = int(cn.SPRITE_PLAYER_HEIGHT*1.3)
+                self.height = int(cn.SPRITE_PLAYER_HEIGHT*1.2)
+            if self.width + 3 < int(cn.SPRITE_PLAYER_WIDTH * 1.1):
+                self.width += 3
+            elif self.width - 3 > int(cn.SPRITE_PLAYER_WIDTH * 1.1):
+                self.width -= 3
+            else:
+                self.width = int(cn.SPRITE_PLAYER_WIDTH * 1.1)
         elif self.crouching:
-            if self.height + 5 < int(cn.SPRITE_PLAYER_HEIGHT/1.5):
+            if self.height + 5 < int(cn.SPRITE_PLAYER_HEIGHT/1.3):
                 self.height += 5
-            elif self.height - 5 > int(cn.SPRITE_PLAYER_HEIGHT/1.5):
+            elif self.height - 5 > int(cn.SPRITE_PLAYER_HEIGHT/1.3):
                 self.height -= 5
             else:
-                self.height = int(cn.SPRITE_PLAYER_HEIGHT/1.5)
+                self.height = int(cn.SPRITE_PLAYER_HEIGHT/1.3)
             if self.width + 5 < int(cn.SPRITE_PLAYER_WIDTH*1.7):
                 self.width += 5
             elif self.width - 5 > int(cn.SPRITE_PLAYER_WIDTH*1.7):
@@ -273,3 +279,33 @@ class Player(object):
         elif self.state_counter == 0 | self.state_counter < 0:
             self.state_counter = 0  # Reset cycle so it can be started again
             self.state = State.idle
+
+    def grav_cycle(self, floors):
+        if not (self.jump_or_nah(floors)):
+            self.change_y_J -= cn.GRAVITY
+        else:
+            self.change_y_J = 0
+
+    def jump_or_nah(self, floors):
+        hit_list_no_move = 0
+        for hurtbox in self.player_hurtboxes:
+            if len(floors) > 1:
+                if check_for_collision_with_lists(hurtbox, floors):
+                    hit_list_no_move += 1
+            elif len(floors) == 1:
+                if check_for_collision(hurtbox, floors[0]):
+                    hit_list_no_move += 1
+        if hit_list_no_move:
+            #print("IN GROUND")
+            self.center_y += cn.GRAVITY
+            return True
+        else:
+            for floor in floors:
+                height_diff = (self.center_y-(self.height/2))-(floor.center_y-(self.height/2))
+                # width_diff = ??? (calc at a later date)
+                if height_diff < 2:
+                    #print("ON GROUND: Diff of "+str(height_diff))
+                    return True
+                else:
+                    #print("OFF GROUND: Diff of "+str(height_diff))
+                    return False

@@ -3,14 +3,10 @@ import constants as cn
 from constants import State
 import player as p
 import os
-import datetime as dt  # If we operate off of datetime, we can ~kinda~ account for frame-dropping on intensive actions??
-
-# This may also be a terrible idea, I honestly have no clue lol
-# TODO: Def bring this up to the group to talk about
+import datetime as dt  # TIMER FOR MAX MATCH TIME
 
 # TODO / Important Stuff:
 #       Divide up into separate classes (hitbox, hurtbox, master, etc)
-#       Hit-stun doesn't work (Dbl hits)
 #       Slow-down from collision detection makes tics vary in speed, which can vary the speed of attacks based on
 #           how much is happening in the code
 
@@ -23,7 +19,7 @@ STUN_TIME = 20  # This is the amount of tics before the Player can land another 
 #   startup frames and stunlock
 
 
-class Stencil(arcade.Window):
+class Stage(arcade.Window):
     """
         Main application class.
 
@@ -38,6 +34,16 @@ class Stencil(arcade.Window):
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None
+
+        self.floors = arcade.SpriteList()
+        self.floor = None
+
+        self.ui = arcade.SpriteList
+        self.d_health = None
+        self.p_1_health = None
+        self.d_block = None
+        self.p_1_block = None
+        self.timer = None
 
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
@@ -61,8 +67,9 @@ class Stencil(arcade.Window):
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
-        p1_center = [4 * cn.SCREEN_WIDTH / 5, 2 * cn.SCREEN_HEIGHT / 5]
-        d_center = [cn.SCREEN_WIDTH / 5, 2 * cn.SCREEN_HEIGHT / 5]
+        p1_center = [int(4 * cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
+        d_center = [int(cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
+        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT/10)]  # STAGE FLOOR CENTER
 
         self.player_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Main Player Health/Body Hit Box
                                                            cn.SPRITE_PLAYER_HEIGHT,
@@ -105,6 +112,13 @@ class Stencil(arcade.Window):
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
                               self.dummy_hitbox, 0)
 
+        self.floor = arcade.SpriteSolidColor(int(3*cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
+                                             int(cn.SCREEN_HEIGHT/3),
+                                             [0, 0, 0])
+        self.floor.center_x = f_center[0]
+        self.floor.center_y = f_center[1]
+        self.floors.append(self.floor)
+
     def on_draw(self):
         """
         Render the screen.
@@ -119,6 +133,7 @@ class Stencil(arcade.Window):
         self.player_1.player_hitboxes.draw()
         self.dummy.player_hurtboxes.draw()
         self.dummy.player_hitboxes.draw()
+        self.floors.draw()
 
     def on_update(self, delta_time):
         """
@@ -126,9 +141,11 @@ class Stencil(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        self.player_1.update()
-        self.dummy.update()
+        self.player_1.update(floors=self.floors)
+        self.dummy.update(floors=self.floors)
+        self.floors.update()
 
+        self.player_1.grav_cycle(floors=self.floors)
         self.whos_on_first()
 
         # Now the hard part: retooling hit detection for the new inputs
@@ -205,23 +222,23 @@ class Stencil(arcade.Window):
                         if self.player_1.right & self.player_1.lefting:
                             print("LEFTING SPRINTING")
                             self.player_1.sprinting = True
-                            #self.player_1.change_x_L -= cn.PLAYER_SPEED/2  # TODO: Movement
+                            self.player_1.change_x_L -= cn.PLAYER_SPEED/2
                             # SPRINT LEFT BEHAVIOR GOES HERE
                         elif (not self.player_1.right) & self.player_1.righting:
                             print("RIGHTING SPRINTING")
                             self.player_1.sprinting = True
                             # SPRINT RIGHT BEHAVIOR GOES HERE
-                            #self.player_1.change_x_R += cn.PLAYER_SPEED/2  # TODO: Movement
+                            self.player_1.change_x_R += cn.PLAYER_SPEED/2
                         else:
                             print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
                             self.player_1.sprinting = False
                     else:
                         match key:
                             case self.player_1.JUMP:
-                                print("JUMPING")
-                                self.player_1.jumping = True
-                                # JUMP BEHAVIOR DOESN'T GO HERE, IT WILL GO IN UPDATE IN player.py,
-                                #   due to the nature of the '1-press-and-done' of the jump key
+                                if self.player_1.jump_or_nah(floors=self.floors):
+                                    print("JUMPING")
+                                    self.player_1.jumping = True
+                                    self.player_1.player_hurtboxes[0].change_y = cn.PLAYER_JUMP_SPEED
                             case self.player_1.DAFOE:
                                 print("DAFOEING")
                                 self.player_1.dafoeing = True
@@ -238,9 +255,9 @@ class Stencil(arcade.Window):
                                 if not self.player_1.right:
                                     self.player_1.state = State.blocking
                                     print("BLOCKING")
-                                    self.player_1.change_x_L -= cn.PLAYER_SPEED / 2  # TODO: Movement
+                                    self.player_1.change_x_L -= int(3*cn.PLAYER_SPEED / 5)
                                 else:
-                                    self.player_1.change_x_L -= cn.PLAYER_SPEED  # TODO: Movement
+                                    self.player_1.change_x_L -= cn.PLAYER_SPEED
                             case self.player_1.RIGHT:
                                 print("RIGHTING")
                                 self.player_1.righting = True
@@ -248,9 +265,9 @@ class Stencil(arcade.Window):
                                 if self.player_1.right:
                                     self.player_1.state = State.blocking
                                     print("BLOCKING")
-                                    self.player_1.change_x_R += cn.PLAYER_SPEED/2  # TODO: Movement
+                                    self.player_1.change_x_R += int(3*cn.PLAYER_SPEED/5)
                                 else:
-                                    self.player_1.change_x_R += cn.PLAYER_SPEED  # TODO: Movement
+                                    self.player_1.change_x_R += cn.PLAYER_SPEED
                             case self.player_1.PUNCH:
                                 print("PUNCH")
                                 self.player_1.punching = True
@@ -368,7 +385,7 @@ class Stencil(arcade.Window):
 
 def main():
     """ Main function """
-    game = Stencil(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
+    game = Stage(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
     game.setup()
     arcade.run()
 

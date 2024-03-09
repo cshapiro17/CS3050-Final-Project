@@ -6,11 +6,14 @@ SCREEN_WIDTH = 1400
 SCREEN_HEIGHT = 700
 SPRITE_PLAYER_WIDTH = int(SCREEN_WIDTH/20)
 SPRITE_PLAYER_HEIGHT = int(1*SCREEN_HEIGHT/5)
+MAX_MATCH_TIME = 60
 
 
 # Balance-based Constants:
 PLAYER_HEALTH = 100
-PLAYER_SPEED = 7
+PLAYER_SPEED = 5
+PLAYER_JUMP_SPEED = 10
+GRAVITY = 1
 H_HIT_LENGTH = 60  # Heavy Move Hit Length
 L_HIT_LENGTH = 30  # Light Move Hit Length
 S_HIT_LENGTH = 50  # Special Move Hit Length (Anti-air and Low-profile)
