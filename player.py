@@ -91,6 +91,38 @@ class Player(object):
         """
         self.center_x += self.change_x
         self.center_y += self.change_y
+        if self.dafoeing:
+            if self.height + 5 < int(cn.SPRITE_PLAYER_HEIGHT*1.3):
+                self.height += 5
+            elif self.height - 5 > int(cn.SPRITE_PLAYER_HEIGHT*1.3):
+                self.height -= 5
+            else:
+                self.height = int(cn.SPRITE_PLAYER_HEIGHT*1.3)
+        elif self.crouching:
+            if self.height + 5 < int(cn.SPRITE_PLAYER_HEIGHT/1.5):
+                self.height += 5
+            elif self.height - 5 > int(cn.SPRITE_PLAYER_HEIGHT/1.5):
+                self.height -= 5
+            else:
+                self.height = int(cn.SPRITE_PLAYER_HEIGHT/1.5)
+            if self.width + 5 < int(cn.SPRITE_PLAYER_WIDTH*1.7):
+                self.width += 5
+            elif self.width - 5 > int(cn.SPRITE_PLAYER_WIDTH*1.7):
+                self.width -= 5
+            else:
+                self.width = int(cn.SPRITE_PLAYER_WIDTH*1.7)
+        else:
+            if self.height+5 < cn.SPRITE_PLAYER_HEIGHT:
+                self.height += 5
+            elif self.height-5 > cn.SPRITE_PLAYER_HEIGHT:
+                self.height -= 5
+            else: self.height = cn.SPRITE_PLAYER_HEIGHT
+            if self.width+5 < cn.SPRITE_PLAYER_WIDTH:
+                self.width += 5
+            elif self.width-5 > cn.SPRITE_PLAYER_WIDTH:
+                self.width -= 5
+            else:
+                self.width = cn.SPRITE_PLAYER_WIDTH
         # Main body tracking
         self.player_hurtboxes[0].center_y = self.center_y
         self.player_hurtboxes[0].center_x = self.center_x
@@ -114,10 +146,6 @@ class Player(object):
             # TODO: Setup animations in chunks (START-UP, ACTIVE, AND RECOVERY FRAMES) based on state_counter
             #   THIS SECTION ~ONLY~ DOES HITBOXES
             screen_side_mod = 0
-            if self.right:
-                screen_side_mod = 1
-            else:
-                screen_side_mod = -1
             if self.state == State.l_punch:  # LIGHT PUNCH
                 # START-UP:
                 if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
