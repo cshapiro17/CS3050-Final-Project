@@ -11,8 +11,8 @@ MAX_MATCH_TIME = 60
 
 # Balance-based Constants:
 PLAYER_HEALTH = 100
-PLAYER_SPEED = 5
-PLAYER_JUMP_SPEED = 10
+PLAYER_SPEED = 4
+PLAYER_JUMP_SPEED = 30
 GRAVITY = 1
 H_HIT_LENGTH = 60  # Heavy Move Hit Length
 L_HIT_LENGTH = 30  # Light Move Hit Length

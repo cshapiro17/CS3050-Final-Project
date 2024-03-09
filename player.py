@@ -79,18 +79,26 @@ class Player(object):
         else:
             self.keymap = None
 
-    def update(self, floors):
+    def update(self, floors):  # TODO: MOVEMENT STUFF SHOULD GET ITS OWN DEF SO IT DOESN'T GET TOO CLUTTERED
+
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
+
         # Movement tracking
         self.change_x = self.change_x_L + self.change_x_R
+
         # Jump Behavior
         self.grav_cycle(floors)
+        if self.jumping & (self.jump_or_nah(floors)):
+            self.change_y_J += cn.PLAYER_JUMP_SPEED
+            self.jumping = False
         self.change_y = self.change_y_J
 
+        # Update position
         self.center_x += self.change_x
         self.center_y += self.change_y
+
         if self.dafoeing:
             if self.height + 3 < int(cn.SPRITE_PLAYER_HEIGHT*1.2):
                 self.height += 3
@@ -301,11 +309,13 @@ class Player(object):
             return True
         else:
             for floor in floors:
-                height_diff = (self.center_y-(self.height/2))-(floor.center_y-(self.height/2))
+                height_diff = (self.center_y-(self.height/2))-(floor.center_y+(floor.height/2))
                 # width_diff = ??? (calc at a later date)
-                if height_diff < 2:
+                if height_diff < 1.5:
                     #print("ON GROUND: Diff of "+str(height_diff))
                     return True
                 else:
                     #print("OFF GROUND: Diff of "+str(height_diff))
+                    #print("player y: " + str(self.center_y) + ", player height: " + str(self.height))
+                    #print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
                     return False

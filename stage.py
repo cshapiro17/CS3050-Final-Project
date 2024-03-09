@@ -222,13 +222,13 @@ class Stage(arcade.Window):
                         if self.player_1.right & self.player_1.lefting:
                             print("LEFTING SPRINTING")
                             self.player_1.sprinting = True
-                            self.player_1.change_x_L -= cn.PLAYER_SPEED/2
+                            self.player_1.change_x_L -= cn.PLAYER_SPEED
                             # SPRINT LEFT BEHAVIOR GOES HERE
                         elif (not self.player_1.right) & self.player_1.righting:
                             print("RIGHTING SPRINTING")
                             self.player_1.sprinting = True
-                            # SPRINT RIGHT BEHAVIOR GOES HERE
-                            self.player_1.change_x_R += cn.PLAYER_SPEED/2
+                            # SPRINT RIGHT BEHAVIOR GOES HEREa
+                            self.player_1.change_x_R += cn.PLAYER_SPEED
                         else:
                             print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
                             self.player_1.sprinting = False
@@ -238,11 +238,9 @@ class Stage(arcade.Window):
                                 if self.player_1.jump_or_nah(floors=self.floors):
                                     print("JUMPING")
                                     self.player_1.jumping = True
-                                    self.player_1.player_hurtboxes[0].change_y = cn.PLAYER_JUMP_SPEED
                             case self.player_1.DAFOE:
                                 print("DAFOEING")
                                 self.player_1.dafoeing = True
-                                print(self.player_1.dafoeing)
                                 # LOOK UP BEHAVIOR GOES HERE
                             case self.player_1.CROUCH:
                                 print("CROUCHING")
