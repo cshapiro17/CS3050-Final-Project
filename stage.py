@@ -15,7 +15,7 @@ import datetime as dt  # If we operate off of datetime, we can ~kinda~ account f
 #           how much is happening in the code
 
 # --- Constants ---
-SCREEN_TITLE = "Hitbox Testing"
+SCREEN_TITLE = "Fight Stage"
 
 HIT_LENGTH = 25
 STUN_TIME = 20  # This is the amount of tics before the Player can land another hit on the Test Dummy.
@@ -196,74 +196,103 @@ class Stencil(arcade.Window):
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
-        if self.player_1.state_counter == 0:  # LET'S BE REAL, THIS SUCKS TO LOOK AT. DECISION MATRIX???
-            if not (self.player_1.keymap is None):
-                match key:
-                    case self.player_1.JUMP:
-                        print("JUMPING")
-                        self.player_1.jumping = True
-                        # JUMP BEHAVIOR GOES HERE
-                    case self.player_1.DAFOE:
-                        print("DAFOEING")
-                        self.player_1.dafoeing = True
-                        print(self.player_1.dafoeing)
-                        # LOOK UP BEHAVIOR GOES HERE
-                    case self.player_1.CROUCH:
-                        print("CROUCHING")
-                        self.player_1.crouching = True
-                        # CROUCH BEHAVIOR GOES HERE
-                    case self.player_1.LEFT:
-                        print("LEFTING")
-                        self.player_1.lefting = True
-                        # MOVE LEFT BEHAVIOR GOES HERE
-                    case self.player_1.RIGHT:
-                        print("RIGHTING")
-                        self.player_1.righting = True
-                        # MOVE RIGHT BEHAVIOR GOES HERE
-                    case self.player_1.PUNCH:
-                        print("PUNCH")
-                        self.player_1.punching = True
-                        if self.player_1.righting | self.player_1.lefting:
-                            print("light punch")
-                            self.player_1.state = State.l_punch  # LIGHT PUNCH
-                            self.player_1.state_counter = cn.L_HIT_LENGTH
-                        elif self.player_1.dafoeing:
-                            print("anti-air punch")
-                            self.player_1.state = State.aa_punch  # ANTI-AIR PUNCH
-                            self.player_1.state_counter = cn.S_HIT_LENGTH
-                        elif self.player_1.crouching:
-                            print("low-profile punch")
-                            self.player_1.state = State.lp_punch  # LOW-PROFILE PUNCH
-                            self.player_1.state_counter = cn.L_HIT_LENGTH
+        # LET'S BE REAL, THIS SUCKS TO LOOK AT. DECISION MATRIX???
+        if self.player_1.state_counter == 0:
+            # USE EITHER STATE.HIT OR STUN-LOCK TO KEEP TRACK OF WHEN THEY CAN'T START NEW MOVES
+            if not self.player_1.state == State.hit:
+                if not (self.player_1.keymap is None):
+                    if self.player_1.SPRINT == key:
+                        if self.player_1.right & self.player_1.lefting:
+                            print("LEFTING SPRINTING")
+                            self.player_1.lefting = True
+                            self.player_1.sprinting = True
+                            # SPRINT LEFT BEHAVIOR GOES HERE
+                        elif (not self.player_1.right) & self.player_1.righting:
+                            print("RIGHTING SPRINTING")
+                            self.player_1.righting = True
+                            self.player_1.sprinting = True
+                            # SPRINT RIGHT BEHAVIOR GOES HERE
                         else:
-                            print("heavy punch")
-                            self.player_1.state = State.h_punch  # HEAVY PUNCH
-                            self.player_1.state_counter = cn.H_HIT_LENGTH
-                    case self.player_1.KICK:
-                        print("KICKING")
-                        self.player_1.kicking = True
-                        if self.player_1.righting | self.player_1.lefting:
-                            print("light kick")
-                            self.player_1.state = State.l_kick  # LIGHT KICK
-                            self.player_1.state_counter = cn.L_HIT_LENGTH
-                        elif self.player_1.dafoeing:
-                            print("anti-air kick")
-                            self.player_1.state = State.aa_kick  # ANTI-AIR KICK
-                            self.player_1.state_counter = cn.S_HIT_LENGTH
-                        elif self.player_1.crouching:
-                            print("low-profile kick")
-                            self.player_1.state = State.lp_kick  # LOW-PROFILE KICK
-                            self.player_1.state_counter = cn.S_HIT_LENGTH
-                        else:
-                            print("heavy kick")
-                            self.player_1.state = State.h_kick  # HEAVY KICK
-                            self.player_1.state_counter = cn.H_HIT_LENGTH
+                            print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
+                            self.player_1.sprinting = False
+                    else:
+                        match key:
+                            case self.player_1.JUMP:
+                                print("JUMPING")
+                                self.player_1.jumping = True
+                                # JUMP BEHAVIOR GOES HERE
+                            case self.player_1.DAFOE:
+                                print("DAFOEING")
+                                self.player_1.dafoeing = True
+                                print(self.player_1.dafoeing)
+                                # LOOK UP BEHAVIOR GOES HERE
+                            case self.player_1.CROUCH:
+                                print("CROUCHING")
+                                self.player_1.crouching = True
+                                # CROUCH BEHAVIOR GOES HERE
+                            case self.player_1.LEFT:
+                                print("LEFTING")
+                                self.player_1.lefting = True
+                                if not self.player_1.right:
+                                    self.player_1.state = State.blocking
+                                    print("BLOCKING")
+                                # MOVE LEFT BEHAVIOR GOES HERE
+                            case self.player_1.RIGHT:
+                                print("RIGHTING")
+                                self.player_1.righting = True
+                                if self.player_1.right:
+                                    self.player_1.state = State.blocking
+                                    print("BLOCKING")
+                                # MOVE RIGHT BEHAVIOR GOES HERE
+                            case self.player_1.PUNCH:
+                                print("PUNCH")
+                                self.player_1.punching = True
+                                if ((self.player_1.righting & (not self.player_1.right)) |
+                                        (self.player_1.lefting & self.player_1.right)):
+                                    print("light punch")
+                                    self.player_1.state = State.l_punch  # LIGHT PUNCH
+                                    self.player_1.state_counter = cn.L_HIT_LENGTH
+                                elif self.player_1.dafoeing:
+                                    print("anti-air punch")
+                                    self.player_1.state = State.aa_punch  # ANTI-AIR PUNCH
+                                    self.player_1.state_counter = cn.S_HIT_LENGTH
+                                elif self.player_1.crouching:
+                                    print("low-profile punch")
+                                    self.player_1.state = State.lp_punch  # LOW-PROFILE PUNCH
+                                    self.player_1.state_counter = cn.L_HIT_LENGTH
+                                else:
+                                    print("heavy punch")
+                                    self.player_1.state = State.h_punch  # HEAVY PUNCH
+                                    self.player_1.state_counter = cn.H_HIT_LENGTH
+                            case self.player_1.KICK:
+                                print("KICKING")
+                                self.player_1.kicking = True
+                                if ((self.player_1.righting & (not self.player_1.right)) |
+                                        (self.player_1.lefting & self.player_1.right)):
+                                    print("light kick")
+                                    self.player_1.state = State.l_kick  # LIGHT KICK
+                                    self.player_1.state_counter = cn.L_HIT_LENGTH
+                                elif self.player_1.dafoeing:
+                                    print("anti-air kick")
+                                    self.player_1.state = State.aa_kick  # ANTI-AIR KICK
+                                    self.player_1.state_counter = cn.S_HIT_LENGTH
+                                elif self.player_1.crouching:
+                                    print("low-profile kick")
+                                    self.player_1.state = State.lp_kick  # LOW-PROFILE KICK
+                                    self.player_1.state_counter = cn.S_HIT_LENGTH
+                                else:
+                                    print("heavy kick")
+                                    self.player_1.state = State.h_kick  # HEAVY KICK
+                                    self.player_1.state_counter = cn.H_HIT_LENGTH
 
     def on_key_release(self, key, key_modifiers):
         """
         Called whenever the user lets off a previously pressed key.
         """
         match key:
+            case self.player_1.SPRINT:
+                print("NO SPRINTING")
+                self.player_1.sprinting = False
             case self.player_1.JUMP:
                 print("NO JUMPING")
                 self.player_1.jumping = False
@@ -276,9 +305,15 @@ class Stencil(arcade.Window):
             case self.player_1.LEFT:
                 print("NO LEFTING")
                 self.player_1.lefting = False
+                if self.player_1.state == State.blocking:
+                    self.player_1.state = State.idle
+                    print("NO BLOCKING")
             case self.player_1.RIGHT:
                 print("NO RIGHTING")
                 self.player_1.righting = False
+                if self.player_1.state == State.blocking:
+                    self.player_1.state = State.idle
+                    print("NO BLOCKING")
             case self.player_1.PUNCH:
                 print("NO PUNCHING")
                 self.player_1.punching = False

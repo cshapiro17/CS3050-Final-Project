@@ -4,6 +4,7 @@ from constants import State
 
 KEYMAP = dict(
     JUMP=arcade.key.SPACE,
+    SPRINT=arcade.key.LSHIFT,
     DAFOE=arcade.key.W,
     CROUCH=arcade.key.S,
     LEFT=arcade.key.A,
@@ -31,6 +32,7 @@ class Player(object):
         # State Accounting:
         self.state = cn.State.idle
         self.health = cn.PLAYER_HEALTH
+        self.block_health = int(cn.PLAYER_HEALTH/2)
         self.alive = True
         self.right = True
         # More Precise State Accounting
@@ -44,6 +46,7 @@ class Player(object):
         self.righting = False
         self.punching = False
         self.kicking = False
+        self.sprinting = False
 
         # Hurt/Hitbox Setup:
         #   Hurt/Hitbox Lists:
@@ -60,6 +63,7 @@ class Player(object):
         if input_map > 0:
             self.keymap = KEYMAP
             self.JUMP = self.keymap['JUMP']
+            self.SPRINT = self.keymap['SPRINT']
             self.DAFOE = self.keymap['DAFOE']
             self.CROUCH = self.keymap['CROUCH']
             self.LEFT = self.keymap['LEFT']
