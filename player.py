@@ -165,11 +165,19 @@ class Player(object):
                 self.width -= 5
             else:
                 self.width = cn.SPRITE_PLAYER_WIDTH
+
         # Main body tracking
         self.player_hurtboxes[0].center_y = self.center_y
         self.player_hurtboxes[0].center_x = self.center_x
         self.player_hurtboxes[0].height = self.height
         self.player_hurtboxes[0].width = self.width
+
+        # Using Extended Hitbox to track direction player is facing
+        self.player_hurtboxes[1].center_y = self.center_y
+        if self.right:
+            self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+        else:
+            self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
 
     def hit_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
         if self.state_counter != 0:

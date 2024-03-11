@@ -71,9 +71,9 @@ class Stage(arcade.Window):
                                                            [0, 255, 0])
         self.player_main_hurtbox.center_x = p1_center[0]
         self.player_main_hurtbox.center_y = p1_center[1]
-        self.player_extended_hurtbox = arcade.SpriteSolidColor(1,  # Extended Player Health/Body Hit Box
-                                                               1,
-                                                               [0, 255, 0])
+        self.player_extended_hurtbox = arcade.SpriteSolidColor(int(cn.SPRITE_PLAYER_WIDTH/3),  # Extended Player Health/Body Hit Box
+                                                               10,
+                                                               [255, 255, 255])
         self.player_extended_hurtbox.center_x = p1_center[0]
         self.player_extended_hurtbox.center_y = p1_center[1]
         self.player_hitbox = arcade.SpriteSolidColor(1,  # Player Hit/Damage Hit Box
