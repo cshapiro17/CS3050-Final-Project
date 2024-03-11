@@ -13,11 +13,6 @@ import datetime as dt  # TIMER FOR MAX MATCH TIME
 # --- Constants ---
 SCREEN_TITLE = "Fight Stage"
 
-HIT_LENGTH = 25
-STUN_TIME = 20  # This is the amount of tics before the Player can land another hit on the Test Dummy.
-#   For balance purposes, I think this should generally be less than hit_length, considering:
-#   startup frames and stunlock
-
 
 class Stage(arcade.Window):
     """
@@ -235,9 +230,15 @@ class Stage(arcade.Window):
                     else:
                         match key:
                             case self.player_1.JUMP:
-                                if self.player_1.jump_or_nah(floors=self.floors):
-                                    print("JUMPING")
-                                    self.player_1.jumping = True
+                                print("JUMPING")
+                                self.player_1.state = State.idle
+                                if self.player_1.lefting:
+                                    self.player_1.left_jump = True
+                                elif self.player_1.righting:
+                                    self.player_1.right_jump = True
+                                else:
+                                    self.player_1.neutral_jump = True
+                                self.player_1.jumping = True
                             case self.player_1.DAFOE:
                                 print("DAFOEING")
                                 self.player_1.dafoeing = True
@@ -317,8 +318,6 @@ class Stage(arcade.Window):
                 self.player_1.sprinting = False
             case self.player_1.JUMP:
                 print("NO JUMPING")
-                self.player_1.jumping = False
-                self.player_1.change_y_J = 0
             case self.player_1.DAFOE:
                 print("NO DAFOEING")
                 self.player_1.dafoeing = False
@@ -373,12 +372,22 @@ class Stage(arcade.Window):
         pass
 
     def whos_on_first(self):
-        if self.player_1.center_x >= self.dummy.center_x:
-            self.player_1.right = True
-            self.dummy.right = False
+        if (not (self.player_1.jump_or_nah(floors=self.floors))) & self.player_1.jumping:
+            if self.player_1.center_x >= self.dummy.center_x:
+                self.player_1.change_x_J -= 10  # TODO: Implement a committal jump arc that is CONSISTENT
+
+            else:
+                self.player_1.change_x_J += 10  # TODO: Implement a committal jump arc that is CONSISTENT
         else:
-            self.player_1.right = False
-            self.dummy.right = True
+            if self.player_1.center_x >= self.dummy.center_x:
+                self.player_1.right = True
+                self.dummy.right = False
+            elif self.player_1.center_x < self.dummy.center_x:
+                self.player_1.right = False
+                self.dummy.right = True
+            self.player_1.change_x_J = 0
+        if self.dummy.jump_or_nah(floors=self.floors):
+            pass
 
 
 def main():

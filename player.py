@@ -49,10 +49,17 @@ class Player(object):
         self.punching = False
         self.kicking = False
         self.sprinting = False
+
+        self.left_jump = False
+        self.right_jump = False
+        self.neutral_jump = False
+
+        self.mid_jump = False
         # Move Inputs accel_vals accounting:
         self.change_x_L = 0  # The change_x value taken from the LEFT key
         self.change_x_R = 0  # The change_x value taken from the RIGHT key
-        self.change_y_J = 0  # The change_x value taken from the JUMP key
+        self.change_x_J = 0  # The change_x value taken from the JUMP key
+        self.change_y_J = 0  # The change_y value taken from the JUMP key
 
         # Hurt/Hitbox Setup:
         #   Hurt/Hitbox Lists:
@@ -85,14 +92,35 @@ class Player(object):
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
 
-        # Movement tracking
-        self.change_x = self.change_x_L + self.change_x_R
-
         # Jump Behavior
         self.grav_cycle(floors)
-        if self.jumping & (self.jump_or_nah(floors)):
+        if self.jumping & self.jump_or_nah(floors) & (not self.mid_jump):
             self.change_y_J += cn.PLAYER_JUMP_SPEED
+            self.change_x_J = 0
+        elif self.jumping & (not (self.jump_or_nah(floors))):
+            if self.neutral_jump:
+                self.change_x_J = 0
+            elif self.right_jump:
+                self.change_x_J = 10
+            elif self.left_jump:
+                self.change_x_J = -10
+            self.mid_jump = True
+        elif self.jump_or_nah(floors) & self.jumping & self.mid_jump:
             self.jumping = False
+            self.mid_jump = False
+            if self.right_jump:
+                self.right_jump = False
+            if self.left_jump:
+                self.left_jump = False
+            if self.neutral_jump:
+                self.neutral_jump = False
+            self.change_y_J = 0
+
+        # Movement tracking
+        if self.jumping & (not (self.jump_or_nah(floors))):
+            self.change_x = self.change_x_J
+        else:
+            self.change_x = self.change_x_L + self.change_x_R
         self.change_y = self.change_y_J
 
         # Update position
@@ -315,7 +343,7 @@ class Player(object):
                     #print("ON GROUND: Diff of "+str(height_diff))
                     return True
                 else:
-                    #print("OFF GROUND: Diff of "+str(height_diff))
-                    #print("player y: " + str(self.center_y) + ", player height: " + str(self.height))
-                    #print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
+                    print("OFF GROUND: Diff of "+str(height_diff))
+                    print("player y: " + str(self.center_y) + ", player height: " + str(self.height))
+                    print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
                     return False
