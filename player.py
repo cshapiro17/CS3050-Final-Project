@@ -34,7 +34,7 @@ class Player(object):
         # State Accounting:
         self.state = cn.State.idle
         self.health = cn.PLAYER_HEALTH               # UI will grab these in stage for bars
-        self.block_health = int(cn.PLAYER_HEALTH/2)  # UI will grab these in stage for bars
+        self.block_health = int(cn.PLAYER_HEALTH/4)  # UI will grab these in stage for bars
         self.alive = True
         self.right = True
         # More Precise State Accounting
