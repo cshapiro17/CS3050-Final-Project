@@ -6,7 +6,7 @@ import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
 # TODO / Important Stuff:
-#       Divide up into separate classes (hitbox, hurtbox, master, etc)
+#       UI SPRITES AREN'T CONNECTED TO THE VALUES THEY REPRESENT YET
 #       Slow-down from collision detection makes tics vary in speed, which can vary the speed of attacks based on
 #           how much is happening in the code
 
@@ -331,6 +331,7 @@ class Stage(arcade.Window):
                             case self.player_1.LEFT:
                                 print("LEFTING")
                                 self.player_1.lefting = True
+                                self.player_1.righting = False
                                 # MOVE LEFT BEHAVIOR GOES HERE
                                 if not self.player_1.right:
                                     self.player_1.state = State.blocking
@@ -341,6 +342,7 @@ class Stage(arcade.Window):
                             case self.player_1.RIGHT:
                                 print("RIGHTING")
                                 self.player_1.righting = True
+                                self.player_1.lefting = False
                                 # MOVE RIGHT BEHAVIOR GOES HERE
                                 if self.player_1.right:
                                     self.player_1.state = State.blocking

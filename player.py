@@ -351,7 +351,7 @@ class Player(object):
                     #print("ON GROUND: Diff of "+str(height_diff))
                     return True
                 else:
-                    print("OFF GROUND: Diff of "+str(height_diff))
-                    print("player y: " + str(self.center_y) + ", player height: " + str(self.height))
-                    print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
+                    #print("OFF GROUND: Diff of "+str(height_diff))
+                    #print("player y: " + str(self.center_y) + ", player height: " + str(self.height))
+                    #print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
                     return False
