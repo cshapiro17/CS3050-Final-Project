@@ -286,7 +286,7 @@ class Player(object):
                     self.center_x += 10 * screen_side_mod
             if self.state == State.aa_punch:
                 pass
-            if self.state == State.lp_punch:
+            if self.state == State.lp_punch:  # APPARENTLY THIS SHOULD ACTUALLY BE THE ANTI-AIR??
                 pass
             if self.state == State.h_punch:
                 pass

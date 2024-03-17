@@ -137,19 +137,19 @@ class Stage(arcade.Window):
                                                   [0, 0, 250])
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9)
-        self.d_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
+        self.d_health = arcade.SpriteSolidColor(int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
                                                 30,  # HEIGHT OF HEALTH BAR
                                                 [255, 0, 0])
-        self.d_health.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.1) +
-                                     ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 1.6))
+        self.d_health.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                     ((self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)/2))
         # * 1.6 is to correct the offset from the portrait
         self.d_health.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) + 20
         # 20px is for offset for block bar
-        self.d_block = arcade.SpriteSolidColor(int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT),
+        self.d_block = arcade.SpriteSolidColor(int(self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT),
                                                  30,  # HEIGHT OF HEALTH BAR
                                                  [125, 249, 255])
-        self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.4) +
-                                                      ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 1.6))
+        self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                    ((self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
         # * 1.6 is to correct the offset from the portrait
         self.d_block.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 20
         # 20px is for offset for block bar
@@ -163,16 +163,16 @@ class Stage(arcade.Window):
         self.p_1_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
                                                   30,  # HEIGHT OF HEALTH BAR
                                                   [255, 0, 0])
-        self.p_1_health.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.1) +
-                                                         ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 1.6))
+        self.p_1_health.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                                         ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 2))
         # * 1.6 is to correct the offset from the portrait
         self.p_1_health.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) + 20
         # 20px is for offset for block bar
         self.p_1_block = arcade.SpriteSolidColor(int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT),
                                                  30,  # HEIGHT OF HEALTH BAR
                                                  [125, 249, 255])
-        self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.4) +
-                                                        ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 1.6))
+        self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                                        ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
         # * 1.6 is to correct the offset from the portrait
         self.p_1_block.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 20
         # 20px is for offset for block bar
@@ -229,6 +229,7 @@ class Stage(arcade.Window):
 
         self.player_1.grav_cycle(floors=self.floors)
         self.whos_on_first()
+        self.ui_update()
 
         # Now the hard part: retooling hit detection for the new inputs
         #   - We don't need to check for moves from the dummy (it doesn't even have inputs)
@@ -253,13 +254,31 @@ class Stage(arcade.Window):
                     hitbox.width = 0.1  # Set the width and height to 0 to avoid...
                     hitbox.height = 0.1  # accidentally registering attacks 2x.
                 arcade.set_background_color(arcade.color.YELLOW)
-                if self.player_1.state == State.h_kick | self.player_1.state == State.h_punch:
+                # --- HEAVY ---
+                if self.player_1.state == State.h_kick:
                     self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                elif ((self.player_1.state == State.aa_punch | self.player_1.state == State.aa_kick) |
-                      (self.player_1.state == State.lp_punch | self.player_1.state == State.lp_kick)):
+                    self.dummy.health -= cn.H_K_HIT_DAMAGE
+                elif self.player_1.state == State.h_punch:
+                    self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    self.dummy.health -= cn.H_P_HIT_DAMAGE
+                # --- SPECIALS ---
+                elif (self.player_1.state == State.aa_punch) | (self.player_1.state == State.lp_punch):
                     self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                else:
+                    self.dummy.health -= cn.S_P_HIT_DAMAGE
+                elif (self.player_1.state == State.aa_kick) | (self.player_1.state == State.lp_kick):
+                    self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    self.dummy.health -= cn.S_K_HIT_DAMAGE
+                # --- LIGHT ---
+                elif self.player_1.state == State.l_kick:
                     self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    self.dummy.health -= cn.L_K_HIT_DAMAGE
+                elif self.player_1.state == State.l_punch:
+                    self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    self.dummy.health -= cn.L_P_HIT_DAMAGE
+                print("DUMMY HEALTH = " + str(self.dummy.health))
+                if self.dummy.health <= 0:
+                    self.dummy.health = cn.PLAYER_HEALTH
+                    arcade.set_background_color(arcade.color.RED)
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 for hitbox in self.player_1.player_hitboxes:
                     hitbox.hit_box_algorithm = 'Simple'
@@ -471,6 +490,22 @@ class Stage(arcade.Window):
             self.player_1.change_x_J = 0
         if self.dummy.jump_or_nah(floors=self.floors):
             pass
+
+    def ui_update(self):
+        # --- DUMMY UI REFRESH ---
+        self.d_health.width = int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
+        self.d_health.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                     ((self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)/2))
+        self.d_block.width = int(self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
+        self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                    ((self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
+        # --- PLAYER UI REFRESH ---
+        self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
+        self.p_1_health.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                                         ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 2))
+        self.p_1_block.width = int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
+        self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                                        ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
 
 
 def main():
