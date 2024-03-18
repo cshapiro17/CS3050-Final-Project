@@ -115,11 +115,11 @@ class Stage(arcade.Window):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, 0)
+                                 self.player_hitbox, 2)  # input_map = 2 for right split keymap
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 1)
+                              self.dummy_hitbox, 1)  # input_map = 1 for left split keymap
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -238,7 +238,8 @@ class Stage(arcade.Window):
 
         # Check to see if the player has attacked the dummy,
 
-        # TODO: Implement Blocking.
+        # TODO: Block works, but hit detection's kinda borked. Dbl hits are back.
+        #       Hit stun being improperly implemented is almost certainly the issue.
         """
         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
         ⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -277,25 +278,31 @@ class Stage(arcade.Window):
                 arcade.set_background_color(arcade.color.YELLOW)
                 # --- HEAVY ---
                 if self.player_1.state == State.h_kick:
-                    self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                    self.dummy.health -= cn.H_K_HIT_DAMAGE
+                    hit_stun = self.dummy.block_check(cn.H_K_HIT_DAMAGE)
+                    if hit_stun:
+                        self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
                 elif self.player_1.state == State.h_punch:
-                    self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                    self.dummy.health -= cn.H_P_HIT_DAMAGE
+                    hit_stun = self.dummy.block_check(cn.H_P_HIT_DAMAGE)
+                    if hit_stun:
+                        self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
                 # --- SPECIALS ---
                 elif (self.player_1.state == State.aa_punch) | (self.player_1.state == State.lp_punch):
-                    self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                    self.dummy.health -= cn.S_P_HIT_DAMAGE
+                    hit_stun = self.dummy.block_check(cn.S_P_HIT_DAMAGE)
+                    if hit_stun:
+                        self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
                 elif (self.player_1.state == State.aa_kick) | (self.player_1.state == State.lp_kick):
-                    self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                    self.dummy.health -= cn.S_K_HIT_DAMAGE
+                    hit_stun = self.dummy.block_check(cn.S_K_HIT_DAMAGE)
+                    if hit_stun:
+                        self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
                 # --- LIGHT ---
                 elif self.player_1.state == State.l_kick:
-                    self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                    self.dummy.health -= cn.L_K_HIT_DAMAGE
+                    hit_stun = self.dummy.block_check(cn.L_K_HIT_DAMAGE)
+                    if hit_stun:
+                        self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
                 elif self.player_1.state == State.l_punch:
-                    self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                    self.dummy.health -= cn.L_P_HIT_DAMAGE
+                    hit_stun = self.dummy.block_check(cn.L_P_HIT_DAMAGE)
+                    if hit_stun:
+                        self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
                 print("DUMMY HEALTH = " + str(self.dummy.health))
                 if self.dummy.health <= 0:
                     self.dummy.health = cn.PLAYER_HEALTH
@@ -334,25 +341,31 @@ class Stage(arcade.Window):
                 arcade.set_background_color(arcade.color.ORANGE)
                 # --- HEAVY ---
                 if self.dummy.state == State.h_kick:
-                    self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                    self.player_1.health -= cn.H_K_HIT_DAMAGE
+                    hit_stun = self.player_1.block_check(cn.H_K_HIT_DAMAGE)
+                    if hit_stun:
+                        self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
                 elif self.dummy.state == State.h_punch:
-                    self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                    self.player_1.health -= cn.H_P_HIT_DAMAGE
+                    hit_stun = self.player_1.block_check(cn.H_P_HIT_DAMAGE)
+                    if hit_stun:
+                        self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
                 # --- SPECIALS ---
                 elif (self.dummy.state == State.aa_punch) | (self.dummy.state == State.lp_punch):
-                    self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                    self.player_1.health -= cn.S_P_HIT_DAMAGE
+                    hit_stun = self.player_1.block_check(cn.S_P_HIT_DAMAGE)
+                    if hit_stun:
+                        self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
                 elif (self.dummy.state == State.aa_kick) | (self.dummy.state == State.lp_kick):
-                    self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                    self.player_1.health -= cn.S_K_HIT_DAMAGE
+                    hit_stun = self.player_1.block_check(cn.S_K_HIT_DAMAGE)
+                    if hit_stun:
+                        self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
                 # --- LIGHT ---
                 elif self.dummy.state == State.l_kick:
-                    self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                    self.player_1.health -= cn.L_K_HIT_DAMAGE
+                    hit_stun = self.player_1.block_check(cn.L_K_HIT_DAMAGE)
+                    if hit_stun:
+                        self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
                 elif self.dummy.state == State.l_punch:
-                    self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                    self.player_1.health -= cn.L_P_HIT_DAMAGE
+                    hit_stun = self.player_1.block_check(cn.L_P_HIT_DAMAGE)
+                    if hit_stun:
+                        self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
                 print("PLAYER HEALTH = " + str(self.player_1.health))
                 if self.player_1.health <= 0:
                     self.player_1.health = cn.PLAYER_HEALTH
@@ -401,13 +414,11 @@ class Stage(arcade.Window):
                         if self.player_1.right & self.player_1.lefting:
                             print("LEFTING SPRINTING")
                             self.player_1.sprinting = True
-                            self.player_1.change_x_L -= cn.PLAYER_SPEED
                             # SPRINT LEFT BEHAVIOR GOES HERE
                         elif (not self.player_1.right) & self.player_1.righting:
                             print("RIGHTING SPRINTING")
                             self.player_1.sprinting = True
-                            # SPRINT RIGHT BEHAVIOR GOES HEREa
-                            self.player_1.change_x_R += cn.PLAYER_SPEED
+                            # SPRINT RIGHT BEHAVIOR GOES HERE
                         else:
                             print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
                             self.player_1.sprinting = False
@@ -537,7 +548,6 @@ class Stage(arcade.Window):
         """
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
-        # TODO: SCRAP THIS (IT'S JUST TEMP MOVEMENT), AND IMPLEMENT ACTUALLY WORKING MOVEMENT
         """ Handle Mouse Motion """
 
         # Move the center of the player sprite to match the mouse x, y

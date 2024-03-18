@@ -4,7 +4,18 @@ from arcade import check_for_collision_with_lists, check_for_collision
 import constants as cn
 from constants import State
 
-KEYMAP = dict(
+FULL_KEYMAP = dict(
+    JUMP=arcade.key.SPACE,
+    SPRINT=arcade.key.LSHIFT,
+    DAFOE=arcade.key.W,
+    CROUCH=arcade.key.S,
+    LEFT=arcade.key.A,
+    RIGHT=arcade.key.D,
+    PUNCH=arcade.key.J,
+    KICK=arcade.key.K,
+    SPECIAL=arcade.key.L
+)
+SPLIT_KEYMAP_L = dict(
     JUMP=arcade.key.LALT,
     SPRINT=arcade.key.LSHIFT,
     DAFOE=arcade.key.W,
@@ -15,7 +26,7 @@ KEYMAP = dict(
     KICK=arcade.key.X,
     SPECIAL=arcade.key.C
 )
-ALT_KEYMAP = dict(
+SPLIT_KEYMAP_R = dict(
     JUMP=arcade.key.RALT,
     SPRINT=arcade.key.SPACE,
     DAFOE=arcade.key.I,
@@ -29,15 +40,15 @@ ALT_KEYMAP = dict(
 # TODO
 """
 GAMEPAD_KEYMAP = dict(
-    JUMP=arcade.key.RALT,
-    SPRINT=arcade.key.SPACE,
-    DAFOE=arcade.key.I,
-    CROUCH=arcade.key.K,
-    LEFT=arcade.key.J,
-    RIGHT=arcade.key.L,
-    PUNCH=arcade.key.M,
-    KICK=arcade.key.COMMA,
-    SPECIAL=arcade.key.PERIOD
+    JUMP=arcade.key.?,
+    SPRINT=arcade.key.?,
+    DAFOE=arcade.key.?,
+    CROUCH=arcade.key.?,
+    LEFT=arcade.key.?,
+    RIGHT=arcade.key.?,
+    PUNCH=arcade.key.?,
+    KICK=arcade.key.?,
+    SPECIAL=arcade.key.?
 )
 """
 
@@ -60,8 +71,8 @@ class Player(object):
         # State Accounting:
         self.state = cn.State.idle
         self.health = cn.PLAYER_HEALTH               # UI will grab these in stage for bars
-        self.block_health = int(cn.PLAYER_HEALTH/4)  # UI will grab these in stage for bars
-        self.alive = True
+        self.block_health = cn.FULL_BLOCK  # UI will grab these in stage for bars
+        self.alive = True   # TODO: Tune block health
         self.right = True
         # More Precise State Accounting
         self.stun = 0
@@ -74,6 +85,8 @@ class Player(object):
         self.righting = False
         self.punching = False
         self.kicking = False
+
+        self.blocking = False
 
         self.sprinting = False
         self.left_dash = False
@@ -107,37 +120,23 @@ class Player(object):
         self.player_hitboxes.append(self.hitbox)
 
         if input_map == 0:
-            self.keymap = KEYMAP
-            self.JUMP = self.keymap['JUMP']
-            self.SPRINT = self.keymap['SPRINT']
-            self.DAFOE = self.keymap['DAFOE']
-            self.CROUCH = self.keymap['CROUCH']
-            self.LEFT = self.keymap['LEFT']
-            self.RIGHT = self.keymap['RIGHT']
-            self.PUNCH = self.keymap['PUNCH']
-            self.KICK = self.keymap['KICK']
+            self.keymap = FULL_KEYMAP
         elif input_map == 1:
-            self.keymap = ALT_KEYMAP
-            self.JUMP = self.keymap['JUMP']
-            self.SPRINT = self.keymap['SPRINT']
-            self.DAFOE = self.keymap['DAFOE']
-            self.CROUCH = self.keymap['CROUCH']
-            self.LEFT = self.keymap['LEFT']
-            self.RIGHT = self.keymap['RIGHT']
-            self.PUNCH = self.keymap['PUNCH']
-            self.KICK = self.keymap['KICK']
-        """
+            self.keymap = SPLIT_KEYMAP_L
         elif input_map == 2:
-            self.keymap = GAMEPAD_KEYMAP
-            self.JUMP = self.keymap['JUMP']
-            self.SPRINT = self.keymap['SPRINT']
-            self.DAFOE = self.keymap['DAFOE']
-            self.CROUCH = self.keymap['CROUCH']
-            self.LEFT = self.keymap['LEFT']
-            self.RIGHT = self.keymap['RIGHT']
-            self.PUNCH = self.keymap['PUNCH']
-            self.KICK = self.keymap['KICK']
+            self.keymap = SPLIT_KEYMAP_R
         """
+        elif input_map == 3:
+            self.keymap = GAMEPAD_KEYMAP
+        """
+        self.JUMP = self.keymap['JUMP']
+        self.SPRINT = self.keymap['SPRINT']
+        self.DAFOE = self.keymap['DAFOE']
+        self.CROUCH = self.keymap['CROUCH']
+        self.LEFT = self.keymap['LEFT']
+        self.RIGHT = self.keymap['RIGHT']
+        self.PUNCH = self.keymap['PUNCH']
+        self.KICK = self.keymap['KICK']
 
     def update(self, floors):  # TODO: MOVEMENT STUFF SHOULD GET ITS OWN DEF SO IT DOESN'T GET TOO CLUTTERED
 
@@ -229,6 +228,7 @@ class Player(object):
                         self.sprinting = False
                         self.left_dash = False
                         self.right_dash = False
+
         # Movement tracking
         if self.jumping & (not (self.jump_or_nah(floors))):
             self.change_x = self.change_x_J
@@ -298,11 +298,6 @@ class Player(object):
     def hit_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
         if self.state_counter != 0:
             # THIS WILL TRACK PLAYER MOVES TO 'ANIMATE' AND MOVE HITBOXES
-            # TODO: Get the old hitbox testing code working with only one move (LIGHT PUNCH) before expanding it to
-            #   more moves.
-            # TODO: Work on the sprite movement. It should not be displayed in terms of state_counter, but rather in
-            #   terms of SCREEN_WIDTH and SCREEN_HEIGHT (or self.sprite_hit.width and self.sprite_hit.height)
-            #   WE ALSO HAVE 2 BUTTONS NOW, MIGHT AS WELL THROW THAT ALL IN HERE
 
             # EXAMPLE HIT:
             # self.player_hitbox.center_x = self.player_hurtbox.center_x - 6*self.state_counter
@@ -324,7 +319,7 @@ class Player(object):
                 elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
                     # Player Hitbox Setup:
                     self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
-                                                                            self.state_counter)) * screen_side_mod
+                                                                        self.state_counter)) * screen_side_mod
                     self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
                                                                         self.state_counter)
                     self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
@@ -349,7 +344,7 @@ class Player(object):
                 elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
                     # Player Hitbox Setup:
                     self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
-                                                                            self.state_counter)) * screen_side_mod
+                                                                        self.state_counter)) * screen_side_mod
                     self.player_hitboxes[0].center_y = self.center_y - 4*self.state_counter
                     self.player_hitboxes[0].width = 10*(cn.L_HIT_LENGTH-self.state_counter)
                     self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
@@ -369,12 +364,6 @@ class Player(object):
     def hurt_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
         if self.state_counter != 0:
             # THIS WILL TRACK PLAYER MOVES TO 'ANIMATE' AND MOVE HURTBOXES
-            # TODO: Get the old hurtbox testing code working with only one move (LIGHT PUNCH) before expanding it to
-            #   more moves.
-            # TODO: Work on the sprite movement. It should not be displayed in terms of state_counter, but rather in
-            #   terms of SCREEN_WIDTH and SCREEN_HEIGHT (or self.sprite_hit.width and self.sprite_hit.height)
-            #   WE ALSO HAVE 2 BUTTONS NOW, MIGHT AS WELL THROW THAT ALL IN HERE
-
             # TODO: Setup animations in chunks (START-UP, ACTIVE, AND RECOVERY FRAMES) based on state_counter
             #   THIS SECTION ~ONLY~ DOES HURTBOXES
             screen_side_mod = 0
@@ -520,6 +509,7 @@ class Player(object):
                                 # MOVE LEFT BEHAVIOR GOES HERE
                                 if not self.right:
                                     self.state = State.blocking
+                                    self.blocking = True
                                     print("BLOCKING")
                                     self.change_x_L -= int(3 * cn.PLAYER_SPEED / 5)
                                 else:
@@ -531,6 +521,7 @@ class Player(object):
                                 # MOVE RIGHT BEHAVIOR GOES HERE
                                 if self.right:
                                     self.state = State.blocking
+                                    self.blocking = True
                                     print("BLOCKING")
                                     self.change_x_R += int(3 * cn.PLAYER_SPEED / 5)
                                 else:
@@ -594,6 +585,7 @@ class Player(object):
                 self.change_x_L = 0
                 if self.state == State.blocking:
                     self.state = State.idle
+                    self.blocking = False
                     print("NO BLOCKING")
             case self.RIGHT:
                 print("NO RIGHTING")
@@ -601,6 +593,7 @@ class Player(object):
                 self.change_x_R = 0
                 if self.state == State.blocking:
                     self.state = State.idle
+                    self.blocking = False
                     print("NO BLOCKING")
             case self.PUNCH:
                 print("NO PUNCHING")
@@ -608,3 +601,20 @@ class Player(object):
             case self.KICK:
                 print("NO KICKING")
                 self.kicking = False
+
+    def block_check(self, hit_damage):
+        if self.blocking:
+            p_block_health = self.block_health  # prev block health
+            c_block_health = self.block_health-hit_damage  # new 'current' block health
+            if c_block_health > 0:
+                self.block_health -= hit_damage
+                return True  # Block is intact
+            elif (p_block_health > 0) & (c_block_health < 0):
+                self.block_health = 0
+                self.health -= hit_damage
+                return False  # BLOCK IS BROKEN, STUN!
+            elif p_block_health == 0:
+                self.health -= hit_damage
+                return True  # Block is already broken
+        else:
+            self.health -= hit_damage  # Not blocking
