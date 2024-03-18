@@ -74,7 +74,12 @@ class Player(object):
         self.righting = False
         self.punching = False
         self.kicking = False
+
         self.sprinting = False
+        self.left_dash = False
+        self.right_dash = False
+
+        self.mid_dash = False
 
         self.left_jump = False
         self.right_jump = False
@@ -84,6 +89,8 @@ class Player(object):
         # Move Inputs accel_vals accounting:
         self.change_x_L = 0  # The change_x value taken from the LEFT key
         self.change_x_R = 0  # The change_x value taken from the RIGHT key
+        self.change_x_S = 0  # The change_x value taken from the SPRINT key
+        self.change_y_S = 0  # The change_y value taken from the SPRINT key
         self.change_x_J = 0  # The change_x value taken from the JUMP key
         self.change_y_J = 0  # The change_y value taken from the JUMP key
 
@@ -140,10 +147,10 @@ class Player(object):
 
         # Jump Behavior
         self.grav_cycle(floors)
-        if self.jumping & self.jump_or_nah(floors) & (not self.mid_jump):
+        if self.jumping & self.jump_or_nah(floors) & (not self.mid_jump):  # IF jumping, on floor, and not mid-jump
             self.change_y_J += cn.PLAYER_JUMP_SPEED
             self.change_x_J = 0
-        elif self.jumping & (not (self.jump_or_nah(floors))):
+        elif self.jumping & (not (self.jump_or_nah(floors))):  # IF jumping, not on floor
             if self.neutral_jump:
                 self.change_x_J = 0
             elif self.right_jump:
@@ -151,7 +158,7 @@ class Player(object):
             elif self.left_jump:
                 self.change_x_J = -10
             self.mid_jump = True
-        elif self.jump_or_nah(floors) & self.jumping & self.mid_jump:
+        elif self.jump_or_nah(floors) & self.jumping & self.mid_jump:  # IF on floor, jumping, and mid-jump
             self.jumping = False
             self.mid_jump = False
             if self.right_jump:
@@ -162,9 +169,72 @@ class Player(object):
                 self.neutral_jump = False
             self.change_y_J = 0
 
+        # Sprint Behavior:
+        if self.jump_or_nah(floors):  # IF on floor
+            if self.sprinting:
+                if not self.mid_dash:
+                    self.mid_dash = True
+                    self.state_counter = 50  # TODO: NAIL THIS DOWN AND ADD IT TO OUR CONSTANTS FILE
+                    self.change_y_S = 0
+                    if self.right_dash:
+                        self.change_x_S = 0.5*cn.PLAYER_SPEED
+                    elif self.left_dash:
+                        self.change_x_S = 0.5*cn.PLAYER_SPEED
+                    else:
+                        self.mid_dash = False
+                        self.sprinting = False
+                        self.left_dash = False
+                        self.right_dash = False
+                        self.state_counter = 0
+
+                else:
+                    self.change_y_S = 0
+                    if self.left_dash:
+                        if self.state_counter > 40:
+                            self.change_x_S = -0.5*cn.PLAYER_SPEED
+                        elif self.state_counter > 25:
+                            self.change_x_S = -5*cn.PLAYER_SPEED
+                        elif self.state_counter > 15:
+                            self.change_x_S = -3*cn.PLAYER_SPEED
+                        else:
+                            self.change_x_S = -0.2*cn.PLAYER_SPEED
+
+                        self.state_counter -= 1
+                        if self.state_counter <= 0:
+                            self.mid_dash = False
+                            self.sprinting = False
+                            self.left_dash = False
+                            self.right_dash = False
+                            self.state_counter = 0
+
+                    elif self.right_dash:
+                        if self.state_counter > 90:
+                            self.change_x_S = 0.5*cn.PLAYER_SPEED
+                        elif self.state_counter > 50:
+                            self.change_x_S = 5*cn.PLAYER_SPEED
+                        elif self.state_counter > 30:
+                            self.change_x_S = 3*cn.PLAYER_SPEED
+                        else:
+                            self.change_x_S = 0.2*cn.PLAYER_SPEED
+
+                        self.state_counter -= 1
+                        if self.state_counter <= 0:
+                            self.mid_dash = False
+                            self.sprinting = False
+                            self.left_dash = False
+                            self.right_dash = False
+                            self.state_counter = 0
+                    else:
+                        self.mid_dash = False
+                        self.sprinting = False
+                        self.left_dash = False
+                        self.right_dash = False
         # Movement tracking
         if self.jumping & (not (self.jump_or_nah(floors))):
             self.change_x = self.change_x_J
+        elif self.sprinting:
+            self.change_x = self.change_x_S
+            self.change_y = self.change_y_S
         else:
             self.change_x = self.change_x_L + self.change_x_R
         self.change_y = self.change_y_J
@@ -402,7 +472,6 @@ class Player(object):
                     #print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
                     return False
 
-
     def player_key_press(self, key, key_modifiers):
         if self.state_counter == 0:
             # USE EITHER STATE.HIT OR STUN-LOCK TO KEEP TRACK OF WHEN THEY CAN'T START NEW MOVES
@@ -412,16 +481,18 @@ class Player(object):
                         if self.right & self.lefting:
                             print("LEFTING SPRINTING")
                             self.sprinting = True
-                            self.change_x_L -= cn.PLAYER_SPEED
-                            # SPRINT LEFT BEHAVIOR GOES HERE
+                            self.left_dash = True
+                            #self.change_x_L -= cn.PLAYER_SPEED
                         elif (not self.right) & self.righting:
                             print("RIGHTING SPRINTING")
                             self.sprinting = True
-                            # SPRINT RIGHT BEHAVIOR GOES HEREa
-                            self.change_x_R += cn.PLAYER_SPEED
+                            self.right_dash = True
+                            #self.change_x_R += cn.PLAYER_SPEED
                         else:
                             print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
                             self.sprinting = False
+                            self.left_dash = False
+                            self.right_dash = False
                     else:
                         match key:
                             case self.JUMP:
@@ -509,7 +580,6 @@ class Player(object):
         match key:
             case self.SPRINT:
                 print("NO SPRINTING")
-                self.sprinting = False
             case self.JUMP:
                 print("NO JUMPING")
             case self.DAFOE:

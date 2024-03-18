@@ -87,8 +87,8 @@ class Stage(arcade.Window):
         self.player_hitbox = arcade.SpriteSolidColor(1,  # Player Hit/Damage Hit Box
                                                      1,
                                                      [255, 0, 0])
-        self.player_hitbox.center_x = p1_center[0]
-        self.player_hitbox.center_y = p1_center[1]
+        self.player_hitbox.center_x = 0
+        self.player_hitbox.center_y = 0
 
         # ===
 
@@ -108,8 +108,8 @@ class Stage(arcade.Window):
         self.dummy_hitbox = arcade.SpriteSolidColor(1,  # Player Hit/Damage Hit Box
                                                     1,
                                                     [255, 0, 0])
-        self.dummy_hitbox.center_x = d_center[0]
-        self.dummy_hitbox.center_y = d_center[1]
+        self.dummy_hitbox.center_x = 0
+        self.dummy_hitbox.center_y = 0
 
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
@@ -237,7 +237,27 @@ class Stage(arcade.Window):
         #     or the stun on player_1 (it literally can't be hit)
 
         # Check to see if the player has attacked the dummy,
-        #   THIS HAS BEEN RETOOLED FOR NEW CHANGES (constants.py and player.py usage)
+
+        # TODO: Implement Blocking.
+        """
+        ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢺⣿⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠜⣿⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⠿⠿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿⣿⣿⣿
+        ⣿⣿⡏⠁⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⣶⣶⣶⣶⣦⣤⡄⠀⠀⠀⠀⢀⣴⣿⣿⣿
+        ⣿⣿⣷⣄⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⡧⠇⢀⣤⣶⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣾⣮⣭⣿⡻⣽⣒⠀⣤⣜⣭⠐⢐⣒⠢⢰⢸⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⣏⣿⣿⣿⣿⣿⣿⡟⣾⣿⠂⢈⢿⣷⣞⣸⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣷⣶⣾⡿⠿⣿⠗⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠻⠋⠉⠑⠀⠀⢘⢻⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⣿⡿⠟⢹⣿⣿⡇⢀⣶⣶⠴⠶⠀⠀⢽⣿⣿⣿⣿⣿⣿⣿⣿
+        ⣿⣿⣿⣿⣿⣿⡿⠀⠀⢸⣿⣿⠀⠀⠣⠀⠀⠀⠀⠀⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿da
+        ⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠹⣿⣧⣀⠀⠀⠀⠀⡀⣴⠁⢘⡙⢿⣿⣿⣿⣿⣿⣿
+        ⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⠗⠂⠄⠀⣴⡟⠀⠀⡃⠀⠉⠉⠟⡿⣿⣿⣿
+        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⠾⠛⠂⢹⠀⠀⠀⢡⠀⠀⠀⠀⠀⠙⠛⠿⢿⣿
+        """
+        hit_on_dummy = 0
         if self.dummy.stun == 0:  # 1st see if Dummy isn't already stunned
             hit_on_dummy = 0
             for hitbox in self.player_1.player_hitboxes:
@@ -294,8 +314,8 @@ class Stage(arcade.Window):
                 arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
                 for hurtbox in self.dummy.player_hurtboxes:
                     hurtbox.COLOR = [0, 0, 250]
-
-        if self.player_1.stun == 0:  # 1st see if Dummy isn't already stunned
+        # Check to see if the dummy has attacked the player,
+        if self.player_1.stun == 0:  # 1st see if player isn't already stunned
             hit_on_player = 0
             for hitbox in self.dummy.player_hitboxes:
                 if arcade.check_for_collision_with_list(hitbox, self.player_1.player_hurtboxes):
@@ -339,7 +359,8 @@ class Stage(arcade.Window):
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 for hitbox in self.dummy.player_hitboxes:
                     hitbox.hit_box_algorithm = 'Simple'
-                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                if (not hit_on_dummy) and (self.dummy.stun <= 0):
+                    arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
         else:  # IF STUNNED
             for hitbox in self.dummy.player_hitboxes:
                 hitbox.hit_box_algorithm = 'None'
@@ -348,7 +369,8 @@ class Stage(arcade.Window):
                 arcade.set_background_color(arcade.color.ORANGE)
             else:
                 self.player_1.stun = 0
-                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                if (not hit_on_dummy) and (self.dummy.stun <= 0):
+                    arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
                 for hurtbox in self.player_1.player_hurtboxes:
                     hurtbox.COLOR = [0, 255, 0]
 
