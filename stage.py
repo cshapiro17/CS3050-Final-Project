@@ -600,18 +600,35 @@ class Stage(arcade.Window):
 
     def ui_update(self):
         # --- DUMMY UI REFRESH ---
-        self.d_health.width = int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
-        self.d_health.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
-                                     ((self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)/2))
-        self.d_block.width = int(self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
-        self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
-                                    ((self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
+        if self.dummy.health < 1:
+            self.d_health.alpha = 0
+        else:
+            self.d_health.alpha = 255
+            self.d_health.width = int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
+            self.d_health.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                        ((self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)/2))
+
+        if self.dummy.block_health < 1:
+            self.d_block.alpha = 0
+        else:
+            self.d_block.alpha = 255
+            self.d_block.width = int(self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
+            self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                        ((self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
         # --- PLAYER UI REFRESH ---
-        self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
-        self.p_1_health.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
-                                                         ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 2))
-        self.p_1_block.width = int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
-        self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+        if self.player_1.health < 1:
+            self.p_1_health.alpha = 0
+        else:
+            self.p_1_health.alpha = 255
+            self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
+            self.p_1_health.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
+                                                            ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 2))
+        if self.player_1.block_health < 1:
+            self.p_1_block.alpha = 0
+        else:
+            self.p_1_block.alpha = 255
+            self.p_1_block.width = int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
+            self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                                         ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
 
 

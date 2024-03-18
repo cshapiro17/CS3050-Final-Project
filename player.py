@@ -615,7 +615,6 @@ class Player(object):
                 return False  # Block is intact
             elif (p_block_health > 0) & (c_block_health <= 0):
                 self.block_health = 0
-                self.health -= hit_damage
                 print("BLOCK HEALTH = "+str(self.block_health))
                 return True  # BLOCK IS BROKEN, STUN!
             elif p_block_health == 0:
