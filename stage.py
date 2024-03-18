@@ -115,11 +115,11 @@ class Stage(arcade.Window):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, 1)
+                                 self.player_hitbox, 0)
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 0)
+                              self.dummy_hitbox, 1)
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -228,6 +228,7 @@ class Stage(arcade.Window):
         self.ui.update()
 
         self.player_1.grav_cycle(floors=self.floors)
+        self.dummy.grav_cycle(floors=self.floors)
         self.whos_on_first()
         self.ui_update()
 
@@ -246,7 +247,7 @@ class Stage(arcade.Window):
             #   for ints to booleans, 0 will show as False and any other number will show as True,
             #   but, y'know, it works, and I just explained it, so we're good I guess
             if hit_on_dummy:  # IF HIT AND ~NOT STUNNED~
-                print("HIT ON " + str(dt.datetime.now()))
+                print("HIT ON D1 " + str(dt.datetime.now()))
                 for hitbox in self.player_1.player_hitboxes:
                     hitbox.hit_box_algorithm = 'None'
                     hitbox.center_x = 0  # Move Hit/Damage box away to avoid...
@@ -278,7 +279,6 @@ class Stage(arcade.Window):
                 print("DUMMY HEALTH = " + str(self.dummy.health))
                 if self.dummy.health <= 0:
                     self.dummy.health = cn.PLAYER_HEALTH
-                    arcade.set_background_color(arcade.color.RED)
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 for hitbox in self.player_1.player_hitboxes:
                     hitbox.hit_box_algorithm = 'Simple'
@@ -295,8 +295,68 @@ class Stage(arcade.Window):
                 for hurtbox in self.dummy.player_hurtboxes:
                     hurtbox.COLOR = [0, 0, 250]
 
+        if self.player_1.stun == 0:  # 1st see if Dummy isn't already stunned
+            hit_on_player = 0
+            for hitbox in self.dummy.player_hitboxes:
+                if arcade.check_for_collision_with_list(hitbox, self.player_1.player_hurtboxes):
+                    hit_on_player += 1
+            # I will admit the below if statement is a bit wack, as it functions off the fact that
+            #   for ints to booleans, 0 will show as False and any other number will show as True,
+            #   but, y'know, it works, and I just explained it, so we're good I guess
+            if hit_on_player:  # IF HIT AND ~NOT STUNNED~
+                print("HIT ON P1 " + str(dt.datetime.now()))
+                for hitbox in self.dummy.player_hitboxes:
+                    hitbox.hit_box_algorithm = 'None'
+                    hitbox.center_x = 0  # Move Hit/Damage box away to avoid...
+                    hitbox.center_y = 0  # accidentally registering attacks 2x.
+                    hitbox.width = 0.1  # Set the width and height to 0 to avoid...
+                    hitbox.height = 0.1  # accidentally registering attacks 2x.
+                arcade.set_background_color(arcade.color.ORANGE)
+                # --- HEAVY ---
+                if self.dummy.state == State.h_kick:
+                    self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    self.player_1.health -= cn.H_K_HIT_DAMAGE
+                elif self.dummy.state == State.h_punch:
+                    self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    self.player_1.health -= cn.H_P_HIT_DAMAGE
+                # --- SPECIALS ---
+                elif (self.dummy.state == State.aa_punch) | (self.dummy.state == State.lp_punch):
+                    self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    self.player_1.health -= cn.S_P_HIT_DAMAGE
+                elif (self.dummy.state == State.aa_kick) | (self.dummy.state == State.lp_kick):
+                    self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    self.player_1.health -= cn.S_K_HIT_DAMAGE
+                # --- LIGHT ---
+                elif self.dummy.state == State.l_kick:
+                    self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    self.player_1.health -= cn.L_K_HIT_DAMAGE
+                elif self.dummy.state == State.l_punch:
+                    self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    self.player_1.health -= cn.L_P_HIT_DAMAGE
+                print("PLAYER HEALTH = " + str(self.player_1.health))
+                if self.player_1.health <= 0:
+                    self.player_1.health = cn.PLAYER_HEALTH
+            else:  # IF NOT HIT AND ~NOT STUNNED~
+                for hitbox in self.dummy.player_hitboxes:
+                    hitbox.hit_box_algorithm = 'Simple'
+                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+        else:  # IF STUNNED
+            for hitbox in self.dummy.player_hitboxes:
+                hitbox.hit_box_algorithm = 'None'
+            if self.player_1.stun > 0:
+                self.player_1.stun -= 1
+                arcade.set_background_color(arcade.color.ORANGE)
+            else:
+                self.player_1.stun = 0
+                arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+                for hurtbox in self.player_1.player_hurtboxes:
+                    hurtbox.COLOR = [0, 255, 0]
+
         self.player_1.hit_cycle()
         self.player_1.hurt_cycle()
+
+        self.dummy.hit_cycle()
+        self.dummy.hurt_cycle()
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -308,7 +368,9 @@ class Stage(arcade.Window):
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
-        # LET'S BE REAL, THIS SUCKS TO LOOK AT. DECISION MATRIX???
+        self.player_1.player_key_press(key, key_modifiers)
+        self.dummy.player_key_press(key, key_modifiers)
+        """
         if self.player_1.state_counter == 0:
             # USE EITHER STATE.HIT OR STUN-LOCK TO KEEP TRACK OF WHEN THEY CAN'T START NEW MOVES
             if not self.player_1.state == State.hit:
@@ -409,10 +471,14 @@ class Stage(arcade.Window):
                                     print("heavy kick")
                                     self.player_1.state = State.h_kick  # HEAVY KICK
                                     self.player_1.state_counter = cn.H_HIT_LENGTH
+            """
 
     def on_key_release(self, key, key_modifiers):
         """
         Called whenever the user lets off a previously pressed key.
+        """
+        self.player_1.player_key_release(key, key_modifiers)
+        self.dummy.player_key_release(key, key_modifiers)
         """
         match key:
             case self.player_1.SPRINT:
@@ -446,6 +512,7 @@ class Stage(arcade.Window):
             case self.player_1.KICK:
                 print("NO KICKING")
                 self.player_1.kicking = False
+        """
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         # TODO: SCRAP THIS (IT'S JUST TEMP MOVEMENT), AND IMPLEMENT ACTUALLY WORKING MOVEMENT

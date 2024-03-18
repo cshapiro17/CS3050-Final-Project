@@ -5,15 +5,41 @@ import constants as cn
 from constants import State
 
 KEYMAP = dict(
-    JUMP=arcade.key.SPACE,
+    JUMP=arcade.key.LALT,
     SPRINT=arcade.key.LSHIFT,
     DAFOE=arcade.key.W,
     CROUCH=arcade.key.S,
     LEFT=arcade.key.A,
     RIGHT=arcade.key.D,
-    PUNCH=arcade.key.Q,
-    KICK=arcade.key.E
+    PUNCH=arcade.key.Z,
+    KICK=arcade.key.X,
+    SPECIAL=arcade.key.C
 )
+ALT_KEYMAP = dict(
+    JUMP=arcade.key.RALT,
+    SPRINT=arcade.key.SPACE,
+    DAFOE=arcade.key.I,
+    CROUCH=arcade.key.K,
+    LEFT=arcade.key.J,
+    RIGHT=arcade.key.L,
+    PUNCH=arcade.key.M,
+    KICK=arcade.key.COMMA,
+    SPECIAL=arcade.key.PERIOD
+)
+# TODO
+"""
+GAMEPAD_KEYMAP = dict(
+    JUMP=arcade.key.RALT,
+    SPRINT=arcade.key.SPACE,
+    DAFOE=arcade.key.I,
+    CROUCH=arcade.key.K,
+    LEFT=arcade.key.J,
+    RIGHT=arcade.key.L,
+    PUNCH=arcade.key.M,
+    KICK=arcade.key.COMMA,
+    SPECIAL=arcade.key.PERIOD
+)
+"""
 
 
 class Player(object):
@@ -73,7 +99,7 @@ class Player(object):
         self.hitbox = hitbox
         self.player_hitboxes.append(self.hitbox)
 
-        if input_map > 0:
+        if input_map == 0:
             self.keymap = KEYMAP
             self.JUMP = self.keymap['JUMP']
             self.SPRINT = self.keymap['SPRINT']
@@ -83,8 +109,28 @@ class Player(object):
             self.RIGHT = self.keymap['RIGHT']
             self.PUNCH = self.keymap['PUNCH']
             self.KICK = self.keymap['KICK']
-        else:
-            self.keymap = None
+        elif input_map == 1:
+            self.keymap = ALT_KEYMAP
+            self.JUMP = self.keymap['JUMP']
+            self.SPRINT = self.keymap['SPRINT']
+            self.DAFOE = self.keymap['DAFOE']
+            self.CROUCH = self.keymap['CROUCH']
+            self.LEFT = self.keymap['LEFT']
+            self.RIGHT = self.keymap['RIGHT']
+            self.PUNCH = self.keymap['PUNCH']
+            self.KICK = self.keymap['KICK']
+        """
+        elif input_map == 2:
+            self.keymap = GAMEPAD_KEYMAP
+            self.JUMP = self.keymap['JUMP']
+            self.SPRINT = self.keymap['SPRINT']
+            self.DAFOE = self.keymap['DAFOE']
+            self.CROUCH = self.keymap['CROUCH']
+            self.LEFT = self.keymap['LEFT']
+            self.RIGHT = self.keymap['RIGHT']
+            self.PUNCH = self.keymap['PUNCH']
+            self.KICK = self.keymap['KICK']
+        """
 
     def update(self, floors):  # TODO: MOVEMENT STUFF SHOULD GET ITS OWN DEF SO IT DOESN'T GET TOO CLUTTERED
 
@@ -355,3 +401,140 @@ class Player(object):
                     #print("player y: " + str(self.center_y) + ", player height: " + str(self.height))
                     #print("floor y: " + str(floor.center_y) + ", floor height: " + str(floor.height))
                     return False
+
+
+    def player_key_press(self, key, key_modifiers):
+        if self.state_counter == 0:
+            # USE EITHER STATE.HIT OR STUN-LOCK TO KEEP TRACK OF WHEN THEY CAN'T START NEW MOVES
+            if not self.state == State.hit:
+                if not (self.keymap is None):
+                    if self.SPRINT == key:
+                        if self.right & self.lefting:
+                            print("LEFTING SPRINTING")
+                            self.sprinting = True
+                            self.change_x_L -= cn.PLAYER_SPEED
+                            # SPRINT LEFT BEHAVIOR GOES HERE
+                        elif (not self.right) & self.righting:
+                            print("RIGHTING SPRINTING")
+                            self.sprinting = True
+                            # SPRINT RIGHT BEHAVIOR GOES HEREa
+                            self.change_x_R += cn.PLAYER_SPEED
+                        else:
+                            print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
+                            self.sprinting = False
+                    else:
+                        match key:
+                            case self.JUMP:
+                                print("JUMPING")
+                                self.state = State.idle
+                                if self.lefting:
+                                    self.left_jump = True
+                                elif self.righting:
+                                    self.right_jump = True
+                                else:
+                                    self.neutral_jump = True
+                                self.jumping = True
+                            case self.DAFOE:
+                                print("DAFOEING")
+                                self.dafoeing = True
+                                # LOOK UP BEHAVIOR GOES HERE
+                            case self.CROUCH:
+                                print("CROUCHING")
+                                self.crouching = True
+                                # CROUCH BEHAVIOR GOES HERE
+                            case self.LEFT:
+                                print("LEFTING")
+                                self.lefting = True
+                                self.righting = False
+                                # MOVE LEFT BEHAVIOR GOES HERE
+                                if not self.right:
+                                    self.state = State.blocking
+                                    print("BLOCKING")
+                                    self.change_x_L -= int(3 * cn.PLAYER_SPEED / 5)
+                                else:
+                                    self.change_x_L -= cn.PLAYER_SPEED
+                            case self.RIGHT:
+                                print("RIGHTING")
+                                self.righting = True
+                                self.lefting = False
+                                # MOVE RIGHT BEHAVIOR GOES HERE
+                                if self.right:
+                                    self.state = State.blocking
+                                    print("BLOCKING")
+                                    self.change_x_R += int(3 * cn.PLAYER_SPEED / 5)
+                                else:
+                                    self.change_x_R += cn.PLAYER_SPEED
+                            case self.PUNCH:
+                                print("PUNCH")
+                                self.punching = True
+                                if ((self.righting & (not self.right)) |
+                                        (self.lefting & self.right)):
+                                    print("light punch")
+                                    self.state = State.l_punch  # LIGHT PUNCH
+                                    self.state_counter = cn.L_HIT_LENGTH
+                                elif self.dafoeing:
+                                    print("anti-air punch")
+                                    self.state = State.aa_punch  # ANTI-AIR PUNCH
+                                    self.state_counter = cn.S_HIT_LENGTH
+                                elif self.crouching:
+                                    print("low-profile punch")
+                                    self.state = State.lp_punch  # LOW-PROFILE PUNCH
+                                    self.state_counter = cn.L_HIT_LENGTH
+                                else:
+                                    print("heavy punch")
+                                    self.state = State.h_punch  # HEAVY PUNCH
+                                    self.state_counter = cn.H_HIT_LENGTH
+                            case self.KICK:
+                                print("KICKING")
+                                self.kicking = True
+                                if ((self.righting & (not self.right)) |
+                                        (self.lefting & self.right)):
+                                    print("light kick")
+                                    self.state = State.l_kick  # LIGHT KICK
+                                    self.state_counter = cn.L_HIT_LENGTH
+                                elif self.dafoeing:
+                                    print("anti-air kick")
+                                    self.state = State.aa_kick  # ANTI-AIR KICK
+                                    self.state_counter = cn.S_HIT_LENGTH
+                                elif self.crouching:
+                                    print("low-profile kick")
+                                    self.state = State.lp_kick  # LOW-PROFILE KICK
+                                    self.state_counter = cn.S_HIT_LENGTH
+                                else:
+                                    print("heavy kick")
+                                    self.state = State.h_kick  # HEAVY KICK
+                                    self.state_counter = cn.H_HIT_LENGTH
+
+    def player_key_release(self, key, key_modifiers):
+        match key:
+            case self.SPRINT:
+                print("NO SPRINTING")
+                self.sprinting = False
+            case self.JUMP:
+                print("NO JUMPING")
+            case self.DAFOE:
+                print("NO DAFOEING")
+                self.dafoeing = False
+            case self.CROUCH:
+                print("NO CROUCHING")
+                self.crouching = False
+            case self.LEFT:
+                print("NO LEFTING")
+                self.lefting = False
+                self.change_x_L = 0
+                if self.state == State.blocking:
+                    self.state = State.idle
+                    print("NO BLOCKING")
+            case self.RIGHT:
+                print("NO RIGHTING")
+                self.righting = False
+                self.change_x_R = 0
+                if self.state == State.blocking:
+                    self.state = State.idle
+                    print("NO BLOCKING")
+            case self.PUNCH:
+                print("NO PUNCHING")
+                self.punching = False
+            case self.KICK:
+                print("NO KICKING")
+                self.kicking = False
