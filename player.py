@@ -99,6 +99,8 @@ class Player(object):
         self.neutral_jump = False
 
         self.mid_jump = False
+
+        self.being_hit = False
         # Move Inputs accel_vals accounting:
         self.change_x_L = 0  # The change_x value taken from the LEFT key
         self.change_x_R = 0  # The change_x value taken from the RIGHT key
@@ -173,7 +175,7 @@ class Player(object):
             if self.sprinting:
                 if not self.mid_dash:
                     self.mid_dash = True
-                    self.state_counter = 50  # TODO: NAIL THIS DOWN AND ADD IT TO OUR CONSTANTS FILE
+                    self.state_counter = cn.PLAYER_DASH_TICS  # TODO: NAIL THIS DOWN AND ADD IT TO OUR CONSTANTS FILE
                     self.change_y_S = 0
                     if self.right_dash:
                         self.change_x_S = 0.5*cn.PLAYER_SPEED
@@ -189,9 +191,9 @@ class Player(object):
                 else:
                     self.change_y_S = 0
                     if self.left_dash:
-                        if self.state_counter > 40:
+                        if self.state_counter > 50:
                             self.change_x_S = -0.5*cn.PLAYER_SPEED
-                        elif self.state_counter > 25:
+                        elif self.state_counter > 30:
                             self.change_x_S = -5*cn.PLAYER_SPEED
                         elif self.state_counter > 15:
                             self.change_x_S = -3*cn.PLAYER_SPEED
@@ -602,19 +604,25 @@ class Player(object):
                 print("NO KICKING")
                 self.kicking = False
 
-    def block_check(self, hit_damage):
+    # TODO: Add a param in the form of a stun_val, and deal with the stun_val assignment here
+    def block_check(self, hit_damage):  # RETURN FALSE IF BLOCK IS INTACT, TRUE IF BROKEN
         if self.blocking:
             p_block_health = self.block_health  # prev block health
             c_block_health = self.block_health-hit_damage  # new 'current' block health
             if c_block_health > 0:
                 self.block_health -= hit_damage
-                return True  # Block is intact
-            elif (p_block_health > 0) & (c_block_health < 0):
+                print("BLOCK HEALTH = "+str(self.block_health))
+                return False  # Block is intact
+            elif (p_block_health > 0) & (c_block_health <= 0):
                 self.block_health = 0
                 self.health -= hit_damage
-                return False  # BLOCK IS BROKEN, STUN!
+                print("BLOCK HEALTH = "+str(self.block_health))
+                return True  # BLOCK IS BROKEN, STUN!
             elif p_block_health == 0:
                 self.health -= hit_damage
+                print("BLOCK HEALTH = "+str(self.block_health))
                 return True  # Block is already broken
         else:
             self.health -= hit_damage  # Not blocking
+            print("BLOCK HEALTH = " + str(self.block_health))
+            return True

@@ -238,8 +238,7 @@ class Stage(arcade.Window):
 
         # Check to see if the player has attacked the dummy,
 
-        # TODO: Block works, but hit detection's kinda borked. Dbl hits are back.
-        #       Hit stun being improperly implemented is almost certainly the issue.
+        # TODO: Hit-stun needs work, multi-hit issues have been solved tho.
         """
         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
         ⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -253,7 +252,7 @@ class Stage(arcade.Window):
         ⣿⣿⣿⣿⣿⣿⣿⣿⣽⣿⣿⣷⣶⣾⡿⠿⣿⠗⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿
         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠻⠋⠉⠑⠀⠀⢘⢻⣿⣿⣿⣿⣿⣿⣿⣿
         ⣿⣿⣿⣿⣿⣿⣿⡿⠟⢹⣿⣿⡇⢀⣶⣶⠴⠶⠀⠀⢽⣿⣿⣿⣿⣿⣿⣿⣿
-        ⣿⣿⣿⣿⣿⣿⡿⠀⠀⢸⣿⣿⠀⠀⠣⠀⠀⠀⠀⠀⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿da
+        ⣿⣿⣿⣿⣿⣿⡿⠀⠀⢸⣿⣿⠀⠀⠣⠀⠀⠀⠀⠀⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
         ⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠹⣿⣧⣀⠀⠀⠀⠀⡀⣴⠁⢘⡙⢿⣿⣿⣿⣿⣿⣿
         ⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⠗⠂⠄⠀⣴⡟⠀⠀⡃⠀⠉⠉⠟⡿⣿⣿⣿
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⠾⠛⠂⢹⠀⠀⠀⢡⠀⠀⠀⠀⠀⠙⠛⠿⢿⣿
@@ -276,37 +275,41 @@ class Stage(arcade.Window):
                     hitbox.width = 0.1  # Set the width and height to 0 to avoid...
                     hitbox.height = 0.1  # accidentally registering attacks 2x.
                 arcade.set_background_color(arcade.color.YELLOW)
-                # --- HEAVY ---
-                if self.player_1.state == State.h_kick:
-                    hit_stun = self.dummy.block_check(cn.H_K_HIT_DAMAGE)
-                    if hit_stun:
-                        self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                elif self.player_1.state == State.h_punch:
-                    hit_stun = self.dummy.block_check(cn.H_P_HIT_DAMAGE)
-                    if hit_stun:
-                        self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                # --- SPECIALS ---
-                elif (self.player_1.state == State.aa_punch) | (self.player_1.state == State.lp_punch):
-                    hit_stun = self.dummy.block_check(cn.S_P_HIT_DAMAGE)
-                    if hit_stun:
-                        self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                elif (self.player_1.state == State.aa_kick) | (self.player_1.state == State.lp_kick):
-                    hit_stun = self.dummy.block_check(cn.S_K_HIT_DAMAGE)
-                    if hit_stun:
-                        self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                # --- LIGHT ---
-                elif self.player_1.state == State.l_kick:
-                    hit_stun = self.dummy.block_check(cn.L_K_HIT_DAMAGE)
-                    if hit_stun:
-                        self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                elif self.player_1.state == State.l_punch:
-                    hit_stun = self.dummy.block_check(cn.L_P_HIT_DAMAGE)
-                    if hit_stun:
-                        self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                print("DUMMY HEALTH = " + str(self.dummy.health))
-                if self.dummy.health <= 0:
-                    self.dummy.health = cn.PLAYER_HEALTH
+                if not self.dummy.being_hit:
+                    self.dummy.being_hit = True
+                    # --- HEAVY ---
+                    if self.player_1.state == State.h_kick:
+                        hit_stun = self.dummy.block_check(cn.H_K_HIT_DAMAGE)
+                        if hit_stun:
+                            self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    elif self.player_1.state == State.h_punch:
+                        hit_stun = self.dummy.block_check(cn.H_P_HIT_DAMAGE)
+                        if hit_stun:
+                            self.dummy.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    # --- SPECIALS ---
+                    elif (self.player_1.state == State.aa_punch) | (self.player_1.state == State.lp_punch):
+                        hit_stun = self.dummy.block_check(cn.S_P_HIT_DAMAGE)
+                        if hit_stun:
+                            self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    elif (self.player_1.state == State.aa_kick) | (self.player_1.state == State.lp_kick):
+                        hit_stun = self.dummy.block_check(cn.S_K_HIT_DAMAGE)
+                        if hit_stun:
+                            self.dummy.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    # --- LIGHT ---
+                    elif self.player_1.state == State.l_kick:
+                        hit_stun = self.dummy.block_check(cn.L_K_HIT_DAMAGE)
+                        if hit_stun:
+                            self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    elif self.player_1.state == State.l_punch:
+                        hit_stun = self.dummy.block_check(cn.L_P_HIT_DAMAGE)
+                        if hit_stun:
+                            self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    print("DUMMY HEALTH = " + str(self.dummy.health))
+                    if self.dummy.health <= 0:
+                        self.dummy.health = cn.PLAYER_HEALTH
+                        self.dummy.block_health = cn.FULL_BLOCK
             else:  # IF NOT HIT AND ~NOT STUNNED~
+                self.dummy.being_hit = False
                 for hitbox in self.player_1.player_hitboxes:
                     hitbox.hit_box_algorithm = 'Simple'
                 arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
@@ -321,6 +324,7 @@ class Stage(arcade.Window):
                 arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
                 for hurtbox in self.dummy.player_hurtboxes:
                     hurtbox.COLOR = [0, 0, 250]
+
         # Check to see if the dummy has attacked the player,
         if self.player_1.stun == 0:  # 1st see if player isn't already stunned
             hit_on_player = 0
@@ -339,37 +343,41 @@ class Stage(arcade.Window):
                     hitbox.width = 0.1  # Set the width and height to 0 to avoid...
                     hitbox.height = 0.1  # accidentally registering attacks 2x.
                 arcade.set_background_color(arcade.color.ORANGE)
-                # --- HEAVY ---
-                if self.dummy.state == State.h_kick:
-                    hit_stun = self.player_1.block_check(cn.H_K_HIT_DAMAGE)
-                    if hit_stun:
-                        self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                elif self.dummy.state == State.h_punch:
-                    hit_stun = self.player_1.block_check(cn.H_P_HIT_DAMAGE)
-                    if hit_stun:
-                        self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
-                # --- SPECIALS ---
-                elif (self.dummy.state == State.aa_punch) | (self.dummy.state == State.lp_punch):
-                    hit_stun = self.player_1.block_check(cn.S_P_HIT_DAMAGE)
-                    if hit_stun:
-                        self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                elif (self.dummy.state == State.aa_kick) | (self.dummy.state == State.lp_kick):
-                    hit_stun = self.player_1.block_check(cn.S_K_HIT_DAMAGE)
-                    if hit_stun:
-                        self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
-                # --- LIGHT ---
-                elif self.dummy.state == State.l_kick:
-                    hit_stun = self.player_1.block_check(cn.L_K_HIT_DAMAGE)
-                    if hit_stun:
-                        self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                elif self.dummy.state == State.l_punch:
-                    hit_stun = self.player_1.block_check(cn.L_P_HIT_DAMAGE)
-                    if hit_stun:
-                        self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
-                print("PLAYER HEALTH = " + str(self.player_1.health))
-                if self.player_1.health <= 0:
-                    self.player_1.health = cn.PLAYER_HEALTH
+                if not self.player_1.being_hit:
+                    self.player_1.being_hit = True
+                    # --- HEAVY ---
+                    if self.dummy.state == State.h_kick:
+                        hit_stun = self.player_1.block_check(cn.H_K_HIT_DAMAGE)
+                        if hit_stun:
+                            self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    elif self.dummy.state == State.h_punch:
+                        hit_stun = self.player_1.block_check(cn.H_P_HIT_DAMAGE)
+                        if hit_stun:
+                            self.player_1.stun = cn.H_STUN_TIME  # Max stun time for heavy moves
+                    # --- SPECIALS ---
+                    elif (self.dummy.state == State.aa_punch) | (self.dummy.state == State.lp_punch):
+                        hit_stun = self.player_1.block_check(cn.S_P_HIT_DAMAGE)
+                        if hit_stun:
+                            self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    elif (self.dummy.state == State.aa_kick) | (self.dummy.state == State.lp_kick):
+                        hit_stun = self.player_1.block_check(cn.S_K_HIT_DAMAGE)
+                        if hit_stun:
+                            self.player_1.stun = cn.S_STUN_TIME  # Max stun time for special moves
+                    # --- LIGHT ---
+                    elif self.dummy.state == State.l_kick:
+                        hit_stun = self.player_1.block_check(cn.L_K_HIT_DAMAGE)
+                        if hit_stun:
+                            self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    elif self.dummy.state == State.l_punch:
+                        hit_stun = self.player_1.block_check(cn.L_P_HIT_DAMAGE)
+                        if hit_stun:
+                            self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
+                    print("PLAYER HEALTH = " + str(self.player_1.health))
+                    if self.player_1.health <= 0:
+                        self.player_1.health = cn.PLAYER_HEALTH
+                        self.player_1.block_health = cn.FULL_BLOCK
             else:  # IF NOT HIT AND ~NOT STUNNED~
+                self.player_1.being_hit = False
                 for hitbox in self.dummy.player_hitboxes:
                     hitbox.hit_box_algorithm = 'Simple'
                 if (not hit_on_dummy) and (self.dummy.stun <= 0):
