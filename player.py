@@ -534,45 +534,47 @@ class Player(object):
                                 else:
                                     self.change_x_R += cn.PLAYER_SPEED
                             case self.PUNCH:
-                                print("PUNCH")
-                                self.punching = True
-                                if ((self.righting & (not self.right)) |
-                                        (self.lefting & self.right)):
-                                    print("light punch")
-                                    self.state = State.l_punch  # LIGHT PUNCH
-                                    self.state_counter = cn.L_HIT_LENGTH
-                                elif self.dafoeing:
-                                    print("anti-air punch")
-                                    self.state = State.aa_punch  # ANTI-AIR PUNCH
-                                    self.state_counter = cn.S_HIT_LENGTH
-                                elif self.crouching:
-                                    print("low-profile punch")
-                                    self.state = State.lp_punch  # LOW-PROFILE PUNCH
-                                    self.state_counter = cn.L_HIT_LENGTH
-                                else:
-                                    print("heavy punch")
-                                    self.state = State.h_punch  # HEAVY PUNCH
-                                    self.state_counter = cn.H_HIT_LENGTH
+                                if self.stun == 0:
+                                    print("PUNCH")
+                                    self.punching = True
+                                    if ((self.righting & (not self.right)) |
+                                            (self.lefting & self.right)):
+                                        print("light punch")
+                                        self.state = State.l_punch  # LIGHT PUNCH
+                                        self.state_counter = cn.L_HIT_LENGTH
+                                    elif self.dafoeing:
+                                        print("anti-air punch")
+                                        self.state = State.aa_punch  # ANTI-AIR PUNCH
+                                        self.state_counter = cn.S_HIT_LENGTH
+                                    elif self.crouching:
+                                        print("low-profile punch")
+                                        self.state = State.lp_punch  # LOW-PROFILE PUNCH
+                                        self.state_counter = cn.L_HIT_LENGTH
+                                    else:
+                                        print("heavy punch")
+                                        self.state = State.h_punch  # HEAVY PUNCH
+                                        self.state_counter = cn.H_HIT_LENGTH
                             case self.KICK:
-                                print("KICKING")
-                                self.kicking = True
-                                if ((self.righting & (not self.right)) |
-                                        (self.lefting & self.right)):
-                                    print("light kick")
-                                    self.state = State.l_kick  # LIGHT KICK
-                                    self.state_counter = cn.L_HIT_LENGTH
-                                elif self.dafoeing:
-                                    print("anti-air kick")
-                                    self.state = State.aa_kick  # ANTI-AIR KICK
-                                    self.state_counter = cn.S_HIT_LENGTH
-                                elif self.crouching:
-                                    print("low-profile kick")
-                                    self.state = State.lp_kick  # LOW-PROFILE KICK
-                                    self.state_counter = cn.S_HIT_LENGTH
-                                else:
-                                    print("heavy kick")
-                                    self.state = State.h_kick  # HEAVY KICK
-                                    self.state_counter = cn.H_HIT_LENGTH
+                                if self.stun == 0:
+                                    print("KICKING")
+                                    self.kicking = True
+                                    if ((self.righting & (not self.right)) |
+                                            (self.lefting & self.right)):
+                                        print("light kick")
+                                        self.state = State.l_kick  # LIGHT KICK
+                                        self.state_counter = cn.L_HIT_LENGTH
+                                    elif self.dafoeing:
+                                        print("anti-air kick")
+                                        self.state = State.aa_kick  # ANTI-AIR KICK
+                                        self.state_counter = cn.S_HIT_LENGTH
+                                    elif self.crouching:
+                                        print("low-profile kick")
+                                        self.state = State.lp_kick  # LOW-PROFILE KICK
+                                        self.state_counter = cn.S_HIT_LENGTH
+                                    else:
+                                        print("heavy kick")
+                                        self.state = State.h_kick  # HEAVY KICK
+                                        self.state_counter = cn.H_HIT_LENGTH
 
     def player_key_release(self, key, key_modifiers):
         match key:
