@@ -70,9 +70,9 @@ class Player(object):
 
         # State Accounting:
         self.state = cn.State.idle
-        self.health = cn.PLAYER_HEALTH               # UI will grab these in stage for bars
+        self.health = cn.PLAYER_HEALTH     # UI will grab these in stage for bars
         self.block_health = cn.FULL_BLOCK  # UI will grab these in stage for bars
-        self.alive = True   # TODO: Tune block health
+        self.alive = True
         self.right = True
         # More Precise State Accounting
         self.stun = 0
@@ -175,7 +175,7 @@ class Player(object):
             if self.sprinting:
                 if not self.mid_dash:
                     self.mid_dash = True
-                    self.state_counter = cn.PLAYER_DASH_TICS  # TODO: NAIL THIS DOWN AND ADD IT TO OUR CONSTANTS FILE
+                    self.state_counter = cn.PLAYER_DASH_TICS
                     self.change_y_S = 0
                     if self.right_dash:
                         self.change_x_S = 0.5*cn.PLAYER_SPEED
