@@ -1,4 +1,7 @@
+import platform
+
 import arcade
+import os
 from arcade import check_for_collision_with_lists, check_for_collision
 
 import constants as cn
@@ -15,28 +18,53 @@ FULL_KEYMAP = dict(
     KICK=arcade.key.K,
     SPECIAL=arcade.key.L
 )
-SPLIT_KEYMAP_L = dict(
-    JUMP=arcade.key.LALT,
-    SPRINT=arcade.key.LSHIFT,
-    DAFOE=arcade.key.W,
-    CROUCH=arcade.key.S,
-    LEFT=arcade.key.A,
-    RIGHT=arcade.key.D,
-    PUNCH=arcade.key.Z,
-    KICK=arcade.key.X,
-    SPECIAL=arcade.key.C
-)
-SPLIT_KEYMAP_R = dict(
-    JUMP=arcade.key.RALT,
-    SPRINT=arcade.key.SPACE,
-    DAFOE=arcade.key.I,
-    CROUCH=arcade.key.K,
-    LEFT=arcade.key.J,
-    RIGHT=arcade.key.L,
-    PUNCH=arcade.key.M,
-    KICK=arcade.key.COMMA,
-    SPECIAL=arcade.key.PERIOD
-)
+if platform.system() == 'Darwin':
+    SPLIT_KEYMAP_L = dict(
+        JUMP=arcade.key.LCOMMAND,
+        SPRINT=arcade.key.LSHIFT,
+        DAFOE=arcade.key.W,
+        CROUCH=arcade.key.S,
+        LEFT=arcade.key.A,
+        RIGHT=arcade.key.D,
+        PUNCH=arcade.key.Z,
+        KICK=arcade.key.X,
+        SPECIAL=arcade.key.C
+    )
+    SPLIT_KEYMAP_R = dict(
+        JUMP=arcade.key.RCOMMAND,
+        SPRINT=arcade.key.SPACE,
+        DAFOE=arcade.key.I,
+        CROUCH=arcade.key.K,
+        LEFT=arcade.key.J,
+        RIGHT=arcade.key.L,
+        PUNCH=arcade.key.M,
+        KICK=arcade.key.COMMA,
+        SPECIAL=arcade.key.PERIOD
+    )
+else:
+    SPLIT_KEYMAP_L = dict(
+        JUMP = arcade.key.LALT,
+        SPRINT = arcade.key.LSHIFT,
+        DAFOE=arcade.key.W,
+        CROUCH=arcade.key.S,
+        LEFT=arcade.key.A,
+        RIGHT=arcade.key.D,
+        PUNCH=arcade.key.Z,
+        KICK=arcade.key.X,
+        SPECIAL=arcade.key.C
+    )
+    SPLIT_KEYMAP_R = dict(
+        JUMP=arcade.key.RALT,
+        SPRINT=arcade.key.SPACE,
+        DAFOE=arcade.key.I,
+        CROUCH=arcade.key.K,
+        LEFT=arcade.key.J,
+        RIGHT=arcade.key.L,
+        PUNCH=arcade.key.M,
+        KICK=arcade.key.COMMA,
+        SPECIAL=arcade.key.PERIOD
+    )
+
 # TODO
 """
 GAMEPAD_KEYMAP = dict(
@@ -317,6 +345,81 @@ class Player(object):
                     screen_side_mod = -1
                 if self.state == State.l_punch:  # LIGHT PUNCH
                     # START-UP:
+                    if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                        # Player Hitbox Setup:
+                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter)) * screen_side_mod
+                        self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
+                                                                            self.state_counter)
+                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 3*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].render_hitbox = True
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                if self.state == State.h_punch:  # HEAVY PUNCH
+                    # START-UP:
+                    if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                        # Player Hitbox Setup:
+                        self.player_hitboxes[0].center_x = self.center_x - (4*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter)) * screen_side_mod
+                        self.player_hitboxes[0].center_y = self.center_y #+ (cn.L_HIT_LENGTH -
+                                                                         #   self.state_counter)
+                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].render_hitbox = True
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                if self.state == State.aa_punch:  # ANTI-AIR PUNCH
+                    # START-UP:
+                    if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                        # Player Hitbox Setup:
+                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter)) * screen_side_mod
+                        self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
+                                                                            self.state_counter)
+                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].render_hitbox = True
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                if self.state == State.lp_punch:  # LOW-PROFILE PUNCH
+                    # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
                         self.player_hitboxes[0].center_x = 0
                         self.player_hitboxes[0].center_y = 0
@@ -411,7 +514,23 @@ class Player(object):
                 if self.state == State.lp_punch:  # APPARENTLY THIS SHOULD ACTUALLY BE THE ANTI-AIR??
                     pass
                 if self.state == State.h_punch:
-                    pass
+                    # START-UP:
+                    if self.state_counter > 3 * int(cn.H_HIT_LENGTH) / 5:
+                        # Player Hurtbox Setup:
+                        self.width = cn.SPRITE_PLAYER_WIDTH + int((cn.H_HIT_LENGTH/self.state_counter)* 3)
+                        self.height = cn.SPRITE_PLAYER_HEIGHT
+                        self.center_x += 5 * screen_side_mod
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.H_HIT_LENGTH) / 5:
+                        # Player Hurtbox Setup:
+                        self.width = cn.SPRITE_PLAYER_WIDTH + int((cn.H_HIT_LENGTH/self.state_counter) * 3)
+                        self.height = cn.SPRITE_PLAYER_HEIGHT
+                        self.center_x -= 5 * screen_side_mod
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.width = cn.SPRITE_PLAYER_WIDTH
+                        self.height = cn.SPRITE_PLAYER_HEIGHT
+                        #self.center_x -= 10 * screen_side_mod
                 if self.state == State.l_kick:
                     pre_center_y = self.center_y
                     # START-UP:
