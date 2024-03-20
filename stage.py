@@ -600,6 +600,7 @@ class StageView(arcade.View):
                 self.player_1.kicking = False
         """
 
+    # MOUSE COMMANDS CURRENTLY UNNECESSARY
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """ Handle Mouse Motion """
 
@@ -613,12 +614,14 @@ class StageView(arcade.View):
                 hitbox.center_y = y
         """
 
+    # MOUSE COMMANDS CURRENTLY UNNECESSARY
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
         Called when the user presses a mouse button.
         """
         pass
 
+    # MOUSE COMMANDS CURRENTLY UNNECESSARY
     def on_mouse_release(self, x, y, button, key_modifiers):
         """
         Called when a user releases a mouse button.
