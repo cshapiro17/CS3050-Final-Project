@@ -587,9 +587,13 @@ class Stage(arcade.Window):
         if (not (self.player_1.jump_or_nah(floors=self.floors))) & self.player_1.jumping:
             if self.player_1.center_x >= self.dummy.center_x:
                 self.player_1.change_x_J -= 10
-
             else:
                 self.player_1.change_x_J += 10
+        elif (not (self.dummy.jump_or_nah(floors=self.floors))) & self.dummy.jumping:
+            if self.dummy.center_x >= self.dummy.center_x:
+                self.dummy.change_x_J -= 10
+            else:
+                self.dummy.change_x_J += 10
         else:
             if self.player_1.center_x >= self.dummy.center_x:
                 self.player_1.right = True
@@ -598,8 +602,6 @@ class Stage(arcade.Window):
                 self.player_1.right = False
                 self.dummy.right = True
             self.player_1.change_x_J = 0
-        if self.dummy.jump_or_nah(floors=self.floors):
-            pass
 
     def ui_update(self):
         # --- DUMMY UI REFRESH ---
