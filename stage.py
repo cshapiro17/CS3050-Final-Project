@@ -14,16 +14,16 @@ import datetime as dt  # TIMER FOR MAX MATCH TIME
 SCREEN_TITLE = "Fight Stage"
 
 
-class Stage(arcade.Window):
+class StageView(arcade.View):
     """
         Main app class for the fighting arena.
             Calls methods from the player class from dummy and player_1.
             Mouse IO is currently unused, however it will likely be used in the case of pause menu/ ui.
     """
 
-    def __init__(self, width, height, title):
+    def __init__(self):
         # Call the parent class initializer
-        super().__init__(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__()
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None
@@ -56,9 +56,22 @@ class Stage(arcade.Window):
         self.dummy_hitbox = None
 
         # Don't show the mouse cursor
-        self.set_mouse_visible(False)
+        self.window.set_mouse_visible(False)
 
-        arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+        # Set up background image info
+        arcade.set_background_color(arcade.color.AMAZON)
+        self.background = None
+
+        # Set up game clock info
+        self.total_time = 0.0
+        self.timer_text = arcade.Text(
+            text = "00:00",
+            start_x = cn.SCREEN_WIDTH/2,
+            start_y = cn.SCREEN_HEIGHT - 85,
+            color=arcade.color.BLACK,
+            font_size= 25,
+            anchor_x="center",
+        )
 
         # If you have sprite lists, you should create them here,
         # and set them to None
@@ -124,7 +137,7 @@ class Stage(arcade.Window):
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
                                              int(cn.SCREEN_HEIGHT / 3),
-                                             [0, 0, 0])
+                                             [114, 164, 164])
         self.floor.center_x = f_center[0]
         self.floor.center_y = f_center[1]
         self.floors.append(self.floor)
@@ -184,7 +197,7 @@ class Stage(arcade.Window):
         self.timer.center_x = cn.SCREEN_WIDTH / 2
         self.timer.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9)
         # 20px is for offset for block bar
-
+        
         # UI APPEND TO LIST
         self.ui.append(self.d_portrait)
         self.ui.append(self.p_1_portrait)
@@ -199,6 +212,12 @@ class Stage(arcade.Window):
         self.ui.append(self.p_1_super)
         """
 
+        # Set the background to the desired image (default as Waterman green)
+        self.background = arcade.load_texture("images/backgrounds/votey.jpg")
+
+        # Set up the game clock
+        self.total_time = 60.0
+
     def on_draw(self):
         """
         Render the screen.
@@ -208,6 +227,11 @@ class Stage(arcade.Window):
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
 
+        # Draw the background
+        arcade.draw_lrwh_rectangle_textured(0, 140,
+                                            cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT,
+                                            self.background)
+
         # Call draw() on all your sprite lists below
         self.player_1.player_hurtboxes.draw()
         self.player_1.player_hitboxes.draw()
@@ -215,6 +239,7 @@ class Stage(arcade.Window):
         self.dummy.player_hitboxes.draw()
         self.floors.draw()
         self.ui.draw()
+        self.timer_text.draw()
 
     def on_update(self, delta_time):
         """
@@ -257,6 +282,26 @@ class Stage(arcade.Window):
         ⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⠗⠂⠄⠀⣴⡟⠀⠀⡃⠀⠉⠉⠟⡿⣿⣿⣿
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⠾⠛⠂⢹⠀⠀⠀⢡⠀⠀⠀⠀⠀⠙⠛⠿⢿⣿
         """
+
+
+        """
+        Update the game clock
+        """
+        minutes = int(self.total_time) // 60
+        seconds = int(self.total_time) % 60
+
+        if minutes == 0.0 and seconds == 0.0:
+            # Change the view to "Game Over" view
+
+            # Make sure time does not decrease
+            self.total_time = 0.0
+        else:
+            # Accumulate the total time
+            self.total_time -= delta_time
+
+        # Create the text for the timer
+        self.timer_text.text = f"{minutes:02d}:{seconds:02d}"
+
         hit_on_dummy = 0
         if self.dummy.stun == 0:  # 1st see if Dummy isn't already stunned
             hit_on_dummy = 0
@@ -639,8 +684,10 @@ class Stage(arcade.Window):
 
 def main():
     """ Main function """
-    game = Stage(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
+    window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
+    stage_view = StageView()
+    window.show_view(stage_view)
+    stage_view.setup()
     arcade.run()
 
 
