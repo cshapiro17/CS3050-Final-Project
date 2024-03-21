@@ -1,7 +1,6 @@
 import arcade
 import constants as cn
 from constants import State
-import player as p
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
@@ -13,7 +12,6 @@ import datetime as dt  # TIMER FOR MAX MATCH TIME
 # --- Constants ---
 SCREEN_TITLE = "Fight Stage"
 
-
 class StageView(arcade.View):
     """
         Main app class for the fighting arena.
@@ -24,6 +22,7 @@ class StageView(arcade.View):
     def __init__(self):
         # Call the parent class initializer
         super().__init__()
+
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None
@@ -456,6 +455,12 @@ class StageView(arcade.View):
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
+        if key == arcade.key.P:
+            # pass self, the current view, to preserve this view's state
+            pause_view = pv.PauseView()
+            pause_view.set_up
+            self.window.show_view(pause_view)
+
         self.player_1.player_key_press(key, key_modifiers)
         self.dummy.player_key_press(key, key_modifiers)
         """
@@ -675,16 +680,3 @@ class StageView(arcade.View):
             self.p_1_block.width = int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
             self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                                         ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
-
-
-def main():
-    """ Main function """
-    window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
-    stage_view = StageView()
-    window.show_view(stage_view)
-    stage_view.setup()
-    arcade.run()
-
-
-if __name__ == "__main__":
-    main()

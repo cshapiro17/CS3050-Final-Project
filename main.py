@@ -1,5 +1,4 @@
 import arcade
-import start_game as sg
 import stage as s
 import constants as cn
 
