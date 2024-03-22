@@ -340,6 +340,9 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
+
+
+
                 if self.state == State.l_kick:  # LIGHT KICK
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
@@ -364,6 +367,93 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
+
+
+
+
+                    #####LOW CROUCH KICK########################
+                if self.state == State.lp_kick:  # Low profile kick
+                        # START-UP:
+                        if self.state_counter > 2*int(cn.S_HIT_LENGTH)/3:
+                            self.player_hitboxes[0].center_x = 0
+                            self.player_hitboxes[0].center_y = 0
+                            self.player_hitboxes[0].width = 1
+                            self.player_hitboxes[0].height = 1
+                            self.player_hitboxes[0].render_hitbox = False
+                        # ACTIVE:
+                        elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                            # Player Hitbox Setup:
+                            self.player_hitboxes[0].center_x = self.center_x - (4*(cn.S_HIT_LENGTH -
+                                                                                self.state_counter)) * screen_side_mod
+                            self.player_hitboxes[0].center_y = self.center_y - 4*self.state_counter
+                            self.player_hitboxes[0].width = 5*(cn.S_HIT_LENGTH-self.state_counter)
+                            self.player_hitboxes[0].height = 2*(cn.S_HIT_LENGTH-self.state_counter)
+                            self.player_hitboxes[0].render_hitbox = True
+                        # RECOVERY:
+                        elif self.state_counter > 0:
+                            self.player_hitboxes[0].center_x = 0
+                            self.player_hitboxes[0].center_y = 0
+                            self.player_hitboxes[0].width = 1
+                            self.player_hitboxes[0].height = 1
+                            self.player_hitboxes[0].render_hitbox = False
+
+                    #########################Heavy Kick############################
+                                    
+                if self.state == State.h_kick:  # heavy kick
+                        # START-UP:
+                        if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
+                            self.player_hitboxes[0].center_x = 0
+                            self.player_hitboxes[0].center_y = 0
+                            self.player_hitboxes[0].width = 1
+                            self.player_hitboxes[0].height = 1
+                            self.player_hitboxes[0].render_hitbox = False
+                        # ACTIVE:
+                        elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                            # Player Hitbox Setup:
+                            self.player_hitboxes[0].center_x = self.center_x - (4*(cn.L_HIT_LENGTH -
+                                                                                self.state_counter)) * screen_side_mod
+                            self.player_hitboxes[0].center_y = self.center_y - 4*self.state_counter
+                            self.player_hitboxes[0].width = 5*(cn.S_HIT_LENGTH-self.state_counter)
+                            self.player_hitboxes[0].height = 2*(cn.S_HIT_LENGTH-self.state_counter)
+                            self.player_hitboxes[0].render_hitbox = True
+                        # RECOVERY:
+                        elif self.state_counter > 0:
+                            self.player_hitboxes[0].center_x = 0
+                            self.player_hitboxes[0].center_y = 0
+                            self.player_hitboxes[0].width = 1
+                            self.player_hitboxes[0].height = 1
+                            self.player_hitboxes[0].render_hitbox = False
+
+                    #########################Anti_air Profile################################
+                if self.state == State.aa_kick:  # Anti-Air
+                        # START-UP:
+                        if self.state_counter > 2*int(cn.S_HIT_LENGTH)/3:
+                            self.player_hitboxes[0].center_x = 0
+                            self.player_hitboxes[0].center_y = 0
+                            self.player_hitboxes[0].width = 1
+                            self.player_hitboxes[0].height = 1
+                            self.player_hitboxes[0].render_hitbox = False
+                        # ACTIVE:
+                        elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                            # Player Hitbox Setup:
+                            self.player_hitboxes[0].center_x = self.center_x - (4*(cn.S_HIT_LENGTH -
+                                                                                self.state_counter)) * screen_side_mod
+                            self.player_hitboxes[0].center_y = self.center_y - 4*self.state_counter
+                            self.player_hitboxes[0].width = 5*(cn.S_HIT_LENGTH-self.state_counter)
+                            self.player_hitboxes[0].height = 2*(cn.S_HIT_LENGTH-self.state_counter)
+                            self.player_hitboxes[0].render_hitbox = True
+                        # RECOVERY:
+                        elif self.state_counter > 0:
+                            self.player_hitboxes[0].center_x = 0
+                            self.player_hitboxes[0].center_y = 0
+                            self.player_hitboxes[0].width = 1
+                            self.player_hitboxes[0].height = 1
+                            self.player_hitboxes[0].render_hitbox = False
+                                    
+
+
+                    
+                            
                 self.state_counter -= 1  # Increment cycle
             elif self.state_counter == 0 | self.state_counter < 0:
                 self.state_counter = 0  # Reset cycle so it can be started again
