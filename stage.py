@@ -1,4 +1,5 @@
 import arcade
+import arcade.gui
 import constants as cn
 from constants import State
 import player as p
@@ -12,16 +13,31 @@ class InstructionView(arcade.View):
 # of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)
 
     def on_show_view(self):
-        """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.csscolor.DARK_SLATE_BLUE)
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_background_color(arcade.csscolor.BLACK)
+         # Reset the viewport
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
+
+
     def on_draw(self):
-        """ Draw this view """
         self.clear()
+
+        self.ui_manager = arcade.gui.UIManager()
+
+        # Create a button
+        button = arcade.gui.UIFlatButton(
+            center_x=100,
+            center_y=100,
+            width=200,
+            height=50,
+            text="Click me",
+        )
+
+        # Add a callback function for when the button is clicked
+        button.on_click = self.on_button_click
+
+        # Add the button to the UI manager
+        self.ui_manager.add_ui_element(button)
         arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 2,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
         arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2 - 75,
