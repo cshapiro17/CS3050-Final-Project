@@ -1,5 +1,4 @@
 import platform
-
 import arcade
 import os
 from arcade import check_for_collision_with_lists, check_for_collision
@@ -358,7 +357,7 @@ class Player(object):
                                                                             self.state_counter)) * screen_side_mod
                         self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
                                                                             self.state_counter)
-                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].width = 7*(cn.L_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].height = 3*(cn.L_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
                     # RECOVERY:
@@ -370,21 +369,20 @@ class Player(object):
                         self.player_hitboxes[0].render_hitbox = False
                 if self.state == State.h_punch:  # HEAVY PUNCH
                     # START-UP:
-                    if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
+                    if self.state_counter > 5*int(cn.H_HIT_LENGTH)/6:
                         self.player_hitboxes[0].center_x = 0
                         self.player_hitboxes[0].center_y = 0
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
                     # ACTIVE:
-                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                    elif self.state_counter > int(cn.H_HIT_LENGTH)/3:
                         # Player Hitbox Setup:
-                        self.player_hitboxes[0].center_x = self.center_x - (4*(cn.L_HIT_LENGTH -
+                        self.player_hitboxes[0].center_x = self.center_x - (4*(cn.H_HIT_LENGTH -
                                                                             self.state_counter)) * screen_side_mod
-                        self.player_hitboxes[0].center_y = self.center_y #+ (cn.L_HIT_LENGTH -
-                                                                         #   self.state_counter)
-                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
-                        self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].center_y = (1.1 * self.center_y) - (cn.L_HIT_LENGTH - self.state_counter)
+                        self.player_hitboxes[0].width = 6*(cn.H_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 2*(cn.H_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
                     # RECOVERY:
                     elif self.state_counter > 0:
@@ -598,20 +596,20 @@ class Player(object):
                     # START-UP:
                     if self.state_counter > 3 * int(cn.H_HIT_LENGTH) / 5:
                         # Player Hurtbox Setup:
-                        self.width = cn.SPRITE_PLAYER_WIDTH + int((cn.H_HIT_LENGTH/self.state_counter)* 3)
+                        self.width = cn.SPRITE_PLAYER_WIDTH + (cn.H_HIT_LENGTH - self.state_counter)
                         self.height = cn.SPRITE_PLAYER_HEIGHT
                         self.center_x += 5 * screen_side_mod
                     # ACTIVE:
                     elif self.state_counter > int(cn.H_HIT_LENGTH) / 5:
                         # Player Hurtbox Setup:
-                        self.width = cn.SPRITE_PLAYER_WIDTH + int((cn.H_HIT_LENGTH/self.state_counter) * 3)
+                        self.width = cn.SPRITE_PLAYER_WIDTH + (cn.H_HIT_LENGTH - self.state_counter)
                         self.height = cn.SPRITE_PLAYER_HEIGHT
                         self.center_x -= 5 * screen_side_mod
                     # RECOVERY:
                     elif self.state_counter > 0:
                         self.width = cn.SPRITE_PLAYER_WIDTH
                         self.height = cn.SPRITE_PLAYER_HEIGHT
-                        #self.center_x -= 10 * screen_side_mod
+                        self.center_x -= 10 * screen_side_mod
                 if self.state == State.l_kick:
                     pre_center_y = self.center_y
                     # START-UP:
