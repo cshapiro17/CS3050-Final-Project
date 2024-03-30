@@ -8,9 +8,10 @@ SCREEN_TITLE = "Fighting Faculty"
 def main():
     """ Main function """
     window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
+
     start_view = s.InstructionView()    # Will change this to "sg.StartView" eventually
     window.show_view(start_view)
-   #start_view.setup()
+
     arcade.run()
 
 

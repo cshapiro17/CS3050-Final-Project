@@ -18,28 +18,14 @@ class InstructionView(arcade.View):
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
 
-
     def on_draw(self):
         self.clear()
 
-        self.ui_manager = arcade.gui.UIManager()
-
-        # Create a button
-        button = arcade.gui.UIFlatButton(
-            center_x=100,
-            center_y=100,
-            width=200,
-            height=50,
-            text="Click me",
-        )
-
-        # Add a callback function for when the button is clicked
-        button.on_click = self.on_button_click
-
-        # Add the button to the UI manager
-        self.ui_manager.add_ui_element(button)
-        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 2,
+        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height ,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
+        arcade.draw_text("Welcome to Faculty Fighting!\n Here are the rules:\n Player 1 has the controls a-s-d-w, left-crouch-right-jump\n "
+                         "Player 2's controls are j-k-l-i, left-crouch-right-jump, respectively\n", self.window.width / 2, self.window.height / 2,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
         arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2 - 75,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
 
@@ -48,10 +34,6 @@ class InstructionView(arcade.View):
         game_view = StageView()
         game_view.setup()
         self.window.show_view(game_view)
-
-
-
-
 
 
 
