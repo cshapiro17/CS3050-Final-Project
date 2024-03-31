@@ -7,6 +7,8 @@ import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
 
+
+
 class InstructionView(arcade.View):
 
 #As of right now this is an example of a intro screen view. my plan as
@@ -17,17 +19,27 @@ class InstructionView(arcade.View):
          # Reset the viewport
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
-
     def on_draw(self):
         self.clear()
+        start_y = cn.SCREEN_HEIGHT - cn.DEFAULT_LINE_HEIGHT * 6
 
-        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height ,
+        arcade.draw_text("                   Welcome to Faculty Fighting!\n"
+                         "                         Here are the rules:\n"
+                         "      Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
+                         "      Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
+                         "                       Press (p) to pause the fight\n" 
+                         "      You have 60 seconds to fight, do your best and fight our faculty!\n",
+                         self.window.width / 3.2, start_y,
+                         arcade.color.WHITE,
+                         cn.DEFAULT_FONT_SIZE / 2,
+                         multiline=True,
+                         width=700)
+
+        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 4,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Welcome to Faculty Fighting!\n Here are the rules:\n Player 1 has the controls a-s-d-w, left-crouch-right-jump\n "
-                         "Player 2's controls are j-k-l-i, left-crouch-right-jump, respectively\n", self.window.width / 2, self.window.height / 2,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+
+        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 45,
+                         arcade.color.WHITE, font_size=15, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
@@ -717,15 +729,3 @@ class StageView(arcade.View):
             self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                                         ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
 
-#TO DO - delete
-# def main():
-#     """ Main function """
-#     window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
-#     stage_view = StageView()
-#     window.show_view(stage_view)
-#     stage_view.setup()
-#     arcade.run()
-#
-#
-# if __name__ == "__main__":
-#     main()

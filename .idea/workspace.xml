@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b9e14e63-9f42-4b88-899b-64608ef24632" name="Changes" comment="i am working on adding buttons to the instruction screen, imported arcade.gui, as of right now it breaks and i want to figure out why" />
+    <list default="true" id="b9e14e63-9f42-4b88-899b-64608ef24632" name="Changes" comment="Not sure if buittons on instruction screen are feasible, going to make background image with title and have instructions and clock to select screen">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stage.py" beforeDir="false" afterPath="$PROJECT_DIR$/stage.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,6 +63,7 @@
     &quot;Python.stage.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main-lwesson&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -88,7 +93,8 @@
       <workItem from="1710792064702" duration="3954000" />
       <workItem from="1710966224819" duration="558000" />
       <workItem from="1710966811360" duration="1777000" />
-      <workItem from="1711654464995" duration="1680000" />
+      <workItem from="1711654464995" duration="3039000" />
+      <workItem from="1711926827389" duration="2630000" />
     </task>
     <task id="LOCAL-00001" summary="#As of right now this is an example of a intro screen view (not our, just from documentation). my plan as of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)">
       <option name="closed" value="true" />
@@ -114,7 +120,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711654945084</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Not sure if buittons on instruction screen are feasible, going to make background image with title and have instructions and clock to select screen">
+      <option name="closed" value="true" />
+      <created>1711819698441</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1711819698441</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -152,12 +166,13 @@
     <MESSAGE value="Merge branch 'main' of https://github.com/cshapiro17/CS3050-Final-Project" />
     <MESSAGE value="#As of right now this is an example of a intro screen view (not our, just from documentation). my plan as of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)" />
     <MESSAGE value="i am working on adding buttons to the instruction screen, imported arcade.gui, as of right now it breaks and i want to figure out why" />
-    <option name="LAST_COMMIT_MESSAGE" value="i am working on adding buttons to the instruction screen, imported arcade.gui, as of right now it breaks and i want to figure out why" />
+    <MESSAGE value="Not sure if buittons on instruction screen are feasible, going to make background image with title and have instructions and clock to select screen" />
+    <option name="LAST_COMMIT_MESSAGE" value="Not sure if buittons on instruction screen are feasible, going to make background image with title and have instructions and clock to select screen" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/CS3050_Final_Project$stage.coverage" NAME="stage Coverage Results" MODIFIED="1711654815472" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/CS3050_Final_Project$stage.coverage" NAME="stage Coverage Results" MODIFIED="1711928593505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/CS3050_Final_Project$game_views.coverage" NAME="game_views Coverage Results" MODIFIED="1711042134296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/CS3050_Final_Project$main.coverage" NAME="main Coverage Results" MODIFIED="1711654819140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/CS3050_Final_Project$main.coverage" NAME="main Coverage Results" MODIFIED="1711929413454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/CS3050_Final_Project$player.coverage" NAME="player Coverage Results" MODIFIED="1710792072853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/CS3050_Final_Project$constants.coverage" NAME="constants Coverage Results" MODIFIED="1710792098166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
