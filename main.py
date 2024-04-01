@@ -9,7 +9,7 @@ def main():
     window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
     start_view = gv.InstructionView()    # Will change this to "sg.StartView" eventually
     window.show_view(start_view)
-   #start_view.setup()
+
     arcade.run()
 
 
