@@ -186,16 +186,25 @@ class Player(object):
             #self.running_sprites_right.append(self.sprite1)
             self.running_sprites_right.append(self.sprite2)
 
-        # ##Idle
-        # self.idle_sprite=[]
-        # self.sprite1=arcade.load_texture(f"images/png/Idle__000.png")
-        # self.sprite2=arcade.load_texture(f"images/png/Idle__001.png",flipped_horizontally = True)
-        # self.idle_sprite.append(self.sprite1)
-        # self.idle_sprite.append(self.sprite2)
+      
         
+        self.idle_sprintes_right=[]
+        for i in range(9):
+            self.sprite1=arcade.load_texture(f"images/png/Idle__00{i}.png")
+            #self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png",flipped_horizontally = True)
+            self.idle_sprintes_right.append(self.sprite1)
+            #self.running_sprites.append(self.sprite2)
+
+
+        self.idle_sprintes_left=[]
+        for i in range(9):
+            self.sprite1=arcade.load_texture(f"images/png/Idle__00{i}.png",flipped_horizontally = True)
+            #self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png",flipped_horizontally = True)
+            self.idle_sprintes_left.append(self.sprite1)
+            #self.running_sprites.append(self.sprite2)
 
         ##Set current player sprite to idle
-        self.cur_sprites = self.running_sprites_left
+        self.cur_sprites = self.idle_sprintes_left
 
         ##
         if self.right:
@@ -336,7 +345,8 @@ class Player(object):
             self.change_y = self.change_y_S
         else:
             self.change_x = self.change_x_L + self.change_x_R
-        
+            
+        self.change_y = self.change_y_J
              ##Changing the sprites with movement
                 
            
@@ -347,14 +357,12 @@ class Player(object):
         if self.stun == 0:
             self.center_x += self.change_x
             self.center_y += self.change_y
-            self.change_y = self.change_y_J
+            
+            
+                
+            
 
             
-            if(self.state!=State.idle):
-                if self.cur_index>=8:
-                    self.cur_index=0
-                else:
-                    self.cur_index+=1
 
         
 
@@ -396,20 +404,7 @@ class Player(object):
                     self.width -= 5
                 else:
                     self.width = cn.SPRITE_PLAYER_WIDTH
-                ##Changing the sprites with movement
-                
-            #         self.player_sprites.clear()
-            #         self.cur_index += 2
-            #         if self.cur_index >= 18:
-            #             self.cur_index = 0
-            #         self.cur_sprites = self.running_sprites
-            #         self.player_sprite.texture = self.cur_sprites[self.cur_index]  
-            #         print(self.cur_index)
-
-                
-            #    # self.player_sprite = arcade.Sprite()
-            #         self.player_sprite.texture = self.cur_sprites[self.cur_index]
-            #         self.player_sprites.append(self.player_sprite)
+              
 
 
 
@@ -422,7 +417,7 @@ class Player(object):
         self.player_hurtboxes[0].width = self.width
 
 
-        self.player_sprite.texture = self.cur_sprites[self.cur_index]
+       
 
         self.player_sprites[0].center_y = self.center_y
         self.player_sprites[0].center_x = self.center_x
@@ -430,20 +425,37 @@ class Player(object):
         self.player_sprites[0].width = self.width*3
             
 
-        
+        self.player_sprite.texture = self.cur_sprites[self.cur_index]
+        self.player_hurtboxes[1].center_y = self.center_y
+        if self.cur_index>=8:
+                self.cur_index=0
+        else:
+                self.cur_index+=1
 
         # Using Extended Hitbox to track direction player is facing
-        self.player_hurtboxes[1].center_y = self.center_y
+        ####IF right
         if self.right:
+
             self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
             self.index=1
-            self.cur_sprites = self.running_sprites_right
-            self.player_sprite.texture = self.cur_sprites[self.cur_index]
+            if self.state == State.idle:
+                self.cur_sprites = self.idle_sprintes_left
+            else:
+                if self.righting:
+                    self.cur_sprites = self.running_sprites_right
+            
+        ###IF LEFT
         else:
+            
             self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
             self.index=0
-            self.cur_sprites = self.running_sprites_left
-            self.player_sprite.texture = self.cur_sprites[self.cur_index]
+            if self.state == State.idle:
+                self.cur_sprites = self.idle_sprintes_right
+            else:
+                self.cur_sprites = self.running_sprites_left
+
+
+        self.player_sprite.texture = self.cur_sprites[self.cur_index]
 
         
     def hit_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
