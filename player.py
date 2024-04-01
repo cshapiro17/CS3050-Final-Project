@@ -6,6 +6,12 @@ from arcade import check_for_collision_with_lists, check_for_collision
 import constants as cn
 from constants import State
 
+"""
+Keymaps: FULL_KEYMAP is for single-player commands,
+    SPLIT_KEYMAPs are for split characters.
+    Darwin is for Macs, as their keyboards differ from Windows.
+"""
+
 FULL_KEYMAP = dict(
     JUMP=arcade.key.SPACE,
     SPRINT=arcade.key.LSHIFT,
@@ -64,7 +70,7 @@ else:
         SPECIAL=arcade.key.PERIOD
     )
 
-# TODO
+# TODO, maybe? Not sure abt gamepad support.
 """
 GAMEPAD_KEYMAP = dict(
     JUMP=arcade.key.?,
@@ -87,6 +93,9 @@ class Player(object):
                  main_hurtbox: arcade.SpriteSolidColor, extended_hurtbox: arcade.SpriteSolidColor,
                  hitbox: arcade.SpriteSolidColor,
                  input_map: int):
+        """
+        CONTAINS ALL SET-UP AND VARIABLE DECLARATION FOR THE PLAYER CLASS
+        """
         # Start-up Stats:
         self.center_x = center_x
         self.center_y = center_y
@@ -140,7 +149,7 @@ class Player(object):
         #   Hurt/Hitbox Lists:
         self.player_hurtboxes = arcade.SpriteList()
         self.player_hitboxes = arcade.SpriteList()
-        # Hurt/Hitbox Assignment:
+        #   Hurt/Hitbox Assignment:
         self.main_hurtbox = main_hurtbox
         self.player_hurtboxes.append(self.main_hurtbox)
         self.extended_hurtbox = extended_hurtbox
@@ -167,8 +176,14 @@ class Player(object):
         self.PUNCH = self.keymap['PUNCH']
         self.KICK = self.keymap['KICK']
 
-    def update(self, floors):  # TODO: MOVEMENT STUFF SHOULD GET ITS OWN DEF SO IT DOESN'T GET TOO CLUTTERED
-
+    def update(self, floors):
+        """
+        Update func:
+            - Updates sprite lists
+            - Accounts for Jump and Sprint behavior (key presses that affect longer than a single frame)
+            - Accounts for movement/ Updates position
+            -
+        """
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
@@ -326,6 +341,9 @@ class Player(object):
             self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
 
     def hit_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
+        """
+        Moves the hitbox in accordance with attack commands
+        """
         if self.stun == 0:
             if self.state_counter != 0:
                 # THIS WILL TRACK PLAYER MOVES TO 'ANIMATE' AND MOVE HITBOXES
@@ -335,8 +353,6 @@ class Player(object):
                 # self.player_hitbox.center_y = self.player_hurtbox.center_y + self.state_counter
                 # self.player_hitbox.width = 15*self.state_counter
                 # self.player_hitbox.height = 7*self.state_counter
-                # TODO: Setup animations in chunks (START-UP, ACTIVE, AND RECOVERY FRAMES) based on state_counter
-                #   THIS SECTION ~ONLY~ DOES HITBOXES
                 screen_side_mod = 0
                 if self.right:
                     screen_side_mod = 1
@@ -479,11 +495,12 @@ class Player(object):
             self.player_hitboxes[0].render_hitbox = False
 
     def hurt_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
+        """
+        Moves the hurtbox in accordance with attack commands
+        """
         if self.stun == 0:
             if self.state_counter != 0:
                 # THIS WILL TRACK PLAYER MOVES TO 'ANIMATE' AND MOVE HURTBOXES
-                # TODO: Setup animations in chunks (START-UP, ACTIVE, AND RECOVERY FRAMES) based on state_counter
-                #   THIS SECTION ~ONLY~ DOES HURTBOXES
                 screen_side_mod = 0
                 if self.right:
                     screen_side_mod = 1
@@ -567,12 +584,18 @@ class Player(object):
             self.state = State.idle
 
     def grav_cycle(self, floors):
+        """
+        If you aren't on the ground, apply gravity (fall)
+        """
         if not (self.jump_or_nah(floors)):
             self.change_y_J -= cn.GRAVITY
         else:
             self.change_y_J = 0
 
     def jump_or_nah(self, floors):
+        """
+        Checks if the player is on the ground or not (touching floors)
+        """
         hit_list_no_move = 0
         for hurtbox in self.player_hurtboxes:
             if len(floors) > 1:
@@ -599,6 +622,9 @@ class Player(object):
                     return False
 
     def player_key_press(self, key, key_modifiers):
+        """
+        Input press affects for player (in stage)
+        """
         if self.state_counter == 0:
             # USE EITHER STATE.HIT OR STUN-LOCK TO KEEP TRACK OF WHEN THEY CAN'T START NEW MOVES
             if not self.state == State.hit:
@@ -707,6 +733,9 @@ class Player(object):
                                         self.state_counter = cn.H_HIT_LENGTH
 
     def player_key_release(self, key, key_modifiers):
+        """
+        Input release affects for player (in stage)
+        """
         match key:
             case self.SPRINT:
                 print("NO SPRINTING")
@@ -741,8 +770,11 @@ class Player(object):
                 print("NO KICKING")
                 self.kicking = False
 
-    # TODO: Add a param in the form of a stun_val, and deal with the stun_val assignment here
     def block_check(self, hit_damage):  # RETURN FALSE IF BLOCK IS INTACT, TRUE IF BROKEN
+        """
+        Checks the block value when hit, if there is a block value subtract damage from that,
+            if not then take damage value from health.
+        """
         if self.blocking:
             p_block_health = self.block_health  # prev block health
             c_block_health = self.block_health-hit_damage  # new 'current' block health
