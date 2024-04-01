@@ -17,7 +17,7 @@ MAX_MATCH_TIME = 60.0
 COUNTDOWN_TIME = 4.0
 
 # UI Color Theme
-UI_COLOR_BASE = arcade.color_from_hex_string(code= '#ffb453')
+#UI_COLOR_BASE = arcade.color_from_hex_string(code= '#ffb453')
 
 # Stage UI Constants:
 PORTRAIT_DIMENSIONS = [80, 80]
