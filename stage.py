@@ -45,7 +45,11 @@ class InstructionView(arcade.View):
         game_view.setup()
         self.window.show_view(game_view)
 
-
+class SelectionScreen(arcade.Window):
+    def on_show_view(self):
+        arcade.set_background_color(arcade.csscolor.BLACK)
+         # Reset the viewport
+        arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
 
 
