@@ -48,8 +48,8 @@ if platform.system() == 'Darwin':
     )
 else:
     SPLIT_KEYMAP_L = dict(
-        JUMP = arcade.key.LALT,
-        SPRINT = arcade.key.LSHIFT,
+        JUMP=arcade.key.LALT,
+        SPRINT=arcade.key.LSHIFT,
         DAFOE=arcade.key.W,
         CROUCH=arcade.key.S,
         LEFT=arcade.key.A,
@@ -407,23 +407,23 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
-                if self.state == State.aa_punch:  # ANTI-AIR PUNCH
+                if self.state == State.aa_punch:  # ANTI-AIR PUNCH (INVULNERABLE WHEN THE BOX IS OUT?)
                     # START-UP:
-                    if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
+                    if self.state_counter > 1*int(cn.L_HIT_LENGTH)/2:
                         self.player_hitboxes[0].center_x = 0
                         self.player_hitboxes[0].center_y = 0
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
                     # ACTIVE:
-                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                    elif self.state_counter > 1*int(cn.L_HIT_LENGTH)/4:
                         # Player Hitbox Setup:
-                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
+                        self.player_hitboxes[0].center_x = self.center_x - (4*(cn.L_HIT_LENGTH -
                                                                             self.state_counter)) * screen_side_mod
                         self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
                                                                             self.state_counter)
-                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
-                        self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].width = 6*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 5*(cn.L_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
                     # RECOVERY:
                     elif self.state_counter > 0:
@@ -434,7 +434,7 @@ class Player(object):
                         self.player_hitboxes[0].render_hitbox = False
                 if self.state == State.lp_punch:  # LOW-PROFILE PUNCH
                     # START-UP:
-                    if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
+                    if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
                         self.player_hitboxes[0].center_x = 0
                         self.player_hitboxes[0].center_y = 0
                         self.player_hitboxes[0].width = 1
@@ -443,12 +443,12 @@ class Player(object):
                     # ACTIVE:
                     elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
                         # Player Hitbox Setup:
-                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
-                                                                            self.state_counter)) * screen_side_mod
-                        self.player_hitboxes[0].center_y = self.center_y + (cn.L_HIT_LENGTH -
-                                                                            self.state_counter)
-                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
-                        self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].center_x = self.center_x - ((self.width/2 + ((cn.L_HIT_LENGTH -
+                                                                            self.state_counter))) * screen_side_mod)
+                        self.player_hitboxes[0].center_y = self.center_y + (4*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter))
+                        self.player_hitboxes[0].width = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 9*(cn.L_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
                     # RECOVERY:
                     elif self.state_counter > 0:
