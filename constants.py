@@ -11,13 +11,14 @@ SPRITE_PLAYER_HEIGHT = int(1*SCREEN_HEIGHT/5)
 MAX_MATCH_TIME = 60
 DEFAULT_LINE_HEIGHT = 45
 DEFAULT_FONT_SIZE = 30
+START_Y = SCREEN_HEIGHT - DEFAULT_LINE_HEIGHT * 6
 
 MAX_MATCH_TIME = 60.0
 
 COUNTDOWN_TIME = 4.0
 
 # UI Color Theme
-#UI_COLOR_BASE = arcade.color_from_hex_string(code= '#ffb453')
+UI_COLOR_BASE = arcade.color_from_hex_string(code= '#ffb453')
 
 # Stage UI Constants:
 PORTRAIT_DIMENSIONS = [80, 80]

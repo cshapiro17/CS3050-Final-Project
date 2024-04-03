@@ -6,10 +6,22 @@ import stage as s
 
 class InstructionView(arcade.View):
 
-# As of right now this is an example of a intro screen view. my plan as
-# of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)
     def __init__(self):
         super().__init__()
+        self.text= arcade.Text("         Welcome to Komputer Science Kombat: A Faculty Fighting Game!\n"
+                                "                         Here are the rules:\n \n"
+                                "      Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
+                                "      Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
+                                "                       Press (p) to pause the fight\n" 
+                                "      You have 60 seconds to fight, do your best and fight our faculty!\n"
+                                "  To block, walk backwards (away from enemy), and press (shift) to dash\n"
+                                "press (q) to punch, (-q) for a heavy punch, (e) to kick (-e) to heavy kick, and beat your opponent with a Heavy Move by pressing (f)"
+                                "       If you run into any issues, press (h) for help, and press (esc) to quit",
+                                 self.window.width / 3.8, cn.START_Y,
+                                 arcade.color.WHITE,
+                                 cn.DEFAULT_FONT_SIZE / 2,
+                                 multiline=True,
+                                 width=700)
     def on_show_view(self):
         arcade.set_background_color(arcade.color.BLACK)
          # Reset the viewport
@@ -17,24 +29,11 @@ class InstructionView(arcade.View):
 
     def on_draw(self):
         self.clear()
-        start_y = cn.SCREEN_HEIGHT - cn.DEFAULT_LINE_HEIGHT * 6
+        self.text.draw()
+        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 4 - 45,
+                         arcade.color.WHITE, font_size=30, anchor_x="center")
 
-        arcade.draw_text("                   Welcome to Faculty Fighting!\n"
-                         "                         Here are the rules:\n"
-                         "      Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
-                         "      Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
-                         "                       Press (p) to pause the fight\n" 
-                         "      You have 60 seconds to fight, do your best and fight our faculty!\n",
-                         self.window.width / 3.2, start_y,
-                         arcade.color.WHITE,
-                         cn.DEFAULT_FONT_SIZE / 2,
-                         multiline=True,
-                         width=700)
-
-        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 4,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
-
-        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 45,
+        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 65,
                          arcade.color.WHITE, font_size=15, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
@@ -50,7 +49,10 @@ class SelectionScreen(arcade.Window):
          # Reset the viewport
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
-
+    def button_clicked(self, _x, _y, _button):
+        game_view = s.StageView()
+        game_view.setup()
+        self.window.show_view(game_view)
 
 
     def on_show_view(self):
