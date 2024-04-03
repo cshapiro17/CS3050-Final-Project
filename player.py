@@ -479,6 +479,8 @@ class Player(object):
                 ####Where sprite changes with movement##############
         if self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
             self.cur_sprites = self.idle_sprite
+        elif self.jumping and self.punching:
+            self.cur_sprites = self.jattack_sprites
         elif self.jumping:
             self.cur_sprites = self.jumping_sprites
         elif self.crouching:
@@ -487,10 +489,8 @@ class Player(object):
             self.cur_sprites = self.attack_sprites
         elif self.state==State.h_punch:
             self.cur_sprites = self.idle_sprite
-        elif self.jumping and self.state==State.h_punch:
-            self.cur_sprites = self.jattack_sprites
-        elif self.state==State.aa_punch:
-            self.cur_sprites = self.idle_sprite
+
+       
         else:
             self.cur_sprites = self.running_sprites
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
@@ -821,7 +821,7 @@ class Player(object):
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
         
-        
+
                 self.state_counter -= 1  # Increment cycle
             elif self.state_counter == 0 | self.state_counter < 0:
                 self.state_counter = 0  # Reset cycle so it can be started again
