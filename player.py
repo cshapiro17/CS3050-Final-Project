@@ -179,8 +179,11 @@ class Player(object):
 
         ##Idle#######################################
         self.idle_sprite=[]
+        # self.sprite2=arcade.load_texture(f"images/png/Lisa.png",flipped_horizontally = True)
+        # self.idle_sprite.append(self.sprite2)
+        
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/png/Idle__00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/png/Lisa3.png",flipped_horizontally = True)
             self.idle_sprite.append(self.sprite2)
 
        ###Left####
@@ -224,6 +227,18 @@ class Player(object):
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/png/Attack__00{i}.png")
             self.attack_sprites.append(self.sprite2)
+
+        ###Jump Attack####
+        self.jattack_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Attack__00{i}.png",flipped_horizontally = True)
+            self.jattack_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Attack__00{i}.png")
+            self.jattack_sprites.append(self.sprite2)
 
 
 
@@ -427,8 +442,8 @@ class Player(object):
 
         self.player_sprites[0].center_y = self.center_y
         self.player_sprites[0].center_x = self.center_x
-        self.player_sprites[0].height = self.height
-        self.player_sprites[0].width = self.width
+        self.player_sprites[0].height = self.height*2
+        self.player_sprites[0].width = self.width*2
             
 
         
@@ -452,7 +467,7 @@ class Player(object):
 
         ###Fix Idle Command
                 ####Where sprite changes with movement##############
-        if self.state==State.idle and not self.jumping and not self.crouching  :
+        if self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
             self.cur_sprites = self.idle_sprite
         elif self.jumping:
             self.cur_sprites = self.jumping_sprites
@@ -461,6 +476,10 @@ class Player(object):
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
             self.cur_sprites = self.attack_sprites
         elif self.state==State.h_punch:
+            self.cur_sprites = self.idle_sprite
+        elif self.jumping and self.state==State.h_punch:
+            self.cur_sprites = self.jattack_sprites
+        elif self.state==State.aa_punch:
             self.cur_sprites = self.idle_sprite
         else:
             self.cur_sprites = self.running_sprites
