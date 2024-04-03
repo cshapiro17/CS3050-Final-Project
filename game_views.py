@@ -10,7 +10,7 @@ class InstructionView(arcade.View):
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.color_from_hex_string("#ffb453"))
+        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -43,7 +43,7 @@ class PauseView(arcade.View):
         self.stage_view = stage_view
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color_from_hex_string("#ffb453"))
+        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -91,7 +91,7 @@ class HelpView(arcade.View):
         self.pause_view = pause_view
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color_from_hex_string("#ffb453"))
+        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -126,7 +126,7 @@ class GameOverView(arcade.View):
         super().__init__()
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color_from_hex_string("#ffb453"))
+        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
