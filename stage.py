@@ -268,7 +268,7 @@ class StageView(arcade.View):
         
         # Set up game clock info
         self.timer_text = arcade.Text(
-            text = "00:00",
+            text = "01:00",
             start_x = cn.SCREEN_WIDTH/2,
             start_y = cn.SCREEN_HEIGHT - 85,
             color=arcade.color.BLACK,
@@ -327,7 +327,6 @@ class StageView(arcade.View):
         self.dummy.player_hitboxes.draw()
         self.floors.draw()
         self.ui.draw()
-        self.timer_text.draw()
         self.timer_text.draw()
         self.countdown_sprite.draw()
 
