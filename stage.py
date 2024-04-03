@@ -1,6 +1,7 @@
 import arcade
 import constants as cn
 from constants import State
+import game_views as gv
 import player as p
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
@@ -8,35 +9,41 @@ import datetime as dt  # TIMER FOR MAX MATCH TIME
 
 class InstructionView(arcade.View):
 
-#As of right now this is an example of a intro screen view. my plan as
+# As of right now this is an example of a intro screen view. my plan as
 # of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)
 
     def on_show_view(self):
-        """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.csscolor.DARK_SLATE_BLUE)
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_background_color(arcade.csscolor.BLACK)
+         # Reset the viewport
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
     def on_draw(self):
-        """ Draw this view """
         self.clear()
-        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 2,
+        start_y = cn.SCREEN_HEIGHT - cn.DEFAULT_LINE_HEIGHT * 6
+
+        arcade.draw_text("                   Welcome to Faculty Fighting!\n"
+                         "                         Here are the rules:\n"
+                         "      Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
+                         "      Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
+                         "                       Press (p) to pause the fight\n" 
+                         "      You have 60 seconds to fight, do your best and fight our faculty!\n",
+                         self.window.width / 3.2, start_y,
+                         arcade.color.WHITE,
+                         cn.DEFAULT_FONT_SIZE / 2,
+                         multiline=True,
+                         width=700)
+
+        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 4,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
-    
+
+        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 45,
+                         arcade.color.WHITE, font_size=15, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         game_view = StageView()
         game_view.setup()
         self.window.show_view(game_view)
-
-
-
-
 
 
 
@@ -63,6 +70,7 @@ class StageView(arcade.View):
     def __init__(self):
         # Call the parent class initializer
         super().__init__()
+
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None
@@ -120,6 +128,7 @@ class StageView(arcade.View):
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
+
         p1_center = [int(4 * cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         d_center = [int(cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 10)]  # STAGE FLOOR CENTER
@@ -296,9 +305,10 @@ class StageView(arcade.View):
 
     def on_update(self, delta_time):
         """
-        All the logic to move, and the game logic goes here.
-        Normally, you'll call update() on the sprite lists that
-        need it.
+        Calls update (and grav_cycle) functions for both players,
+            updates UI, and calls whos_on_first.
+        Also calls hit and hurt cycle (attack animations for both players,
+            and deals with the hit collision logic.
         """
         self.player_1.update(floors=self.floors)
         self.dummy.update(floors=self.floors)
@@ -315,8 +325,6 @@ class StageView(arcade.View):
         #     or the stun on player_1 (it literally can't be hit)
 
         # Check to see if the player has attacked the dummy,
-
-        # TODO: Hit-stun needs work, multi-hit issues have been solved tho.
         """
         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
         ⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -335,7 +343,6 @@ class StageView(arcade.View):
         ⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⠗⠂⠄⠀⣴⡟⠀⠀⡃⠀⠉⠉⠟⡿⣿⣿⣿
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⠾⠛⠂⢹⠀⠀⠀⢡⠀⠀⠀⠀⠀⠙⠛⠿⢿⣿
         """
-
 
         """
         Update the game clock
@@ -503,114 +510,11 @@ class StageView(arcade.View):
         """
         Called whenever a key on the keyboard is pressed.
 
-        ### Right now I've tuned it for the directional inputs I came up with in
-            potential_control_schema.txt.
-
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
         self.player_1.player_key_press(key, key_modifiers)
         self.dummy.player_key_press(key, key_modifiers)
-        """
-        if self.player_1.state_counter == 0:
-            # USE EITHER STATE.HIT OR STUN-LOCK TO KEEP TRACK OF WHEN THEY CAN'T START NEW MOVES
-            if not self.player_1.state == State.hit:
-                if not (self.player_1.keymap is None):
-                    if self.player_1.SPRINT == key:
-                        if self.player_1.right & self.player_1.lefting:
-                            print("LEFTING SPRINTING")
-                            self.player_1.sprinting = True
-                            # SPRINT LEFT BEHAVIOR GOES HERE
-                        elif (not self.player_1.right) & self.player_1.righting:
-                            print("RIGHTING SPRINTING")
-                            self.player_1.sprinting = True
-                            # SPRINT RIGHT BEHAVIOR GOES HERE
-                        else:
-                            print("DIR INPUT NEEDED BEFORE SPRINT PRESSED")
-                            self.player_1.sprinting = False
-                    else:
-                        match key:
-                            case self.player_1.JUMP:
-                                print("JUMPING")
-                                self.player_1.state = State.idle
-                                if self.player_1.lefting:
-                                    self.player_1.left_jump = True
-                                elif self.player_1.righting:
-                                    self.player_1.right_jump = True
-                                else:
-                                    self.player_1.neutral_jump = True
-                                self.player_1.jumping = True
-                            case self.player_1.DAFOE:
-                                print("DAFOEING")
-                                self.player_1.dafoeing = True
-                                # LOOK UP BEHAVIOR GOES HERE
-                            case self.player_1.CROUCH:
-                                print("CROUCHING")
-                                self.player_1.crouching = True
-                                # CROUCH BEHAVIOR GOES HERE
-                            case self.player_1.LEFT:
-                                print("LEFTING")
-                                self.player_1.lefting = True
-                                self.player_1.righting = False
-                                # MOVE LEFT BEHAVIOR GOES HERE
-                                if not self.player_1.right:
-                                    self.player_1.state = State.blocking
-                                    print("BLOCKING")
-                                    self.player_1.change_x_L -= int(3 * cn.PLAYER_SPEED / 5)
-                                else:
-                                    self.player_1.change_x_L -= cn.PLAYER_SPEED
-                            case self.player_1.RIGHT:
-                                print("RIGHTING")
-                                self.player_1.righting = True
-                                self.player_1.lefting = False
-                                # MOVE RIGHT BEHAVIOR GOES HERE
-                                if self.player_1.right:
-                                    self.player_1.state = State.blocking
-                                    print("BLOCKING")
-                                    self.player_1.change_x_R += int(3 * cn.PLAYER_SPEED / 5)
-                                else:
-                                    self.player_1.change_x_R += cn.PLAYER_SPEED
-                            case self.player_1.PUNCH:
-                                print("PUNCH")
-                                self.player_1.punching = True
-                                if ((self.player_1.righting & (not self.player_1.right)) |
-                                        (self.player_1.lefting & self.player_1.right)):
-                                    print("light punch")
-                                    self.player_1.state = State.l_punch  # LIGHT PUNCH
-                                    self.player_1.state_counter = cn.L_HIT_LENGTH
-                                elif self.player_1.dafoeing:
-                                    print("anti-air punch")
-                                    self.player_1.state = State.aa_punch  # ANTI-AIR PUNCH
-                                    self.player_1.state_counter = cn.S_HIT_LENGTH
-                                elif self.player_1.crouching:
-                                    print("low-profile punch")
-                                    self.player_1.state = State.lp_punch  # LOW-PROFILE PUNCH
-                                    self.player_1.state_counter = cn.L_HIT_LENGTH
-                                else:
-                                    print("heavy punch")
-                                    self.player_1.state = State.h_punch  # HEAVY PUNCH
-                                    self.player_1.state_counter = cn.H_HIT_LENGTH
-                            case self.player_1.KICK:
-                                print("KICKING")
-                                self.player_1.kicking = True
-                                if ((self.player_1.righting & (not self.player_1.right)) |
-                                        (self.player_1.lefting & self.player_1.right)):
-                                    print("light kick")
-                                    self.player_1.state = State.l_kick  # LIGHT KICK
-                                    self.player_1.state_counter = cn.L_HIT_LENGTH
-                                elif self.player_1.dafoeing:
-                                    print("anti-air kick")
-                                    self.player_1.state = State.aa_kick  # ANTI-AIR KICK
-                                    self.player_1.state_counter = cn.S_HIT_LENGTH
-                                elif self.player_1.crouching:
-                                    print("low-profile kick")
-                                    self.player_1.state = State.lp_kick  # LOW-PROFILE KICK
-                                    self.player_1.state_counter = cn.S_HIT_LENGTH
-                                else:
-                                    print("heavy kick")
-                                    self.player_1.state = State.h_kick  # HEAVY KICK
-                                    self.player_1.state_counter = cn.H_HIT_LENGTH
-            """
 
     def on_key_release(self, key, key_modifiers):
         """
@@ -618,70 +522,11 @@ class StageView(arcade.View):
         """
         self.player_1.player_key_release(key, key_modifiers)
         self.dummy.player_key_release(key, key_modifiers)
-        """
-        match key:
-            case self.player_1.SPRINT:
-                print("NO SPRINTING")
-                self.player_1.sprinting = False
-            case self.player_1.JUMP:
-                print("NO JUMPING")
-            case self.player_1.DAFOE:
-                print("NO DAFOEING")
-                self.player_1.dafoeing = False
-            case self.player_1.CROUCH:
-                print("NO CROUCHING")
-                self.player_1.crouching = False
-            case self.player_1.LEFT:
-                print("NO LEFTING")
-                self.player_1.lefting = False
-                self.player_1.change_x_L = 0
-                if self.player_1.state == State.blocking:
-                    self.player_1.state = State.idle
-                    print("NO BLOCKING")
-            case self.player_1.RIGHT:
-                print("NO RIGHTING")
-                self.player_1.righting = False
-                self.player_1.change_x_R = 0
-                if self.player_1.state == State.blocking:
-                    self.player_1.state = State.idle
-                    print("NO BLOCKING")
-            case self.player_1.PUNCH:
-                print("NO PUNCHING")
-                self.player_1.punching = False
-            case self.player_1.KICK:
-                print("NO KICKING")
-                self.player_1.kicking = False
-        """
-
-    # MOUSE COMMANDS CURRENTLY UNNECESSARY
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
-        """ Handle Mouse Motion """
-
-        # Move the center of the player sprite to match the mouse x, y
-        """
-        self.player_1.center_x = x
-        self.player_1.center_y = y
-        if int(self.player_1.state) > 2:
-            for hitbox in self.player_1.player_hitboxes:
-                hitbox.center_x = x
-                hitbox.center_y = y
-        """
-
-    # MOUSE COMMANDS CURRENTLY UNNECESSARY
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        """
-        Called when the user presses a mouse button.
-        """
-        pass
-
-    # MOUSE COMMANDS CURRENTLY UNNECESSARY
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Called when a user releases a mouse button.
-        """
-        pass
 
     def whos_on_first(self):
+        """
+        Checks who's on which side of the arena, and keeps track of that
+        """
         if (not (self.player_1.jump_or_nah(floors=self.floors))) & self.player_1.jumping:
             if self.player_1.center_x >= self.dummy.center_x:
                 self.player_1.change_x_J -= 10
@@ -702,6 +547,9 @@ class StageView(arcade.View):
             self.player_1.change_x_J = 0
 
     def ui_update(self):
+        """
+        Updates the UI
+        """
         # --- DUMMY UI REFRESH ---
         if self.dummy.health < 1:
             self.d_health.alpha = 0
@@ -718,6 +566,7 @@ class StageView(arcade.View):
             self.d_block.width = int(self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
             self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                         ((self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
+
         # --- PLAYER UI REFRESH ---
         if self.player_1.health < 1:
             self.p_1_health.alpha = 0
@@ -726,6 +575,7 @@ class StageView(arcade.View):
             self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
             self.p_1_health.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                                             ((self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT) / 2))
+
         if self.player_1.block_health < 1:
             self.p_1_block.alpha = 0
         else:
@@ -733,16 +583,3 @@ class StageView(arcade.View):
             self.p_1_block.width = int(self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT)
             self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                                         ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
-
-#TO DO - delete
-# def main():
-#     """ Main function """
-#     window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
-#     stage_view = StageView()
-#     window.show_view(stage_view)
-#     stage_view.setup()
-#     arcade.run()
-#
-#
-# if __name__ == "__main__":
-#     main()
