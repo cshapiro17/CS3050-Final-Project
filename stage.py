@@ -111,14 +111,16 @@ class StageView(arcade.View):
 
         # Set up game clock info
         self.total_time = 0.0
-        self.timer_text = arcade.Text(
-            text = "00:00",
-            start_x = cn.SCREEN_WIDTH/2,
-            start_y = cn.SCREEN_HEIGHT - 85,
-            color=arcade.color.BLACK,
-            font_size= 25,
-            anchor_x="center",
-        )
+        self.timer_text = None
+
+        # Set up start countdown info
+        self.start_time = 0
+        self.countdown_sprite = None
+        
+        # Game View Sprites
+        self.player_health_bar_sprite = None
+        self.dummy_health_bar_sprite = None
+        self.timer_sprite = None
 
         # If you have sprite lists, you should create them here,
         # and set them to None
@@ -197,7 +199,7 @@ class StageView(arcade.View):
                                                   cn.PORTRAIT_DIMENSIONS[1],
                                                   [0, 0, 250])
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
-        self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9)
+        self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.d_health = arcade.SpriteSolidColor(int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
                                                 30,  # HEIGHT OF HEALTH BAR
                                                 [255, 0, 0])
@@ -212,7 +214,7 @@ class StageView(arcade.View):
         self.d_block.center_x = int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                     ((self.dummy.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
         # * 1.6 is to correct the offset from the portrait
-        self.d_block.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 20
+        self.d_block.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 23.5
         # 20px is for offset for block bar
 
         # PLAYER TRACKER UI
@@ -220,7 +222,7 @@ class StageView(arcade.View):
                                                     cn.PORTRAIT_DIMENSIONS[1],
                                                     [0, 255, 0])
         self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
-        self.p_1_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9)
+        self.p_1_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.p_1_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
                                                   30,  # HEIGHT OF HEALTH BAR
                                                   [255, 0, 0])
@@ -235,7 +237,7 @@ class StageView(arcade.View):
         self.p_1_block.center_x = cn.SCREEN_WIDTH - int(int(cn.PORTRAIT_DIMENSIONS[0] * 1.8) +
                                                         ((self.player_1.block_health * cn.BLOCK_BAR_PIXEL_CONSTANT) / 2))
         # * 1.6 is to correct the offset from the portrait
-        self.p_1_block.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 20
+        self.p_1_block.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 23.5
         # 20px is for offset for block bar
 
         # TIMER
@@ -244,16 +246,54 @@ class StageView(arcade.View):
                                              [255, 255, 100])
         self.timer.center_x = cn.SCREEN_WIDTH / 2
         self.timer.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9)
-        # 20px is for offset for block bar
+
+        # Health bar UI sprites
+        self.player_health_bar_sprite = arcade.Sprite("sprites/health_6.png",
+                                               center_x=self.p_1_health.center_x + 61,
+                                               center_y=self.p_1_health.center_y - 24,
+                                               flipped_horizontally=True)
         
+        self.dummy_health_bar_sprite = arcade.Sprite("sprites/health_6.png",
+                                               center_x=self.d_health.center_x - 61,
+                                               center_y=self.d_health.center_y - 24)
+        
+                
+        # Set the background to the desired image (default as Waterman green)
+        self.background = arcade.load_texture("images/backgrounds/votey.jpg")
+        
+        # Timer UI sprite
+        self.timer_sprite = arcade.Sprite("sprites/timer.png",
+                                          center_x= self.timer.center_x,
+                                          center_y= self.timer.center_y)
+        
+        # Set up game clock info
+        self.timer_text = arcade.Text(
+            text = "00:00",
+            start_x = cn.SCREEN_WIDTH/2,
+            start_y = cn.SCREEN_HEIGHT - 85,
+            color=arcade.color.BLACK,
+            font_size= 25,
+            anchor_x="center",
+        )
+
+        # Set up the start countdown
+        self.start_time = cn.COUNTDOWN_TIME
+
+        # Set up the countdown sprite
+        self.countdown_sprite = arcade.Sprite("sprites/three.png",
+                                              center_x=cn.SCREEN_WIDTH/2,
+                                              center_y=cn.SCREEN_HEIGHT/2)
+
         # UI APPEND TO LIST
+        self.ui.append(self.player_health_bar_sprite)
+        self.ui.append(self.dummy_health_bar_sprite)
+        self.ui.append(self.timer_sprite)
         self.ui.append(self.d_portrait)
         self.ui.append(self.p_1_portrait)
         self.ui.append(self.d_health)
         self.ui.append(self.p_1_health)
         self.ui.append(self.d_block)
         self.ui.append(self.p_1_block)
-        self.ui.append(self.timer)
 
         """
         self.ui.append(self.d_super)
@@ -288,6 +328,8 @@ class StageView(arcade.View):
         self.floors.draw()
         self.ui.draw()
         self.timer_text.draw()
+        self.timer_text.draw()
+        self.countdown_sprite.draw()
 
     def on_update(self, delta_time):
         """
@@ -304,7 +346,7 @@ class StageView(arcade.View):
         self.player_1.grav_cycle(floors=self.floors)
         self.dummy.grav_cycle(floors=self.floors)
         self.whos_on_first()
-        self.ui_update()
+        self.ui_update(delta_time)
 
         # Now the hard part: retooling hit detection for the new inputs
         #   - We don't need to check for moves from the dummy (it doesn't even have inputs)
@@ -330,24 +372,7 @@ class StageView(arcade.View):
         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⠾⠛⠂⢹⠀⠀⠀⢡⠀⠀⠀⠀⠀⠙⠛⠿⢿⣿
         """
 
-        """
-        Update the game clock
-        """
-        minutes = int(self.total_time) // 60
-        seconds = int(self.total_time) % 60
-
-        if minutes == 0.0 and seconds == 0.0:
-            # Change the view to "Game Over" view
-
-            # Make sure time does not decrease
-            self.total_time = 0.0
-        else:
-            # Accumulate the total time
-            self.total_time -= delta_time
-
-        # Create the text for the timer
-        self.timer_text.text = f"{minutes:02d}:{seconds:02d}"
-
+        
         hit_on_dummy = 0
         if self.dummy.stun == 0:  # 1st see if Dummy isn't already stunned
             hit_on_dummy = 0
@@ -499,6 +524,11 @@ class StageView(arcade.View):
         For a full list of keys, see:
         https://api.arcade.academy/en/latest/arcade.key.html
         """
+        if key == arcade.key.P:   # pause game
+            # pass self, the current view, to preserve this view's state
+            pause = gv.PauseView(self)
+            self.window.show_view(pause)
+
         self.player_1.player_key_press(key, key_modifiers)
         self.dummy.player_key_press(key, key_modifiers)
 
@@ -532,10 +562,52 @@ class StageView(arcade.View):
                 self.dummy.right = True
             self.player_1.change_x_J = 0
 
-    def ui_update(self):
+    def ui_update(self, delta_time):
         """
         Updates the UI
         """
+        """
+        Update the countdown sequence
+        """
+        self.start_time -= delta_time
+
+        if self.start_time <= cn.COUNTDOWN_TIME and self.start_time > 2.5:
+            self.countdown_sprite = arcade.Sprite("sprites/three.png",
+                                                  center_x=cn.SCREEN_WIDTH/2,
+                                                  center_y=cn.SCREEN_HEIGHT/2)
+        elif self.start_time <= 2.5 and self.start_time > 1.25:
+            self.countdown_sprite = arcade.Sprite("sprites/two.png",
+                                                  center_x=cn.SCREEN_WIDTH/2 - 1,
+                                                  center_y=cn.SCREEN_HEIGHT/2 - 12)
+                    # Decrement the countdown time
+        elif self.start_time <= 1.25 and self.start_time > 0:
+            self.countdown_sprite = arcade.Sprite("sprites/one.png",
+                                                  center_x=cn.SCREEN_WIDTH/2 + 4,
+                                                  center_y=cn.SCREEN_HEIGHT/2 + 2) 
+                    # Decrement the countdown time
+        else:
+            self.countdown_sprite.visible = False
+            self.start_time = 0.0
+
+            """
+            Update the game clock
+            """
+
+            minutes = int(self.total_time) // 60
+            seconds = int(self.total_time) % 60
+
+            if minutes == 0.0 and seconds == 0.0:
+                # Change the view to "Game Over" view
+                self.window.show_view(gv.GameOverView())
+
+                # Make sure time does not decrease
+                self.total_time = 0.0
+            else:
+                # Accumulate the total time
+                self.total_time -= delta_time
+
+            # Create the text for the timer
+            self.timer_text.text = f"{minutes:02d}:{seconds:02d}"
         # --- DUMMY UI REFRESH ---
         if self.dummy.health < 1:
             self.d_health.alpha = 0
