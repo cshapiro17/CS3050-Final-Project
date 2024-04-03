@@ -2,6 +2,7 @@ import arcade
 import constants as cn
 from constants import State
 import player as p
+import game_views as gv
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 

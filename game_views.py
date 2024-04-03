@@ -8,33 +8,35 @@ class InstructionView(arcade.View):
 
     def __init__(self):
         super().__init__()
-        self.text= arcade.Text("         Welcome to Komputer Science Kombat: A Faculty Fighting Game!\n"
-                                "                         Here are the rules:\n \n"
-                                "      Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
-                                "      Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
-                                "                       Press (p) to pause the fight\n" 
-                                "      You have 60 seconds to fight, do your best and fight our faculty!\n"
-                                "  To block, walk backwards (away from enemy), and press (shift) to dash\n"
-                                "press (q) to punch, (-q) for a heavy punch, (e) to kick (-e) to heavy kick, and beat your opponent with a Heavy Move by pressing (f)"
-                                "       If you run into any issues, press (h) for help, and press (esc) to quit",
-                                 self.window.width / 3.8, cn.START_Y,
-                                 arcade.color.WHITE,
-                                 cn.DEFAULT_FONT_SIZE / 2,
+        self.text= arcade.Text("Welcome to Komputer Science Kombat: A Faculty Fighting Game!\n"
+                                "Here are the rules:\n \n"
+                                "Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
+                                "Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
+                                "Press (p) to pause the fight\n" 
+                                "You have 60 seconds to fight, do your best and fight our faculty!\n"
+                                "To block, walk backwards (away from enemy), and press (shift) to dash\n"
+                                "Press (q) to punch, (-q) for a heavy punch, (e) to kick (-e) to heavy kick,\n"
+                                "and beat your opponent with a Heavy Move by pressing (f)\n"
+                                "If you run into any issues, press (h) for help, and press (q) to quit",
+                                 self.window.width / 12, cn.START_Y +35,
+                                 cn.K_RED,
+                                 cn.DEFAULT_FONT_SIZE - 10,
                                  multiline=True,
-                                 width=700)
+                                 width=1300)
     def on_show_view(self):
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(cn.K_ORANGE)
          # Reset the viewport
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
     def on_draw(self):
         self.clear()
+        arcade.draw_rectangle_filled(self.window.width /2, self.window.height /2.25, self.window.width , cn.START_Y -30, arcade.color.WHITE)
         self.text.draw()
-        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 4 - 45,
-                         arcade.color.WHITE, font_size=30, anchor_x="center")
+        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height - 130,
+                         arcade.color.WHITE, font_size=40, anchor_x="center")
 
-        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 65,
-                         arcade.color.WHITE, font_size=15, anchor_x="center")
+        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 105,
+                         arcade.color.WHITE, font_size=25, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
@@ -44,6 +46,11 @@ class InstructionView(arcade.View):
 
 
 class SelectionScreen(arcade.Window):
+
+    def __init__(self, game_view):
+        super().__init__()
+        self.game_view = game_view
+
     def on_show_view(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
          # Reset the viewport
@@ -54,14 +61,6 @@ class SelectionScreen(arcade.Window):
         game_view.setup()
         self.window.show_view(game_view)
 
-
-    def on_show_view(self):
-        """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.color_from_hex_string("#ffb453"))
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
-        arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
     def on_draw(self):
         """ Draw this view """
