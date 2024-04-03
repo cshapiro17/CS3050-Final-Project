@@ -164,55 +164,78 @@ class Player(object):
         ###########################Sprites##################################
         
         ###Running
-        self.running_sprites_left=[]
-        self.sprite1=arcade.load_texture(f"images/png/Idle__000.png")
-        #self.sprite2=arcade.load_texture(f"images/png/Idle__000.png",flipped_horizontally = True)
-        self.running_sprites_left.append(self.sprite1)
-        #self.running_sprites.append(self.sprite2)
+        ##Running left 0-8
+        self.running_sprites=[]
         for i in range(9):
-            self.sprite1=arcade.load_texture(f"images/png/Run__00{i}.png")
-            #self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png",flipped_horizontally = True)
-            self.running_sprites_left.append(self.sprite1)
-            #self.running_sprites.append(self.sprite2)
-
-        self.running_sprites_right=[]
-        #self.sprite1=arcade.load_texture(f"images/png/Idle__000.png")
-        self.sprite2=arcade.load_texture(f"images/png/Idle__000.png",flipped_horizontally = True)
-        #self.running_sprites_left.append(self.sprite1)
-        self.running_sprites_right.append(self.sprite2)
-        for i in range(9):
-            #self.sprite1=arcade.load_texture(f"images/png/Run__00{i}.png")
             self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png",flipped_horizontally = True)
-            #self.running_sprites_right.append(self.sprite1)
-            self.running_sprites_right.append(self.sprite2)
+            self.running_sprites.append(self.sprite2)
 
-      
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png")
+            self.running_sprites.append(self.sprite2)
+     
+
+        ##Idle#######################################
+        self.idle_sprite=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Idle__00{i}.png",flipped_horizontally = True)
+            self.idle_sprite.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Idle__00{i}.png")
+            self.idle_sprite.append(self.sprite2)
         
-        self.idle_sprintes_right=[]
+
+        ##########JUMPING###################
+        self.jumping_sprites=[]
         for i in range(9):
-            self.sprite1=arcade.load_texture(f"images/png/Idle__00{i}.png")
-            #self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png",flipped_horizontally = True)
-            self.idle_sprintes_right.append(self.sprite1)
-            #self.running_sprites.append(self.sprite2)
+            self.sprite2=arcade.load_texture(f"images/png/Jump__00{i}.png",flipped_horizontally = True)
+            self.jumping_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Jump__00{i}.png")
+            self.running_sprites.append(self.sprite2)
+     
+      ########Crouching####################
+        self.crouching_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Slide__00{i}.png",flipped_horizontally = True)
+            self.crouching_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Slide__00{i}.png")
+            self.crouching_sprites.append(self.sprite2)
+     ###Attack####
+        self.attack_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Attack__00{i}.png",flipped_horizontally = True)
+            self.attack_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/png/Attack__00{i}.png")
+            self.attack_sprites.append(self.sprite2)
 
 
-        self.idle_sprintes_left=[]
-        for i in range(9):
-            self.sprite1=arcade.load_texture(f"images/png/Idle__00{i}.png",flipped_horizontally = True)
-            #self.sprite2=arcade.load_texture(f"images/png/Run__00{i}.png",flipped_horizontally = True)
-            self.idle_sprintes_left.append(self.sprite1)
-            #self.running_sprites.append(self.sprite2)
+
+
+
 
         ##Set current player sprite to idle
-        self.cur_sprites = self.idle_sprintes_left
+        self.cur_sprites = self.idle_sprite
 
-        ##
-        if self.right:
-            self.index = 1
-        else:
-            self.index = 0
+       
 
-        self.cur_index=self.index
+        self.cur_index=0
 
         ##Makes the idle textures into sprites
         self.player_sprite = arcade.Sprite()
@@ -345,26 +368,13 @@ class Player(object):
             self.change_y = self.change_y_S
         else:
             self.change_x = self.change_x_L + self.change_x_R
-            
         self.change_y = self.change_y_J
-             ##Changing the sprites with movement
-                
-           
-            
 
 
         # Update position
         if self.stun == 0:
             self.center_x += self.change_x
             self.center_y += self.change_y
-            
-            
-                
-            
-
-            
-
-        
 
             if self.dafoeing:
                 if self.height + 3 < int(cn.SPRITE_PLAYER_HEIGHT*1.2):
@@ -404,8 +414,7 @@ class Player(object):
                     self.width -= 5
                 else:
                     self.width = cn.SPRITE_PLAYER_WIDTH
-              
-
+            
 
 
                 
@@ -416,45 +425,45 @@ class Player(object):
         self.player_hurtboxes[0].height = self.height
         self.player_hurtboxes[0].width = self.width
 
-
-       
-
         self.player_sprites[0].center_y = self.center_y
         self.player_sprites[0].center_x = self.center_x
-        self.player_sprites[0].height = self.height*1.5
-        self.player_sprites[0].width = self.width*3
+        self.player_sprites[0].height = self.height
+        self.player_sprites[0].width = self.width
             
 
-        self.player_sprite.texture = self.cur_sprites[self.cur_index]
+        
+        # self.player_sprite.texture = self.cur_sprites[self.cur_index]  
+       
+        # Using Extended Hitbox to track direction player is facing
         self.player_hurtboxes[1].center_y = self.center_y
-        if self.cur_index>=8:
+        if self.right:
+            self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+            if self.cur_index>=8:
                 self.cur_index=0
+            else:
+                self.cur_index+=1
+            
         else:
+            self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+            if self.cur_index>=17:
+                self.cur_index=9
+            else:
                 self.cur_index+=1
 
-        # Using Extended Hitbox to track direction player is facing
-        ####IF right
-        if self.right:
-
-            self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
-            self.index=1
-            if self.state == State.idle:
-                self.cur_sprites = self.idle_sprintes_left
-            else:
-                if self.righting:
-                    self.cur_sprites = self.running_sprites_right
-            
-        ###IF LEFT
+        ###Fix Idle Command
+                ####Where sprite changes with movement##############
+        if self.state==State.idle and not self.jumping and not self.crouching  :
+            self.cur_sprites = self.idle_sprite
+        elif self.jumping:
+            self.cur_sprites = self.jumping_sprites
+        elif self.crouching:
+            self.cur_sprites = self.crouching_sprites
+        elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            self.cur_sprites = self.attack_sprites
+        elif self.state==State.h_punch:
+            self.cur_sprites = self.idle_sprite
         else:
-            
-            self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
-            self.index=0
-            if self.state == State.idle:
-                self.cur_sprites = self.idle_sprintes_right
-            else:
-                self.cur_sprites = self.running_sprites_left
-
-
+            self.cur_sprites = self.running_sprites
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
 
         
@@ -508,6 +517,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
+                        
                     # ACTIVE:
                     elif self.state_counter > int(cn.H_HIT_LENGTH)/3:
                         # Player Hitbox Setup:
@@ -517,6 +527,8 @@ class Player(object):
                         self.player_hitboxes[0].width = 6*(cn.H_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].height = 2*(cn.H_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
+
+                      
                     # RECOVERY:
                     elif self.state_counter > 0:
                         self.player_hitboxes[0].center_x = 0
@@ -524,6 +536,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
+                       
                 if self.state == State.aa_punch:  # ANTI-AIR PUNCH
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
