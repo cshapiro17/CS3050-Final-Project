@@ -174,13 +174,13 @@ class Player(object):
         ##Running left 0-8
         self.running_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Run00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/Jason/Run00{i}.png",flipped_horizontally = True)
             self.running_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Run00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/Jason/Run00{i}.png")
             self.running_sprites.append(self.sprite2)
      
 
@@ -190,61 +190,61 @@ class Player(object):
         # self.idle_sprite.append(self.sprite2)
         
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Idle.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/Jason/Idle.png",flipped_horizontally = True)
             self.idle_sprite.append(self.sprite2)
 
        ###Left####
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Idle.png")
+            self.sprite2=arcade.load_texture(f"images/Jason/Idle.png")
             self.idle_sprite.append(self.sprite2)
         
 
         ##########JUMPING###################
         self.jumping_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Jump00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/Jason/Jump00{i}.png",flipped_horizontally = True)
             self.jumping_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Jump00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/Jason/Jump00{i}.png")
             self.running_sprites.append(self.sprite2)
      
       ########Crouching####################
         self.crouching_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Slide.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/Jason/Slide.png",flipped_horizontally = True)
             self.crouching_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Slide.png")
+            self.sprite2=arcade.load_texture(f"images/Jason/Slide.png")
             self.crouching_sprites.append(self.sprite2)
      ###Attack####
         self.attack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Attack00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/Jason/Attack00{i}.png",flipped_horizontally = True)
             self.attack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Attack00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/Jason/Attack00{i}.png")
             self.attack_sprites.append(self.sprite2)
 
         ###Jump Attack####
         self.jattack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/JumpAttack00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/Jason/JumpAttack00{i}.png",flipped_horizontally = True)
             self.jattack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/JumpAttack00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/Jason/JumpAttack00{i}.png")
             self.jattack_sprites.append(self.sprite2)
 
 
