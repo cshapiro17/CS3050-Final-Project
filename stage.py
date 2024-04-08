@@ -102,6 +102,8 @@ class StageView(arcade.View):
         self.dummy_extended_hurtbox = None
         self.dummy_hitbox = None
 
+        self.player_sprite=None
+
         # Don't show the mouse cursor
         self.window.set_mouse_visible(False)
 
@@ -154,6 +156,7 @@ class StageView(arcade.View):
         self.player_hitbox.center_y = 0
 
         # ===
+        
 
         # -- DUMMY HURTBOXES --
         self.dummy_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Test Dummy Health/Body Hit Box
@@ -179,6 +182,10 @@ class StageView(arcade.View):
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
                                  self.player_hitbox, 2)  # input_map = 2 for right split keymap
+        
+        
+       ## self.scene.add_sprite(self.player_1)
+
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
@@ -295,6 +302,8 @@ class StageView(arcade.View):
         self.ui.append(self.d_block)
         self.ui.append(self.p_1_block)
 
+
+       
         """
         self.ui.append(self.d_super)
         self.ui.append(self.p_1_super)
@@ -322,9 +331,14 @@ class StageView(arcade.View):
 
         # Call draw() on all your sprite lists below
         self.player_1.player_hurtboxes.draw()
+        self.player_1.player_sprites.draw()
         self.player_1.player_hitboxes.draw()
+        
+        
         self.dummy.player_hurtboxes.draw()
         self.dummy.player_hitboxes.draw()
+
+
         self.floors.draw()
         self.ui.draw()
         self.timer_text.draw()
