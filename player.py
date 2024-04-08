@@ -226,7 +226,7 @@ class Player(object):
      ###Attack####
         self.attack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/SPL/ugh.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/SPL/Attack00{i}.png",flipped_horizontally = True)
             self.attack_sprites.append(self.sprite2)
 
        ###Left 
@@ -238,13 +238,13 @@ class Player(object):
         ###Jump Attack####
         self.jattack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/SPL/JA.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/SPL/JumpAttack00{i}.png",flipped_horizontally = True)
             self.jattack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/SPL/JA.png")
+            self.sprite2=arcade.load_texture(f"images/SPL/JumpAttack00{i}.png")
             self.jattack_sprites.append(self.sprite2)
 
 
