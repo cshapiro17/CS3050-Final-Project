@@ -266,7 +266,10 @@ class Player(object):
        
         
         
-
+        ######Sound Effects:
+        # Load sounds
+        self.sword_sound = arcade.load_sound('SoundEffect/Sword.wav')
+        
 
         if input_map == 0:
             self.keymap = FULL_KEYMAP
@@ -485,7 +488,9 @@ class Player(object):
         elif self.crouching:
             self.cur_sprites = self.crouching_sprites
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.attack_sprites
+            
         elif self.state==State.h_punch:
             self.cur_sprites = self.idle_sprite
         else:
