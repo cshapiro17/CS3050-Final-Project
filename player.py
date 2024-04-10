@@ -99,7 +99,7 @@ class Player(object):
                  width: int, height: int,
                  main_hurtbox: arcade.SpriteSolidColor, extended_hurtbox: arcade.SpriteSolidColor,
                  hitbox: arcade.SpriteSolidColor,
-                 input_map: int):
+                 input_map: int, character_input:int):
         """
         CONTAINS ALL SET-UP AND VARIABLE DECLARATION FOR THE PLAYER CLASS
         """
@@ -170,82 +170,104 @@ class Player(object):
 
         ###########################Sprites##################################
         
+        ##Character choice:
+        if (character_input==1):
+            character="Lisa"
+        elif (character_input==2):
+            character="Jackie"
+        elif (character_input==3):
+            character="Jason"
+        elif (character_input==4):
+            character="Chris"
+        else:
+            character="Robot"
+
         ###Running
         ##Running left 0-8
         self.running_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Run00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Run00{i}.png",flipped_horizontally = True)
             self.running_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Run00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Run00{i}.png")
             self.running_sprites.append(self.sprite2)
      
 
         ##Idle#######################################
         self.idle_sprite=[]
-        # self.sprite2=arcade.load_texture(f"images/png/Lisa.png",flipped_horizontally = True)
-        # self.idle_sprite.append(self.sprite2)
-        
+       
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Idle.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Idle.png",flipped_horizontally = True)
             self.idle_sprite.append(self.sprite2)
 
        ###Left####
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Idle.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Idle.png")
             self.idle_sprite.append(self.sprite2)
         
 
         ##########JUMPING###################
         self.jumping_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Jump00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png",flipped_horizontally = True)
             self.jumping_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Jason/Jump00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png")
             self.running_sprites.append(self.sprite2)
      
       ########Crouching####################
         self.crouching_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Slide.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Slide.png",flipped_horizontally = True)
             self.crouching_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Slide.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Slide.png")
             self.crouching_sprites.append(self.sprite2)
      ###Attack####
         self.attack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Attack00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png",flipped_horizontally = True)
             self.attack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Attack00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png")
             self.attack_sprites.append(self.sprite2)
 
         ###Jump Attack####
         self.jattack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/JumpAttack00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png",flipped_horizontally = True)
             self.jattack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/JumpAttack00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png")
             self.jattack_sprites.append(self.sprite2)
+
+        ##Dying:
+        self.dead_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png",flipped_horizontally = True)
+            self.dead_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png")
+            self.dead_sprites.append(self.sprite2)
 
 
 
@@ -268,7 +290,9 @@ class Player(object):
         
         ######Sound Effects:
         # Load sounds
-        self.sword_sound = arcade.load_sound('SoundEffect/Sword.wav')
+
+        self.sword_sound=arcade.load_sound("SoundEffect/Sword3.wav")
+        self.hurt_sound=arcade.load_sound("SoundEffect/hurt.wav")
         
 
         if input_map == 0:
@@ -460,7 +484,6 @@ class Player(object):
             
 
         
-        # self.player_sprite.texture = self.cur_sprites[self.cur_index]  
        
         # Using Extended Hitbox to track direction player is facing
         self.player_hurtboxes[1].center_y = self.center_y
@@ -1014,6 +1037,7 @@ class Player(object):
         Checks the block value when hit, if there is a block value subtract damage from that,
             if not then take damage value from health.
         """
+        arcade.play_sound(self.hurt_sound)
         if self.blocking:
             p_block_health = self.block_health  # prev block health
             c_block_health = self.block_health-hit_damage  # new 'current' block health
@@ -1033,3 +1057,6 @@ class Player(object):
             self.health -= hit_damage  # Not blocking
             print("BLOCK HEALTH = " + str(self.block_health))
             return True
+        
+        if self.health==0:
+            self.cur_sprites = self.dead_sprites

@@ -181,15 +181,15 @@ class StageView(arcade.View):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, 2)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, 2,1)  # input_map = 2 for right split keymap
         
         
-       ## self.scene.add_sprite(self.player_1)
+      
 
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 1)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, 1,5)  # input_map = 1 for left split keymap
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -337,6 +337,7 @@ class StageView(arcade.View):
         
         self.dummy.player_hurtboxes.draw()
         self.dummy.player_hitboxes.draw()
+        self.dummy.player_sprites.draw()
 
 
         self.floors.draw()
