@@ -673,7 +673,7 @@ class Player(object):
                     # ACTIVE:
                     elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
                         # Player Hitbox Setup:
-                        self.player_hitboxes[0].center_x = self.center_x - (8(cn.L_HIT_LENGTH -
+                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
                                                                             self.state_counter)) * screen_side_mod
                         self.player_hitboxes[0].center_y = 2*self.center_y - ((cn.L_HIT_LENGTH -
                                                                             self.state_counter))
