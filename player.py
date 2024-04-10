@@ -304,6 +304,11 @@ class Player(object):
             - Accounts for movement/ Updates position
             -
         """
+        if self.block_health > cn.FULL_BLOCK:
+            self.block_health = cn.FULL_BLOCK
+        elif not (self.block_health == cn.FULL_BLOCK):
+            self.block_health += 0.05
+
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
