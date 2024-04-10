@@ -189,7 +189,7 @@ class StageView(arcade.View):
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 1,5)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, 1,2)  # input_map = 1 for left split keymap
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -504,6 +504,7 @@ class StageView(arcade.View):
                             self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("PLAYER HEALTH = " + str(self.player_1.health))
                     if self.player_1.health <= 0:
+                        
                         self.player_1.health = cn.PLAYER_HEALTH
                         self.player_1.block_health = cn.FULL_BLOCK
             else:  # IF NOT HIT AND ~NOT STUNNED~

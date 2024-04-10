@@ -502,7 +502,10 @@ class Player(object):
                 self.cur_index+=1
 
                 ####Where sprite changes with movement##############
-        if self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
+        print(self.health)
+        if self.health<=0:
+            self.cur_sprites = self.dead_sprites
+        elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
             self.cur_sprites = self.idle_sprite
         elif self.jumping and self.punching:
             self.cur_sprites = self.jattack_sprites
@@ -1058,5 +1061,5 @@ class Player(object):
             print("BLOCK HEALTH = " + str(self.block_health))
             return True
         
-        if self.health==0:
-            self.cur_sprites = self.dead_sprites
+       
+            
