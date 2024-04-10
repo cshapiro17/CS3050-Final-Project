@@ -27,7 +27,7 @@ FULL_KEYMAP = dict(
     LEFT=arcade.key.A,
     RIGHT=arcade.key.D,
     PUNCH=arcade.key.J,
-    KICK=arcade.key.K,
+    #KICK=arcade.key.K,
     SPECIAL=arcade.key.L
 )
 if platform.system() == 'Darwin':
@@ -39,7 +39,7 @@ if platform.system() == 'Darwin':
         LEFT=arcade.key.A,
         RIGHT=arcade.key.D,
         PUNCH=arcade.key.Z,
-        KICK=arcade.key.X,
+        #KICK=arcade.key.X,
         SPECIAL=arcade.key.C
     )
     SPLIT_KEYMAP_R = dict(
@@ -50,7 +50,7 @@ if platform.system() == 'Darwin':
         LEFT=arcade.key.J,
         RIGHT=arcade.key.L,
         PUNCH=arcade.key.M,
-        KICK=arcade.key.COMMA,
+        #KICK=arcade.key.COMMA,
         SPECIAL=arcade.key.PERIOD
     )
 else:
@@ -62,7 +62,7 @@ else:
         LEFT=arcade.key.A,
         RIGHT=arcade.key.D,
         PUNCH=arcade.key.Z,
-        KICK=arcade.key.X,
+        #KICK=arcade.key.X,
         SPECIAL=arcade.key.C
     )
     SPLIT_KEYMAP_R = dict(
@@ -73,7 +73,7 @@ else:
         LEFT=arcade.key.J,
         RIGHT=arcade.key.L,
         PUNCH=arcade.key.M,
-        KICK=arcade.key.COMMA,
+        #KICK=arcade.key.COMMA,
         SPECIAL=arcade.key.PERIOD
     )
 
@@ -87,7 +87,7 @@ GAMEPAD_KEYMAP = dict(
     LEFT=arcade.key.?,
     RIGHT=arcade.key.?,
     PUNCH=arcade.key.?,
-    KICK=arcade.key.?,
+    #KICK=arcade.key.?,
     SPECIAL=arcade.key.?
 )
 """
@@ -284,7 +284,7 @@ class Player(object):
             self.LEFT = self.keymap['LEFT']
             self.RIGHT = self.keymap['RIGHT']
             self.PUNCH = self.keymap['PUNCH']
-            self.KICK = self.keymap['KICK']
+            #self.KICK = self.keymap['KICK']
         else:
             self.keymap = None
             self.JUMP = None
@@ -294,7 +294,7 @@ class Player(object):
             self.LEFT = None
             self.RIGHT = None
             self.PUNCH = None
-            self.KICK = None
+            #self.KICK = None
 
     def update(self, floors):
         """
@@ -627,7 +627,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
-                if self.state == State.l_kick:  # LIGHT Kick
+                """if self.state == State.l_kick:  # LIGHT Kick
                     # START-UP:
                     if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
                         self.player_hitboxes[0].center_x = 0
@@ -676,7 +676,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
-                if self.state == State.aa_punch:  # ANTI-AIR Kick
+                if self.state == State.aa_kick:  # ANTI-AIR Kick
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
                         self.player_hitboxes[0].center_x = 0
@@ -726,7 +726,7 @@ class Player(object):
                         self.player_hitboxes[0].center_y = 0
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
-                        self.player_hitboxes[0].render_hitbox = False
+                        self.player_hitboxes[0].render_hitbox = False"""
         
 
                 self.state_counter -= 1  # Increment cycle
@@ -794,7 +794,7 @@ class Player(object):
                         self.width = cn.SPRITE_PLAYER_WIDTH
                         self.height = cn.SPRITE_PLAYER_HEIGHT
                         self.center_x -= 10 * screen_side_mod
-                if self.state == State.l_kick:
+                """if self.state == State.l_kick:
                     pre_center_y = self.center_y
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
@@ -822,7 +822,7 @@ class Player(object):
                 if self.state == State.lp_kick:
                     pass
                 if self.state == State.h_kick:
-                    pass
+                    pass"""
                 self.state_counter -= 1  # Increment cycle
             elif self.state_counter == 0 | self.state_counter < 0:
                 self.state_counter = 0  # Reset cycle so it can be started again
@@ -958,8 +958,9 @@ class Player(object):
                                         print("heavy punch")
                                         self.state = State.h_punch  # HEAVY PUNCH
                                         self.state_counter = cn.H_HIT_LENGTH
-                            case self.KICK:
-                                if self.stun == 0:
+
+                            # case self.KICK:  # Getting weird behavior with the IDE here, so starting with line cmt
+                                """if self.stun == 0:
                                     print("KICKING")
                                     self.kicking = True
                                     if ((self.righting & (not self.right)) |
@@ -978,7 +979,7 @@ class Player(object):
                                     else:
                                         print("heavy kick")
                                         self.state = State.h_kick  # HEAVY KICK
-                                        self.state_counter = cn.H_HIT_LENGTH
+                                        self.state_counter = cn.H_HIT_LENGTH"""
 
     def player_key_release(self, key, key_modifiers):
         """
@@ -1014,9 +1015,9 @@ class Player(object):
             case self.PUNCH:
                 print("NO PUNCHING")
                 self.punching = False
-            case self.KICK:
-                print("NO KICKING")
-                self.kicking = False
+            #case self.KICK:
+            #    print("NO KICKING")
+            #    self.kicking = False
 
     def block_check(self, hit_damage):  # RETURN FALSE IF BLOCK IS INTACT, TRUE IF BROKEN
         """
