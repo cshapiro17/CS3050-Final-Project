@@ -3,6 +3,7 @@ import constants as cn
 from constants import State
 import game_views as gv
 import player as p
+import computer_controller as c
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
@@ -126,6 +127,9 @@ class StageView(arcade.View):
 
         # If you have sprite lists, you should create them here,
         # and set them to None
+        self.player_controller_num = None
+        self.dummy_controller_num = None
+        self.controller = None
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -177,11 +181,17 @@ class StageView(arcade.View):
         self.dummy_hitbox.center_x = 0
         self.dummy_hitbox.center_y = 0
 
+        # For controller_nums, 0 is full keymap, 1 is left split, 2 is right split, < 0 is mister roboto
+        self.player_controller_num = 2  # input_map = 2 for right split keymap
+        self.dummy_controller_num = 1  # input_map = 1 for left split keymap
+        if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
+            self.controller = c.Controller(self.dummy, self.player_1)
+
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, 2)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, 2)
         
         
        ## self.scene.add_sprite(self.player_1)
@@ -189,7 +199,7 @@ class StageView(arcade.View):
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 1)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, 1)
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
