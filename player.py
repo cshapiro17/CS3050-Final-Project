@@ -27,7 +27,7 @@ FULL_KEYMAP = dict(
     LEFT=arcade.key.A,
     RIGHT=arcade.key.D,
     PUNCH=arcade.key.J,
-    KICK=arcade.key.K,
+    #KICK=arcade.key.K,
     SPECIAL=arcade.key.L
 )
 if platform.system() == 'Darwin':
@@ -39,7 +39,7 @@ if platform.system() == 'Darwin':
         LEFT=arcade.key.A,
         RIGHT=arcade.key.D,
         PUNCH=arcade.key.Z,
-        KICK=arcade.key.X,
+        #KICK=arcade.key.X,
         SPECIAL=arcade.key.C
     )
     SPLIT_KEYMAP_R = dict(
@@ -50,7 +50,7 @@ if platform.system() == 'Darwin':
         LEFT=arcade.key.J,
         RIGHT=arcade.key.L,
         PUNCH=arcade.key.M,
-        KICK=arcade.key.COMMA,
+        #KICK=arcade.key.COMMA,
         SPECIAL=arcade.key.PERIOD
     )
 else:
@@ -62,7 +62,7 @@ else:
         LEFT=arcade.key.A,
         RIGHT=arcade.key.D,
         PUNCH=arcade.key.Z,
-        KICK=arcade.key.X,
+        #KICK=arcade.key.X,
         SPECIAL=arcade.key.C
     )
     SPLIT_KEYMAP_R = dict(
@@ -73,7 +73,7 @@ else:
         LEFT=arcade.key.J,
         RIGHT=arcade.key.L,
         PUNCH=arcade.key.M,
-        KICK=arcade.key.COMMA,
+        #KICK=arcade.key.COMMA,
         SPECIAL=arcade.key.PERIOD
     )
 
@@ -87,7 +87,7 @@ GAMEPAD_KEYMAP = dict(
     LEFT=arcade.key.?,
     RIGHT=arcade.key.?,
     PUNCH=arcade.key.?,
-    KICK=arcade.key.?,
+    #KICK=arcade.key.?,
     SPECIAL=arcade.key.?
 )
 """
@@ -295,7 +295,7 @@ class Player(object):
 
         self.cur_index=0
 
-        ##Makes the idle textures into sprites
+        # Makes the idle textures into sprites
         self.player_sprite = arcade.Sprite()
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
         self.player_sprites.append(self.player_sprite)
@@ -336,6 +336,11 @@ class Player(object):
             - Accounts for movement/ Updates position
             -
         """
+        if self.block_health > cn.FULL_BLOCK:
+            self.block_health = cn.FULL_BLOCK
+        elif not (self.block_health == cn.FULL_BLOCK):
+            self.block_health += 0.05
+
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
@@ -674,7 +679,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
-                if self.state == State.l_kick:  # LIGHT Kick
+                """if self.state == State.l_kick:  # LIGHT Kick
                     # START-UP:
                     if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
                         self.player_hitboxes[0].center_x = 0
@@ -723,7 +728,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
-                if self.state == State.aa_punch:  # ANTI-AIR Kick
+                if self.state == State.aa_kick:  # ANTI-AIR Kick
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
                         self.player_hitboxes[0].center_x = 0
@@ -734,7 +739,7 @@ class Player(object):
                     # ACTIVE:
                     elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
                         # Player Hitbox Setup:
-                        self.player_hitboxes[0].center_x = self.center_x - (8(cn.L_HIT_LENGTH -
+                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
                                                                             self.state_counter)) * screen_side_mod
                         self.player_hitboxes[0].center_y = 2*self.center_y - ((cn.L_HIT_LENGTH -
                                                                             self.state_counter))
@@ -773,7 +778,7 @@ class Player(object):
                         self.player_hitboxes[0].center_y = 0
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
-                        self.player_hitboxes[0].render_hitbox = False
+                        self.player_hitboxes[0].render_hitbox = False"""
         
 
                 self.state_counter -= 1  # Increment cycle
@@ -841,7 +846,7 @@ class Player(object):
                         self.width = cn.SPRITE_PLAYER_WIDTH
                         self.height = cn.SPRITE_PLAYER_HEIGHT
                         self.center_x -= 10 * screen_side_mod
-                if self.state == State.l_kick:
+                """if self.state == State.l_kick:
                     pre_center_y = self.center_y
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
@@ -869,7 +874,7 @@ class Player(object):
                 if self.state == State.lp_kick:
                     pass
                 if self.state == State.h_kick:
-                    pass
+                    pass"""
                 self.state_counter -= 1  # Increment cycle
             elif self.state_counter == 0 | self.state_counter < 0:
                 self.state_counter = 0  # Reset cycle so it can be started again
@@ -1005,8 +1010,9 @@ class Player(object):
                                         print("heavy punch")
                                         self.state = State.h_punch  # HEAVY PUNCH
                                         self.state_counter = cn.H_HIT_LENGTH
-                            case self.KICK:
-                                if self.stun == 0:
+
+                            # case self.KICK:  # Getting weird behavior with the IDE here, so starting with line cmt
+                                """if self.stun == 0:
                                     print("KICKING")
                                     self.kicking = True
                                     if ((self.righting & (not self.right)) |
@@ -1025,7 +1031,7 @@ class Player(object):
                                     else:
                                         print("heavy kick")
                                         self.state = State.h_kick  # HEAVY KICK
-                                        self.state_counter = cn.H_HIT_LENGTH
+                                        self.state_counter = cn.H_HIT_LENGTH"""
 
     def player_key_release(self, key, key_modifiers):
         """
@@ -1061,9 +1067,9 @@ class Player(object):
             case self.PUNCH:
                 print("NO PUNCHING")
                 self.punching = False
-            case self.KICK:
-                print("NO KICKING")
-                self.kicking = False
+            #case self.KICK:
+            #    print("NO KICKING")
+            #    self.kicking = False
 
     def block_check(self, hit_damage):  # RETURN FALSE IF BLOCK IS INTACT, TRUE IF BROKEN
         """
