@@ -326,7 +326,7 @@ class Player(object):
         self.LEFT = self.keymap['LEFT']
         self.RIGHT = self.keymap['RIGHT']
         self.PUNCH = self.keymap['PUNCH']
-        self.KICK = self.keymap['KICK']
+        #self.KICK = self.keymap['KICK']
 
     def update(self, floors):
         """
