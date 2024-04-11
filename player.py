@@ -12,6 +12,13 @@ Keymaps: FULL_KEYMAP is for single-player commands,
     Darwin is for Macs, as their keyboards differ from Windows.
 """
 
+"""
+Keymaps: FULL_KEYMAP is for single-player commands,
+    SPLIT_KEYMAPs are for split characters.
+    Darwin is for Macs, as their keyboards differ from Windows.
+"""
+
+
 FULL_KEYMAP = dict(
     JUMP=arcade.key.SPACE,
     SPRINT=arcade.key.LSHIFT,
@@ -20,7 +27,7 @@ FULL_KEYMAP = dict(
     LEFT=arcade.key.A,
     RIGHT=arcade.key.D,
     PUNCH=arcade.key.J,
-    KICK=arcade.key.K,
+    #KICK=arcade.key.K,
     SPECIAL=arcade.key.L
 )
 if platform.system() == 'Darwin':
@@ -32,7 +39,7 @@ if platform.system() == 'Darwin':
         LEFT=arcade.key.A,
         RIGHT=arcade.key.D,
         PUNCH=arcade.key.Z,
-        KICK=arcade.key.X,
+        #KICK=arcade.key.X,
         SPECIAL=arcade.key.C
     )
     SPLIT_KEYMAP_R = dict(
@@ -43,7 +50,7 @@ if platform.system() == 'Darwin':
         LEFT=arcade.key.J,
         RIGHT=arcade.key.L,
         PUNCH=arcade.key.M,
-        KICK=arcade.key.COMMA,
+        #KICK=arcade.key.COMMA,
         SPECIAL=arcade.key.PERIOD
     )
 else:
@@ -55,7 +62,7 @@ else:
         LEFT=arcade.key.A,
         RIGHT=arcade.key.D,
         PUNCH=arcade.key.Z,
-        KICK=arcade.key.X,
+        #KICK=arcade.key.X,
         SPECIAL=arcade.key.C
     )
     SPLIT_KEYMAP_R = dict(
@@ -66,7 +73,7 @@ else:
         LEFT=arcade.key.J,
         RIGHT=arcade.key.L,
         PUNCH=arcade.key.M,
-        KICK=arcade.key.COMMA,
+        #KICK=arcade.key.COMMA,
         SPECIAL=arcade.key.PERIOD
     )
 
@@ -80,7 +87,7 @@ GAMEPAD_KEYMAP = dict(
     LEFT=arcade.key.?,
     RIGHT=arcade.key.?,
     PUNCH=arcade.key.?,
-    KICK=arcade.key.?,
+    #KICK=arcade.key.?,
     SPECIAL=arcade.key.?
 )
 """
@@ -92,7 +99,7 @@ class Player(object):
                  width: int, height: int,
                  main_hurtbox: arcade.SpriteSolidColor, extended_hurtbox: arcade.SpriteSolidColor,
                  hitbox: arcade.SpriteSolidColor,
-                 input_map: int):
+                 input_map: int, character_input:int):
         """
         CONTAINS ALL SET-UP AND VARIABLE DECLARATION FOR THE PLAYER CLASS
         """
@@ -103,8 +110,10 @@ class Player(object):
         self.change_y = 0
         self.height = height
         self.width = width
+        self.character_input=character_input
 
         # State Accounting:
+        self.player_sprites=False
         self.state = cn.State.idle
         self.health = cn.PLAYER_HEALTH     # UI will grab these in stage for bars
         self.block_health = cn.FULL_BLOCK  # UI will grab these in stage for bars
@@ -149,7 +158,9 @@ class Player(object):
         #   Hurt/Hitbox Lists:
         self.player_hurtboxes = arcade.SpriteList()
         self.player_hitboxes = arcade.SpriteList()
-        #   Hurt/Hitbox Assignment:
+        self.player_sprites=arcade.SpriteList()
+        
+        # Hurt/Hitbox Assignment:
         self.main_hurtbox = main_hurtbox
         self.player_hurtboxes.append(self.main_hurtbox)
         self.extended_hurtbox = extended_hurtbox
@@ -157,24 +168,176 @@ class Player(object):
         self.hitbox = hitbox
         self.player_hitboxes.append(self.hitbox)
 
-        if input_map == 0:
-            self.keymap = FULL_KEYMAP
-        elif input_map == 1:
-            self.keymap = SPLIT_KEYMAP_L
-        elif input_map == 2:
-            self.keymap = SPLIT_KEYMAP_R
-        """
-        elif input_map == 3:
-            self.keymap = GAMEPAD_KEYMAP
-        """
-        self.JUMP = self.keymap['JUMP']
-        self.SPRINT = self.keymap['SPRINT']
-        self.DAFOE = self.keymap['DAFOE']
-        self.CROUCH = self.keymap['CROUCH']
-        self.LEFT = self.keymap['LEFT']
-        self.RIGHT = self.keymap['RIGHT']
-        self.PUNCH = self.keymap['PUNCH']
-        self.KICK = self.keymap['KICK']
+
+        ###########################Sprites##################################
+        
+        ##Character choice:
+        if (character_input==1):
+            character="Lisa"
+        elif (character_input==2):
+            character="Jackie"
+        elif (character_input==3):
+            character="Jason"
+        elif (character_input==4):
+            character="Chris"
+        else:
+            character="Robot"
+
+        ###Running
+        ##Running left 0-8
+        self.running_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Run00{i}.png",flipped_horizontally = True)
+            self.running_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Run00{i}.png")
+            self.running_sprites.append(self.sprite2)
+     
+
+        ##Idle#######################################
+        self.idle_sprite=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Idle.png",flipped_horizontally = True)
+            self.idle_sprite.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Idle.png")
+            self.idle_sprite.append(self.sprite2)
+        
+
+        ##########JUMPING###################
+        self.jumping_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png",flipped_horizontally = True)
+            self.jumping_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png")
+            self.jumping_sprites.append(self.sprite2)
+     
+      ########Crouching####################
+        self.crouching_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Slide.png",flipped_horizontally = True)
+            self.crouching_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Slide.png")
+            self.crouching_sprites.append(self.sprite2)
+     ###Attack####
+        self.attack_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png",flipped_horizontally = True)
+            self.attack_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png")
+            self.attack_sprites.append(self.sprite2)
+
+        ###Jump Attack####
+        self.jattack_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png",flipped_horizontally = True)
+            self.jattack_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png")
+            self.jattack_sprites.append(self.sprite2)
+
+        ##Dying:
+        self.dead_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png",flipped_horizontally = True)
+            self.dead_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png")
+            self.dead_sprites.append(self.sprite2)
+        
+        ##Block#######################################
+        self.block_sprite=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Block.png",flipped_horizontally = True)
+            self.block_sprite.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Block.png")
+            self.block_sprite.append(self.sprite2)
+
+
+
+
+
+
+        ##Set current player sprite to idle
+        self.cur_sprites = self.idle_sprite
+
+       
+
+        self.cur_index=0
+
+        # Makes the idle textures into sprites
+        self.player_sprite = arcade.Sprite()
+        self.player_sprite.texture = self.cur_sprites[self.cur_index]
+        self.player_sprites.append(self.player_sprite)
+       
+        
+        
+        ######Sound Effects:
+        # Load sounds
+
+        self.sword_sound=arcade.load_sound("SoundEffect/Sword3.wav")
+        self.hurt_sound=arcade.load_sound("SoundEffect/hurt.wav")
+        
+        if input_map >= 0:
+            if input_map == 0:
+                self.keymap = FULL_KEYMAP
+            elif input_map == 1:
+                self.keymap = SPLIT_KEYMAP_L
+            elif input_map == 2:
+                self.keymap = SPLIT_KEYMAP_R
+            """
+            elif input_map == 3:
+                self.keymap = GAMEPAD_KEYMAP
+            """
+            self.JUMP = self.keymap['JUMP']
+            self.SPRINT = self.keymap['SPRINT']
+            self.DAFOE = self.keymap['DAFOE']
+            self.CROUCH = self.keymap['CROUCH']
+            self.LEFT = self.keymap['LEFT']
+            self.RIGHT = self.keymap['RIGHT']
+            self.PUNCH = self.keymap['PUNCH']
+            #self.KICK = self.keymap['KICK']
+        else:
+            self.keymap = None
+            self.JUMP = None
+            self.SPRINT = None
+            self.DAFOE = None
+            self.CROUCH = None
+            self.LEFT = None
+            self.RIGHT = None
+            self.PUNCH = None
+            # self.KICK = None
+
 
     def update(self, floors):
         """
@@ -184,9 +347,15 @@ class Player(object):
             - Accounts for movement/ Updates position
             -
         """
+        if self.block_health > cn.FULL_BLOCK:
+            self.block_health = cn.FULL_BLOCK
+        elif not (self.block_health == cn.FULL_BLOCK):
+            self.block_health += 0.05
+
         # Sprite list updates
         self.player_hurtboxes.update()
         self.player_hitboxes.update()
+        self.player_sprites.update()
 
         # Jump Behavior
         self.grav_cycle(floors)
@@ -283,6 +452,7 @@ class Player(object):
             self.change_x = self.change_x_L + self.change_x_R
         self.change_y = self.change_y_J
 
+
         # Update position
         if self.stun == 0:
             self.center_x += self.change_x
@@ -326,6 +496,10 @@ class Player(object):
                     self.width -= 5
                 else:
                     self.width = cn.SPRITE_PLAYER_WIDTH
+            
+
+
+                
 
         # Main body tracking
         self.player_hurtboxes[0].center_y = self.center_y
@@ -333,13 +507,69 @@ class Player(object):
         self.player_hurtboxes[0].height = self.height
         self.player_hurtboxes[0].width = self.width
 
+        self.player_sprites[0].center_y = self.center_y
+        self.player_sprites[0].center_x = self.center_x
+        self.player_sprites[0].height = self.height
+        self.player_sprites[0].width = self.width
+            
+
+        
+       
         # Using Extended Hitbox to track direction player is facing
         self.player_hurtboxes[1].center_y = self.center_y
         if self.right:
             self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+            
+            
+            if self.cur_index>=8:
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=0
+                else:
+                    ##Keep the sprite on the floor
+                    self.cur_index=8
+            else:
+                    self.cur_index+=1
+            
         else:
             self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
 
+            if self.cur_index>=17:
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=9
+                else:
+                    self.cur_index=17
+            else:
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=17
+                else:
+                    self.cur_index+=1
+
+       
+
+                ####Where sprite changes with movement##############
+        print(self.health)
+        if self.health<=0:
+            self.cur_sprites = self.dead_sprites
+        elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
+            self.cur_sprites = self.idle_sprite
+        elif self.jumping and self.punching:
+            self.cur_sprites = self.jattack_sprites
+        elif self.jumping:
+            self.cur_sprites = self.jumping_sprites
+        elif self.crouching:
+            self.cur_sprites = self.crouching_sprites
+        elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            arcade.play_sound(self.sword_sound)
+            self.cur_sprites = self.attack_sprites  
+        elif self.state==State.h_punch:
+            self.cur_sprites = self.idle_sprite
+        elif self.state==State.blocking:
+            self.cur_sprites = self.block_sprite
+        else:
+            self.cur_sprites = self.running_sprites
+        self.player_sprite.texture = self.cur_sprites[self.cur_index]
+
+        
     def hit_cycle(self):  # this one's gonna be a solid brick of code. no joke. true pain.
         """
         Moves the hitbox in accordance with attack commands
@@ -391,6 +621,7 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
+                        
                     # ACTIVE:
                     elif self.state_counter > int(cn.H_HIT_LENGTH)/3:
                         # Player Hitbox Setup:
@@ -400,6 +631,8 @@ class Player(object):
                         self.player_hitboxes[0].width = 6*(cn.H_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].height = 2*(cn.H_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
+
+                      
                     # RECOVERY:
                     elif self.state_counter > 0:
                         self.player_hitboxes[0].center_x = 0
@@ -434,7 +667,7 @@ class Player(object):
                         self.player_hitboxes[0].render_hitbox = False
                 if self.state == State.lp_punch:  # LOW-PROFILE PUNCH
                     # START-UP:
-                    if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
+                    if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
                         self.player_hitboxes[0].center_x = 0
                         self.player_hitboxes[0].center_y = 0
                         self.player_hitboxes[0].width = 1
@@ -457,7 +690,56 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
-                if self.state == State.l_kick:  # LIGHT KICK
+                """if self.state == State.l_kick:  # LIGHT Kick
+                    # START-UP:
+                    if self.state_counter > 5*int(cn.L_HIT_LENGTH)/6:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                        # Player Hitbox Setup:
+                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter)) * screen_side_mod
+                        self.player_hitboxes[0].center_y = self.center_y - (2*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter))
+                        self.player_hitboxes[0].width = 7*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 3*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].render_hitbox = True
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                if self.state == State.h_kick:  # HEAVY Kick
+                    # START-UP:
+                    if self.state_counter > 5*int(cn.H_HIT_LENGTH)/6:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.H_HIT_LENGTH)/3:
+                        # Player Hitbox Setup:
+                        self.player_hitboxes[0].center_x = self.center_x - (4*(cn.H_HIT_LENGTH -
+                                                                            self.state_counter)) * screen_side_mod
+                        self.player_hitboxes[0].center_y = (1.1 * self.center_y) - (cn.L_HIT_LENGTH - self.state_counter)
+                        self.player_hitboxes[0].width = 6*(cn.H_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 2*(cn.H_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].render_hitbox = True
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                if self.state == State.aa_kick:  # ANTI-AIR Kick
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
                         self.player_hitboxes[0].center_x = 0
@@ -470,8 +752,9 @@ class Player(object):
                         # Player Hitbox Setup:
                         self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
                                                                             self.state_counter)) * screen_side_mod
-                        self.player_hitboxes[0].center_y = self.center_y - 4*self.state_counter
-                        self.player_hitboxes[0].width = 10*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].center_y = 2*self.center_y - ((cn.L_HIT_LENGTH -
+                                                                            self.state_counter))
+                        self.player_hitboxes[0].width = 9*(cn.L_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
                         self.player_hitboxes[0].render_hitbox = True
                     # RECOVERY:
@@ -481,6 +764,34 @@ class Player(object):
                         self.player_hitboxes[0].width = 1
                         self.player_hitboxes[0].height = 1
                         self.player_hitboxes[0].render_hitbox = False
+                if self.state == State.lp_kick:  # LOW-PROFILE kick
+
+                    # START-UP:
+                    if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False
+                    # ACTIVE:
+                    elif self.state_counter > int(cn.L_HIT_LENGTH)/3:
+                        # Player Hitbox Setup:
+                        self.player_hitboxes[0].center_x = self.center_x - (8*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter)) * screen_side_mod
+                        self.player_hitboxes[0].center_y = self.center_y - (4*(cn.L_HIT_LENGTH -
+                                                                            self.state_counter))
+                        self.player_hitboxes[0].width = 10*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].height = 4*(cn.L_HIT_LENGTH-self.state_counter)
+                        self.player_hitboxes[0].render_hitbox = True
+                    # RECOVERY:
+                    elif self.state_counter > 0:
+                        self.player_hitboxes[0].center_x = 0
+                        self.player_hitboxes[0].center_y = 0
+                        self.player_hitboxes[0].width = 1
+                        self.player_hitboxes[0].height = 1
+                        self.player_hitboxes[0].render_hitbox = False"""
+        
+
                 self.state_counter -= 1  # Increment cycle
             elif self.state_counter == 0 | self.state_counter < 0:
                 self.state_counter = 0  # Reset cycle so it can be started again
@@ -546,7 +857,7 @@ class Player(object):
                         self.width = cn.SPRITE_PLAYER_WIDTH
                         self.height = cn.SPRITE_PLAYER_HEIGHT
                         self.center_x -= 10 * screen_side_mod
-                if self.state == State.l_kick:
+                """if self.state == State.l_kick:
                     pre_center_y = self.center_y
                     # START-UP:
                     if self.state_counter > 2*int(cn.L_HIT_LENGTH)/3:
@@ -574,7 +885,7 @@ class Player(object):
                 if self.state == State.lp_kick:
                     pass
                 if self.state == State.h_kick:
-                    pass
+                    pass"""
                 self.state_counter -= 1  # Increment cycle
             elif self.state_counter == 0 | self.state_counter < 0:
                 self.state_counter = 0  # Reset cycle so it can be started again
@@ -710,8 +1021,9 @@ class Player(object):
                                         print("heavy punch")
                                         self.state = State.h_punch  # HEAVY PUNCH
                                         self.state_counter = cn.H_HIT_LENGTH
-                            case self.KICK:
-                                if self.stun == 0:
+
+                            # case self.KICK:  # Getting weird behavior with the IDE here, so starting with line cmt
+                                """if self.stun == 0:
                                     print("KICKING")
                                     self.kicking = True
                                     if ((self.righting & (not self.right)) |
@@ -730,7 +1042,7 @@ class Player(object):
                                     else:
                                         print("heavy kick")
                                         self.state = State.h_kick  # HEAVY KICK
-                                        self.state_counter = cn.H_HIT_LENGTH
+                                        self.state_counter = cn.H_HIT_LENGTH"""
 
     def player_key_release(self, key, key_modifiers):
         """
@@ -766,15 +1078,16 @@ class Player(object):
             case self.PUNCH:
                 print("NO PUNCHING")
                 self.punching = False
-            case self.KICK:
-                print("NO KICKING")
-                self.kicking = False
+            #case self.KICK:
+            #    print("NO KICKING")
+            #    self.kicking = False
 
     def block_check(self, hit_damage):  # RETURN FALSE IF BLOCK IS INTACT, TRUE IF BROKEN
         """
         Checks the block value when hit, if there is a block value subtract damage from that,
             if not then take damage value from health.
         """
+        arcade.play_sound(self.hurt_sound)
         if self.blocking:
             p_block_health = self.block_health  # prev block health
             c_block_health = self.block_health-hit_damage  # new 'current' block health
@@ -784,6 +1097,7 @@ class Player(object):
                 return False  # Block is intact
             elif (p_block_health > 0) & (c_block_health <= 0):
                 self.block_health = 0
+                self.health -= (hit_damage-p_block_health)
                 print("BLOCK HEALTH = "+str(self.block_health))
                 return True  # BLOCK IS BROKEN, STUN!
             elif p_block_health == 0:
@@ -794,3 +1108,6 @@ class Player(object):
             self.health -= hit_damage  # Not blocking
             print("BLOCK HEALTH = " + str(self.block_health))
             return True
+        
+       
+            

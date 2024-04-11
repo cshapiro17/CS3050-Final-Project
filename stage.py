@@ -1,8 +1,9 @@
 import arcade
 import constants as cn
 from constants import State
-import player as p
 import game_views as gv
+import player as p
+import computer_controller as c
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
@@ -59,6 +60,8 @@ class StageView(arcade.View):
         self.dummy_extended_hurtbox = None
         self.dummy_hitbox = None
 
+        self.player_sprite=None
+
         # Don't show the mouse cursor
         self.window.set_mouse_visible(False)
 
@@ -81,6 +84,9 @@ class StageView(arcade.View):
 
         # If you have sprite lists, you should create them here,
         # and set them to None
+        self.player_controller_num = None
+        self.dummy_controller_num = None
+        self.controller = None
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -112,6 +118,7 @@ class StageView(arcade.View):
 
         # ===
 
+
         # -- DUMMY HURTBOXES --
         self.dummy_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Test Dummy Health/Body Hit Box
                                                           cn.SPRITE_PLAYER_HEIGHT,
@@ -131,15 +138,25 @@ class StageView(arcade.View):
         self.dummy_hitbox.center_x = 0
         self.dummy_hitbox.center_y = 0
 
+        # TODO: Sync this with the UI, so different setups can be selected
+        # For controller_nums, 0 is full keymap, 1 is left split, 2 is right split, < 0 is mister roboto
+        self.player_controller_num = 0  # input_map = 2 for right split keymap
+        self.dummy_controller_num = -1  # input_map = 1 for left split keymap
+
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, 2)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, self.player_controller_num,4)  # input_map = 2 for right split keymap
+
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 1)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, self.dummy_controller_num,1)  # input_map = 1 for left split keymap
+
+        if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
+            self.controller = c.Controller(self.dummy, self.player_1)
+            self.controller.setup()
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -252,6 +269,8 @@ class StageView(arcade.View):
         self.ui.append(self.d_block)
         self.ui.append(self.p_1_block)
 
+
+
         """
         self.ui.append(self.d_super)
         self.ui.append(self.p_1_super)
@@ -278,10 +297,16 @@ class StageView(arcade.View):
                                             self.background)
 
         # Call draw() on all your sprite lists below
-        self.player_1.player_hurtboxes.draw()
-        self.player_1.player_hitboxes.draw()
-        self.dummy.player_hurtboxes.draw()
-        self.dummy.player_hitboxes.draw()
+       # self.player_1.player_hurtboxes.draw()
+        self.player_1.player_sprites.draw()
+        #self.player_1.player_hitboxes.draw()
+
+
+      #  self.dummy.player_hurtboxes.draw()
+       # self.dummy.player_hitboxes.draw()
+        self.dummy.player_sprites.draw()
+
+
         self.floors.draw()
         self.ui.draw()
         self.timer_text.draw()
@@ -299,6 +324,8 @@ class StageView(arcade.View):
         self.dummy.update(floors=self.floors)
         self.floors.update()
         self.ui.update()
+
+        self.controller.update()
 
         self.player_1.grav_cycle(floors=self.floors)
         self.dummy.grav_cycle(floors=self.floors)
@@ -378,9 +405,11 @@ class StageView(arcade.View):
                         if hit_stun:
                             self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("DUMMY HEALTH = " + str(self.dummy.health))
-                    if self.dummy.health <= 0:
-                        self.dummy.health = cn.PLAYER_HEALTH
-                        self.dummy.block_health = cn.FULL_BLOCK
+                    if self.dummy.health < 0:
+                        # self.dummy.health = cn.PLAYER_HEALTH
+                        # self.dummy.block_health = cn.FULL_BLOCK
+                        # TODO: END GAME
+                        pass
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 self.dummy.being_hit = False
                 for hitbox in self.player_1.player_hitboxes:
@@ -446,9 +475,11 @@ class StageView(arcade.View):
                         if hit_stun:
                             self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("PLAYER HEALTH = " + str(self.player_1.health))
-                    if self.player_1.health <= 0:
-                        self.player_1.health = cn.PLAYER_HEALTH
-                        self.player_1.block_health = cn.FULL_BLOCK
+                    if self.player_1.health < 0:
+                        # self.player_1.health = cn.PLAYER_HEALTH
+                        # self.player_1.block_health = cn.FULL_BLOCK
+                        # TODO: END GAME
+                        pass
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 self.player_1.being_hit = False
                 for hitbox in self.dummy.player_hitboxes:
@@ -473,6 +504,16 @@ class StageView(arcade.View):
 
         self.dummy.hit_cycle()
         self.dummy.hurt_cycle()
+
+        if self.dummy.center_x < 0:
+            self.dummy.center_x = 0
+        elif self.dummy.center_x > cn.SCREEN_WIDTH:
+            self.dummy.center_x = cn.SCREEN_WIDTH
+
+        if self.player_1.center_x < 0:
+            self.player_1.center_x = 0
+        elif self.player_1.center_x > cn.SCREEN_WIDTH:
+            self.player_1.center_x = cn.SCREEN_WIDTH
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -526,7 +567,10 @@ class StageView(arcade.View):
         """
         Update the countdown sequence
         """
+
         self.start_time -= delta_time
+        self.player_1.player_sprites.visible=False
+        self.dummy.player_sprites.visible=False
 
         if self.start_time <= cn.COUNTDOWN_TIME and self.start_time > 2.5:
             self.countdown_sprite = arcade.Sprite("sprites/three.png",
@@ -544,6 +588,8 @@ class StageView(arcade.View):
                     # Decrement the countdown time
         else:
             self.countdown_sprite.visible = False
+            self.player_1.player_sprites.visible=True
+            self.dummy.player_sprites.visible=True
             self.start_time = 0.0
 
             """
