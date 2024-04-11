@@ -184,8 +184,6 @@ class StageView(arcade.View):
         # For controller_nums, 0 is full keymap, 1 is left split, 2 is right split, < 0 is mister roboto
         self.player_controller_num = 0  # input_map = 2 for right split keymap
         self.dummy_controller_num = -1  # input_map = 1 for left split keymap
-        if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
-            self.controller = c.Controller(self.dummy, self.player_1)
 
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
@@ -197,6 +195,10 @@ class StageView(arcade.View):
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
                               self.dummy_hitbox, self.dummy_controller_num,1)  # input_map = 1 for left split keymap
+
+        if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
+            self.controller = c.Controller(self.dummy, self.player_1)
+            self.controller.setup()
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -359,11 +361,12 @@ class StageView(arcade.View):
         Also calls hit and hurt cycle (attack animations for both players,
             and deals with the hit collision logic.
         """
-        #self.controller.update()
         self.player_1.update(floors=self.floors)
         self.dummy.update(floors=self.floors)
         self.floors.update()
         self.ui.update()
+
+        self.controller.update()
 
         self.player_1.grav_cycle(floors=self.floors)
         self.dummy.grav_cycle(floors=self.floors)
