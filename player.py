@@ -308,25 +308,36 @@ class Player(object):
         self.sword_sound=arcade.load_sound("SoundEffect/Sword3.wav")
         self.hurt_sound=arcade.load_sound("SoundEffect/hurt.wav")
         
+        if input_map >= 0:
+            if input_map == 0:
+                self.keymap = FULL_KEYMAP
+            elif input_map == 1:
+                self.keymap = SPLIT_KEYMAP_L
+            elif input_map == 2:
+                self.keymap = SPLIT_KEYMAP_R
+            """
+            elif input_map == 3:
+                self.keymap = GAMEPAD_KEYMAP
+            """
+            self.JUMP = self.keymap['JUMP']
+            self.SPRINT = self.keymap['SPRINT']
+            self.DAFOE = self.keymap['DAFOE']
+            self.CROUCH = self.keymap['CROUCH']
+            self.LEFT = self.keymap['LEFT']
+            self.RIGHT = self.keymap['RIGHT']
+            self.PUNCH = self.keymap['PUNCH']
+            #self.KICK = self.keymap['KICK']
+        else:
+            self.keymap = None
+            self.JUMP = None
+            self.SPRINT = None
+            self.DAFOE = None
+            self.CROUCH = None
+            self.LEFT = None
+            self.RIGHT = None
+            self.PUNCH = None
+            # self.KICK = None
 
-        if input_map == 0:
-            self.keymap = FULL_KEYMAP
-        elif input_map == 1:
-            self.keymap = SPLIT_KEYMAP_L
-        elif input_map == 2:
-            self.keymap = SPLIT_KEYMAP_R
-        """
-        elif input_map == 3:
-            self.keymap = GAMEPAD_KEYMAP
-        """
-        self.JUMP = self.keymap['JUMP']
-        self.SPRINT = self.keymap['SPRINT']
-        self.DAFOE = self.keymap['DAFOE']
-        self.CROUCH = self.keymap['CROUCH']
-        self.LEFT = self.keymap['LEFT']
-        self.RIGHT = self.keymap['RIGHT']
-        self.PUNCH = self.keymap['PUNCH']
-        #self.KICK = self.keymap['KICK']
 
     def update(self, floors):
         """
