@@ -99,7 +99,7 @@ class Player(object):
                  width: int, height: int,
                  main_hurtbox: arcade.SpriteSolidColor, extended_hurtbox: arcade.SpriteSolidColor,
                  hitbox: arcade.SpriteSolidColor,
-                 input_map: int):
+                 input_map: int, character_input:int):
         """
         CONTAINS ALL SET-UP AND VARIABLE DECLARATION FOR THE PLAYER CLASS
         """
@@ -110,6 +110,7 @@ class Player(object):
         self.change_y = 0
         self.height = height
         self.width = width
+        self.character_input=character_input
 
         # State Accounting:
         self.player_sprites=False
@@ -170,82 +171,117 @@ class Player(object):
 
         ###########################Sprites##################################
         
+        ##Character choice:
+        if (character_input==1):
+            character="Lisa"
+        elif (character_input==2):
+            character="Jackie"
+        elif (character_input==3):
+            character="Jason"
+        elif (character_input==4):
+            character="Chris"
+        else:
+            character="Robot"
+
         ###Running
         ##Running left 0-8
         self.running_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Run00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Run00{i}.png",flipped_horizontally = True)
             self.running_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Run00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Run00{i}.png")
             self.running_sprites.append(self.sprite2)
      
 
         ##Idle#######################################
         self.idle_sprite=[]
-        # self.sprite2=arcade.load_texture(f"images/png/Lisa.png",flipped_horizontally = True)
-        # self.idle_sprite.append(self.sprite2)
-        
+       
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Idle.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Idle.png",flipped_horizontally = True)
             self.idle_sprite.append(self.sprite2)
 
        ###Left####
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Idle.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Idle.png")
             self.idle_sprite.append(self.sprite2)
         
 
         ##########JUMPING###################
         self.jumping_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Jump00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png",flipped_horizontally = True)
             self.jumping_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Jason/Jump00{i}.png")
-            self.running_sprites.append(self.sprite2)
+            self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png")
+            self.jumping_sprites.append(self.sprite2)
      
       ########Crouching####################
         self.crouching_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Slide.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Slide.png",flipped_horizontally = True)
             self.crouching_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Slide.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Slide.png")
             self.crouching_sprites.append(self.sprite2)
      ###Attack####
         self.attack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Attack00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png",flipped_horizontally = True)
             self.attack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/Attack00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png")
             self.attack_sprites.append(self.sprite2)
 
         ###Jump Attack####
         self.jattack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/JumpAttack00{i}.png",flipped_horizontally = True)
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png",flipped_horizontally = True)
             self.jattack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/Chris/JumpAttack00{i}.png")
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png")
             self.jattack_sprites.append(self.sprite2)
+
+        ##Dying:
+        self.dead_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png",flipped_horizontally = True)
+            self.dead_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png")
+            self.dead_sprites.append(self.sprite2)
+        
+        ##Block#######################################
+        self.block_sprite=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Block.png",flipped_horizontally = True)
+            self.block_sprite.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Block.png")
+            self.block_sprite.append(self.sprite2)
 
 
 
@@ -263,38 +299,34 @@ class Player(object):
         self.player_sprite = arcade.Sprite()
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
         self.player_sprites.append(self.player_sprite)
+       
+        
+        
+        ######Sound Effects:
+        # Load sounds
 
+        self.sword_sound=arcade.load_sound("SoundEffect/Sword3.wav")
+        self.hurt_sound=arcade.load_sound("SoundEffect/hurt.wav")
+        
 
-
-        if input_map >= 0:
-            if input_map == 0:
-                self.keymap = FULL_KEYMAP
-            elif input_map == 1:
-                self.keymap = SPLIT_KEYMAP_L
-            elif input_map == 2:
-                self.keymap = SPLIT_KEYMAP_R
-            """
-            elif input_map == 3:
-                self.keymap = GAMEPAD_KEYMAP
-            """
-            self.JUMP = self.keymap['JUMP']
-            self.SPRINT = self.keymap['SPRINT']
-            self.DAFOE = self.keymap['DAFOE']
-            self.CROUCH = self.keymap['CROUCH']
-            self.LEFT = self.keymap['LEFT']
-            self.RIGHT = self.keymap['RIGHT']
-            self.PUNCH = self.keymap['PUNCH']
-            #self.KICK = self.keymap['KICK']
-        else:
-            self.keymap = None
-            self.JUMP = None
-            self.SPRINT = None
-            self.DAFOE = None
-            self.CROUCH = None
-            self.LEFT = None
-            self.RIGHT = None
-            self.PUNCH = None
-            #self.KICK = None
+        if input_map == 0:
+            self.keymap = FULL_KEYMAP
+        elif input_map == 1:
+            self.keymap = SPLIT_KEYMAP_L
+        elif input_map == 2:
+            self.keymap = SPLIT_KEYMAP_R
+        """
+        elif input_map == 3:
+            self.keymap = GAMEPAD_KEYMAP
+        """
+        self.JUMP = self.keymap['JUMP']
+        self.SPRINT = self.keymap['SPRINT']
+        self.DAFOE = self.keymap['DAFOE']
+        self.CROUCH = self.keymap['CROUCH']
+        self.LEFT = self.keymap['LEFT']
+        self.RIGHT = self.keymap['RIGHT']
+        self.PUNCH = self.keymap['PUNCH']
+        self.KICK = self.keymap['KICK']
 
     def update(self, floors):
         """
@@ -466,31 +498,48 @@ class Player(object):
 
         self.player_sprites[0].center_y = self.center_y
         self.player_sprites[0].center_x = self.center_x
-        self.player_sprites[0].height = self.height*2.3
-        self.player_sprites[0].width = self.width*3
+        self.player_sprites[0].height = self.height
+        self.player_sprites[0].width = self.width
             
 
         
-        # self.player_sprite.texture = self.cur_sprites[self.cur_index]  
        
         # Using Extended Hitbox to track direction player is facing
         self.player_hurtboxes[1].center_y = self.center_y
         if self.right:
             self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+            
+            
             if self.cur_index>=8:
-                self.cur_index=0
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=0
+                else:
+                    ##Keep the sprite on the floor
+                    self.cur_index=8
             else:
-                self.cur_index+=1
+                    self.cur_index+=1
             
         else:
             self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+
             if self.cur_index>=17:
-                self.cur_index=9
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=9
+                else:
+                    self.cur_index=17
             else:
-                self.cur_index+=1
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=17
+                else:
+                    self.cur_index+=1
+
+       
 
                 ####Where sprite changes with movement##############
-        if self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
+        print(self.health)
+        if self.health<=0:
+            self.cur_sprites = self.dead_sprites
+        elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
             self.cur_sprites = self.idle_sprite
         elif self.jumping and self.punching:
             self.cur_sprites = self.jattack_sprites
@@ -499,9 +548,12 @@ class Player(object):
         elif self.crouching:
             self.cur_sprites = self.crouching_sprites
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
-            self.cur_sprites = self.attack_sprites
+            arcade.play_sound(self.sword_sound)
+            self.cur_sprites = self.attack_sprites  
         elif self.state==State.h_punch:
             self.cur_sprites = self.idle_sprite
+        elif self.state==State.blocking:
+            self.cur_sprites = self.block_sprite
         else:
             self.cur_sprites = self.running_sprites
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
@@ -1024,6 +1076,7 @@ class Player(object):
         Checks the block value when hit, if there is a block value subtract damage from that,
             if not then take damage value from health.
         """
+        arcade.play_sound(self.hurt_sound)
         if self.blocking:
             p_block_health = self.block_health  # prev block health
             c_block_health = self.block_health-hit_damage  # new 'current' block health
@@ -1043,3 +1096,6 @@ class Player(object):
             self.health -= hit_damage  # Not blocking
             print("BLOCK HEALTH = " + str(self.block_health))
             return True
+        
+       
+            
