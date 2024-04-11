@@ -7,6 +7,7 @@ class InstructionView(arcade.View):
 
     def __init__(self):
         super().__init__()
+        self.texture = arcade.load_texture("images/backgrounds/csKombat.png")
         self.text= arcade.Text("Welcome to Komputer Science Kombat: A Faculty Fighting Game!\n"
                                 "Here are the rules:\n \n"
                                 "Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
@@ -25,7 +26,7 @@ class InstructionView(arcade.View):
     def on_show_view(self):
         arcade.set_background_color(cn.K_ORANGE)
          # Reset the viewport
-        arcade.set_viewport(0, self.window.width, 0, self.window.height)
+        # arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
     def on_draw(self):
         self.clear()
@@ -39,7 +40,7 @@ class InstructionView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-        game_view = s.StageView()
+        game_view = SelectionScreen()
         game_view.setup()
         self.window.show_view(game_view)
 
@@ -53,7 +54,7 @@ class SelectionScreen(arcade.Window):
     def on_show_view(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
          # Reset the viewport
-        arcade.set_viewport(0, self.window.width, 0, self.window.height)
+        # arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
     def button_clicked(self, _x, _y, _button):
         game_view = s.StageView()
