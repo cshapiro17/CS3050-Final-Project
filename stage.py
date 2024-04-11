@@ -181,7 +181,7 @@ class StageView(arcade.View):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, 2,1)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, 2,4)  # input_map = 2 for right split keymap
         
         
       
@@ -189,7 +189,7 @@ class StageView(arcade.View):
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, 1,2)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, 1,1)  # input_map = 1 for left split keymap
 
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
@@ -330,13 +330,13 @@ class StageView(arcade.View):
                                             self.background)
 
         # Call draw() on all your sprite lists below
-        self.player_1.player_hurtboxes.draw()
+       # self.player_1.player_hurtboxes.draw()
         self.player_1.player_sprites.draw()
-        self.player_1.player_hitboxes.draw()
+        #self.player_1.player_hitboxes.draw()
         
         
-        self.dummy.player_hurtboxes.draw()
-        self.dummy.player_hitboxes.draw()
+      #  self.dummy.player_hurtboxes.draw()
+       # self.dummy.player_hitboxes.draw()
         self.dummy.player_sprites.draw()
 
 
@@ -435,7 +435,7 @@ class StageView(arcade.View):
                         if hit_stun:
                             self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("DUMMY HEALTH = " + str(self.dummy.health))
-                    if self.dummy.health <= 0:
+                    if self.dummy.health < 0:
                         self.dummy.health = cn.PLAYER_HEALTH
                         self.dummy.block_health = cn.FULL_BLOCK
             else:  # IF NOT HIT AND ~NOT STUNNED~
@@ -503,8 +503,7 @@ class StageView(arcade.View):
                         if hit_stun:
                             self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("PLAYER HEALTH = " + str(self.player_1.health))
-                    if self.player_1.health <= 0:
-                        
+                    if self.player_1.health < 0:
                         self.player_1.health = cn.PLAYER_HEALTH
                         self.player_1.block_health = cn.FULL_BLOCK
             else:  # IF NOT HIT AND ~NOT STUNNED~
@@ -584,7 +583,10 @@ class StageView(arcade.View):
         """
         Update the countdown sequence
         """
+        
         self.start_time -= delta_time
+        self.player_1.player_sprites.visible=False
+        self.dummy.player_sprites.visible=False
 
         if self.start_time <= cn.COUNTDOWN_TIME and self.start_time > 2.5:
             self.countdown_sprite = arcade.Sprite("sprites/three.png",
@@ -602,6 +604,8 @@ class StageView(arcade.View):
                     # Decrement the countdown time
         else:
             self.countdown_sprite.visible = False
+            self.player_1.player_sprites.visible=True
+            self.dummy.player_sprites.visible=True
             self.start_time = 0.0
 
             """

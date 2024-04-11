@@ -110,6 +110,7 @@ class Player(object):
         self.change_y = 0
         self.height = height
         self.width = width
+        self.character_input=character_input
 
         # State Accounting:
         self.player_sprites=False
@@ -220,7 +221,7 @@ class Player(object):
        ##9-17
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/Jump00{i}.png")
-            self.running_sprites.append(self.sprite2)
+            self.jumping_sprites.append(self.sprite2)
      
       ########Crouching####################
         self.crouching_sprites=[]
@@ -268,6 +269,19 @@ class Player(object):
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/Dead00{i}.png")
             self.dead_sprites.append(self.sprite2)
+        
+        ##Block#######################################
+        self.block_sprite=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Block.png",flipped_horizontally = True)
+            self.block_sprite.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Block.png")
+            self.block_sprite.append(self.sprite2)
 
 
 
@@ -479,8 +493,8 @@ class Player(object):
 
         self.player_sprites[0].center_y = self.center_y
         self.player_sprites[0].center_x = self.center_x
-        self.player_sprites[0].height = self.height*2.3
-        self.player_sprites[0].width = self.width*3
+        self.player_sprites[0].height = self.height
+        self.player_sprites[0].width = self.width
             
 
         
@@ -489,17 +503,32 @@ class Player(object):
         self.player_hurtboxes[1].center_y = self.center_y
         if self.right:
             self.player_hurtboxes[1].center_x = int(self.center_x - (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+            
+            
             if self.cur_index>=8:
-                self.cur_index=0
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=0
+                else:
+                    ##Keep the sprite on the floor
+                    self.cur_index=8
             else:
-                self.cur_index+=1
+                    self.cur_index+=1
             
         else:
             self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
+
             if self.cur_index>=17:
-                self.cur_index=9
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=9
+                else:
+                    self.cur_index=17
             else:
-                self.cur_index+=1
+                if self.cur_sprites != self.dead_sprites:
+                    self.cur_index=17
+                else:
+                    self.cur_index+=1
+
+       
 
                 ####Where sprite changes with movement##############
         print(self.health)
@@ -515,10 +544,11 @@ class Player(object):
             self.cur_sprites = self.crouching_sprites
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
             arcade.play_sound(self.sword_sound)
-            self.cur_sprites = self.attack_sprites
-            
+            self.cur_sprites = self.attack_sprites  
         elif self.state==State.h_punch:
             self.cur_sprites = self.idle_sprite
+        elif self.state==State.blocking:
+            self.cur_sprites = self.block_sprite
         else:
             self.cur_sprites = self.running_sprites
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
