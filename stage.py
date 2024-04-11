@@ -181,6 +181,7 @@ class StageView(arcade.View):
         self.dummy_hitbox.center_x = 0
         self.dummy_hitbox.center_y = 0
 
+        # TODO: Sync this with the UI, so different setups can be selected
         # For controller_nums, 0 is full keymap, 1 is left split, 2 is right split, < 0 is mister roboto
         self.player_controller_num = 0  # input_map = 2 for right split keymap
         self.dummy_controller_num = -1  # input_map = 1 for left split keymap
@@ -447,8 +448,10 @@ class StageView(arcade.View):
                             self.dummy.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("DUMMY HEALTH = " + str(self.dummy.health))
                     if self.dummy.health < 0:
-                        self.dummy.health = cn.PLAYER_HEALTH
-                        self.dummy.block_health = cn.FULL_BLOCK
+                        # self.dummy.health = cn.PLAYER_HEALTH
+                        # self.dummy.block_health = cn.FULL_BLOCK
+                        # TODO: END GAME
+                        pass
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 self.dummy.being_hit = False
                 for hitbox in self.player_1.player_hitboxes:
@@ -515,8 +518,10 @@ class StageView(arcade.View):
                             self.player_1.stun = cn.L_STUN_TIME  # Max stun time for light moves
                     print("PLAYER HEALTH = " + str(self.player_1.health))
                     if self.player_1.health < 0:
-                        self.player_1.health = cn.PLAYER_HEALTH
-                        self.player_1.block_health = cn.FULL_BLOCK
+                        # self.player_1.health = cn.PLAYER_HEALTH
+                        # self.player_1.block_health = cn.FULL_BLOCK
+                        # TODO: END GAME
+                        pass
             else:  # IF NOT HIT AND ~NOT STUNNED~
                 self.player_1.being_hit = False
                 for hitbox in self.dummy.player_hitboxes:
@@ -541,6 +546,16 @@ class StageView(arcade.View):
 
         self.dummy.hit_cycle()
         self.dummy.hurt_cycle()
+
+        if self.dummy.center_x < 0:
+            self.dummy.center_x = 0
+        elif self.dummy.center_x > cn.SCREEN_WIDTH:
+            self.dummy.center_x = cn.SCREEN_WIDTH
+
+        if self.player_1.center_x < 0:
+            self.player_1.center_x = 0
+        elif self.player_1.center_x > cn.SCREEN_WIDTH:
+            self.player_1.center_x = cn.SCREEN_WIDTH
 
     def on_key_press(self, key, key_modifiers):
         """
