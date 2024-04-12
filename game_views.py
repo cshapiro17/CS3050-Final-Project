@@ -4,10 +4,28 @@ import os
 import stage as s
 import pyglet
 
+
 class InstructionView(arcade.View):
 
     def __init__(self):
         super().__init__()
+        self.window.set_mouse_visible(True)
+        self.enable_computer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
+                                                       int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
+                                                       [255, 255, 100])
+        self.enable_computer.center_x = (cn.SCREEN_WIDTH / 2) + 100
+        self.enable_computer.center_y = (cn.SCREEN_HEIGHT / 4)
+        self.enable_pvp = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
+                                                  int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
+                                                  [255, 0, 0])
+        self.enable_pvp.center_x = (cn.SCREEN_WIDTH / 2) - 100
+        self.enable_pvp.center_y = (cn.SCREEN_HEIGHT / 4)
+        self.pointer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 0.25),
+                                               int(cn.PORTRAIT_DIMENSIONS[1] * 0.25),
+                                               [255, 255, 255])
+        self.pointer.center_x = cn.SCREEN_WIDTH / 2
+        self.pointer.center_y = cn.SCREEN_HEIGHT / 2
+        self.pointer.alpha = 0
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
@@ -24,12 +42,32 @@ class InstructionView(arcade.View):
                          arcade.color.WHITE, font_size=50, anchor_x="center")
         arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2 - 75,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
+        self.enable_computer.draw()
+        arcade.draw_text("PvC", self.enable_computer.center_x, self.enable_computer.center_y - 20,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        self.enable_pvp.draw()
+        arcade.draw_text("PvP", self.enable_pvp.center_x, self.enable_pvp.center_y - 20,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        self.pointer.draw()
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-        game_view = s.StageView()
-        game_view.setup()
-        self.window.show_view(game_view)
+        if arcade.check_for_collision(self.pointer, self.enable_computer):
+            stage_setup_inputs = [0, -1]
+            game_view = s.StageView()
+            game_view.setup(stage_setup_inputs)
+            self.window.show_view(game_view)
+        elif arcade.check_for_collision(self.pointer, self.enable_pvp):
+            stage_setup_inputs = [2, 1]
+            game_view = s.StageView()
+            game_view.setup(stage_setup_inputs)
+            self.window.show_view(game_view)
+        else:
+            pass
+
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        self.pointer.center_x = x
+        self.pointer.center_y = y
 
 
 class PauseView(arcade.View):
@@ -77,7 +115,6 @@ class PauseView(arcade.View):
         elif key == arcade.key.E:
             end_game = GameOverView("manual")
             self.window.show_view(end_game)
-
 
 
 class HelpView(arcade.View):

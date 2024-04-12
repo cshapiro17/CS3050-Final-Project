@@ -9,9 +9,34 @@ import datetime as dt  # TIMER FOR MAX MATCH TIME
 
 
 class InstructionView(arcade.View):
+    # As of right now this is an example of a intro screen view. my plan as
+    # of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)
 
-# As of right now this is an example of a intro screen view. my plan as
-# of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)
+    def __init__(self):
+        super().__init__()
+        self.window.set_mouse_visible(True)
+        self.enable_computer = None
+        self.enable_pvp = None
+        self.pointer = None
+        self.setup()
+
+    def setup(self):
+        self.enable_computer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
+                                                       int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
+                                                       [255, 255, 100])
+        self.enable_computer.center_x = (cn.SCREEN_WIDTH / 2) + 180
+        self.enable_computer.center_y = (cn.SCREEN_HEIGHT / 5) - 10
+        self.enable_pvp = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
+                                                  int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
+                                                  [255, 0, 0])
+        self.enable_pvp.center_x = (cn.SCREEN_WIDTH / 2) - 180
+        self.enable_pvp.center_y = (cn.SCREEN_HEIGHT / 5) - 10
+        self.pointer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 0.25),
+                                               int(cn.PORTRAIT_DIMENSIONS[1] * 0.25),
+                                               [255, 255, 255])
+        self.pointer.center_x = cn.SCREEN_WIDTH / 2
+        self.pointer.center_y = cn.SCREEN_HEIGHT / 2
+        self.pointer.alpha = 0
 
     def on_show_view(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
@@ -39,23 +64,34 @@ class InstructionView(arcade.View):
 
         arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 45,
                          arcade.color.WHITE, font_size=15, anchor_x="center")
+        self.enable_computer.draw()
+        arcade.draw_text("PvC", self.enable_computer.center_x, self.enable_computer.center_y - 20,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        self.enable_pvp.draw()
+        arcade.draw_text("PvP", self.enable_pvp.center_x, self.enable_pvp.center_y - 20,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        self.pointer.draw()
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
-        game_view = StageView()
-        game_view.setup()
-        self.window.show_view(game_view)
+        if arcade.check_for_collision(self.pointer, self.enable_computer):
+            stage_setup_inputs = [0, -1]
+            game_view = StageView()
+            game_view.setup(stage_setup_inputs)
+            self.window.show_view(game_view)
+        elif arcade.check_for_collision(self.pointer, self.enable_pvp):
+            stage_setup_inputs = [2, 1]
+            game_view = StageView()
+            game_view.setup(stage_setup_inputs)
+            self.window.show_view(game_view)
+        else:
+            pass
+
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        self.pointer.center_x = x
+        self.pointer.center_y = y
 
 
-
-
-
-
-
-# TODO / Important Stuff:
-#       UI SPRITES AREN'T CONNECTED TO THE VALUES THEY REPRESENT YET
-#       Slow-down from collision detection makes tics vary in speed, which can vary the speed of attacks based on
-#           how much is happening in the code
 
 # --- Constants ---
 SCREEN_TITLE = "Fight Stage"
@@ -71,7 +107,7 @@ class StageView(arcade.View):
     def __init__(self):
         # Call the parent class initializer
         super().__init__()
-
+        self.window.set_mouse_visible(False)
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None
@@ -131,7 +167,7 @@ class StageView(arcade.View):
         self.dummy_controller_num = None
         self.controller = None
 
-    def setup(self):
+    def setup(self, setup_inputs):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
 
@@ -182,8 +218,8 @@ class StageView(arcade.View):
 
         # TODO: Sync this with the UI, so different setups can be selected
         # For controller_nums, 0 is full keymap, 1 is left split, 2 is right split, < 0 is mister roboto
-        self.player_controller_num = 0  # input_map = 2 for right split keymap
-        self.dummy_controller_num = -1  # input_map = 1 for left split keymap
+        self.player_controller_num = setup_inputs[0]  # input_map = 2 for right split keymap
+        self.dummy_controller_num = setup_inputs[1]  # input_map = 1 for left split keymap
 
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
@@ -341,12 +377,10 @@ class StageView(arcade.View):
        # self.player_1.player_hurtboxes.draw()
         self.player_1.player_sprites.draw()
         #self.player_1.player_hitboxes.draw()
-        
-        
+
       #  self.dummy.player_hurtboxes.draw()
        # self.dummy.player_hitboxes.draw()
         self.dummy.player_sprites.draw()
-
 
         self.floors.draw()
         self.ui.draw()
@@ -365,7 +399,8 @@ class StageView(arcade.View):
         self.floors.update()
         self.ui.update()
 
-        self.controller.update()
+        if not (self.controller is None):
+            self.controller.update()
 
         self.player_1.grav_cycle(floors=self.floors)
         self.dummy.grav_cycle(floors=self.floors)
