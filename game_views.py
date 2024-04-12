@@ -2,6 +2,7 @@ import arcade
 import constants as cn
 import os
 import stage as s
+import pyglet
 
 class InstructionView(arcade.View):
 
@@ -74,7 +75,7 @@ class PauseView(arcade.View):
             help = HelpView(self)
             self.window.show_view(help)
         elif key == arcade.key.E:
-            end_game = GameOverView()
+            end_game = GameOverView("manual")
             self.window.show_view(end_game)
 
 
@@ -122,8 +123,15 @@ class GameOverView(arcade.View):
             Will end the game and allow the user to pick new characters or restart the game
     """
 
-    def __init__(self):
+    def __init__(self, game_end_state):
         super().__init__()
+        self.game_end_state = game_end_state
+        self.lisa_win = None
+        self.jackie_win = None
+        self.jason_win = None
+        self.kombat_theme = None
+        self.Player = None
+
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color_from_hex_string("#000000"))
@@ -132,11 +140,48 @@ class GameOverView(arcade.View):
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
 
+        if (self.game_end_state == "timeout"):
+            self.kombat_theme = arcade.load_sound("SoundEffect/Mortal Kombat.mp3")
+            self.Player = arcade.play_sound(self.kombat_theme)
+        elif (self.game_end_state == "1"):
+            self.lisa_win = arcade.load_sound("SoundEffect/Gonna Fly Now.mp3")
+            self.Player = arcade.play_sound(self.lisa_win)
+        elif (self.game_end_state == "2"):
+            self.jackie_win = arcade.load_sound("SoundEffect/T.N.T..wav")
+            self.Player = arcade.play_sound(self.jackie_win)
+        elif (self.game_end_state == "3"):
+            self.jason_win = arcade.load_sound("SoundEffect/Roadrunner.mp3")
+            self.Player = arcade.play_sound(self.jason_win)
+        elif (self.game_end_state == "4"):
+            self.kombat_theme = arcade.load_sound("SoundEffect/Mortal Kombat.mp3")
+            self.Player = arcade.play_sound(self.kombat_theme)
+        else:
+            self.kombat_theme = arcade.load_sound("SoundEffect/Mortal Kombat.mp3")
+            self.Player = arcade.play_sound(self.kombat_theme)
+     
+
     def on_draw(self):
         self.clear()
 
-        arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2 + 75,
+        if (self.game_end_state == "timeout"):
+            arcade.draw_text("Match Timed Out", self.window.width / 2, self.window.height / 2 + 75,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
+        elif (self.game_end_state == "1"):
+            arcade.draw_text("Lisa Wins!", self.window.width / 2, self.window.height / 2 + 75,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        elif (self.game_end_state == "2"):
+            arcade.draw_text("Jackie Wins!", self.window.width / 2, self.window.height / 2 + 75,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        elif (self.game_end_state == "3"):
+            arcade.draw_text("Jason Wins!", self.window.width / 2, self.window.height / 2 + 75,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        elif (self.game_end_state == "4"):
+            arcade.draw_text("Chris Wins", self.window.width / 2, self.window.height / 2 + 75,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        else:
+            arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2 + 75,
+                            arcade.color.WHITE, font_size=50, anchor_x="center")
+            
         arcade.draw_text("Pick new characters [Y]", self.window.width / 2, self.window.height / 2,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
         arcade.draw_text("Restart game [R]", self.window.width / 2, self.window.height / 2 - 75,
@@ -149,6 +194,8 @@ class GameOverView(arcade.View):
             start_view = InstructionView()
             self.window.show_view(start_view)
         elif key == arcade.key.R:  # Restart game
+            arcade.stop_sound(self.Player)
+
             game_view = s.StageView()
             game_view.setup()
             self.window.show_view(game_view)

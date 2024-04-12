@@ -5,6 +5,7 @@ import constants as cn
 
 SCREEN_TITLE = "Fighting Faculty"
 
+
 def main():
     """ Main function """
     window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)

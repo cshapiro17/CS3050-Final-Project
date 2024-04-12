@@ -33,48 +33,121 @@ class Controller(object):
         self.anger_management = rn.randint(cn.LITERALLY_GHANDI, cn.GO_TO_THERAPY)
 
     def update(self):
-        if self.social_distancing > cn.SIX_FEET:
-            if self.anger_management > self.freezing_point:  # Decrease freezing_point when hit
-                self.freezing_point += 1
-                self.retreat()
-            else:
-                self.boiling_point += 1
-                self.advance()
-        else:
-            # In coughing distance, make a decision
-            if self.anger_management < self.boiling_point:
-                self.boiling_point -= 2
-                if abs(self.height_diff) < cn.NAPOLEONIC_ANGER:  # Height diff isn't significant
-                    self.attack(0)
-                    pass
-                if (self.height_diff < 0) & (abs(self.height_diff) > cn.NAPOLEONIC_ANGER):  # Dummy is shorter,
-                    # Napoleon's Wrath has been Incurred
-                    self.attack(1)
-                    pass
+        if (self.puppet.state_counter <= 0) & (self.puppet.stun <= 0):  # If able:
+            self.puppet.state_counter = 0
+            self.puppet.stun = 0
+            if self.social_distancing > cn.SIX_FEET:
+                if self.anger_management > self.freezing_point:  # Decrease freezing_point when hit
+                    self.freezing_point += 1
+                    self.retreat()
                 else:
-                    self.attack(-1)
-                    pass
-                pass
-            elif self.anger_management > self.freezing_point:  # Decrease freezing_point when hit
-                self.freezing_point += 1
-                self.retreat()
+                    self.boiling_point += 1
+                    self.advance()
             else:
-                self.boiling_point += 1
-                self.advance()
+                # In coughing distance, make a decision
+                if self.anger_management < self.boiling_point:
+                    self.boiling_point -= 2
+                    if abs(self.height_diff) < cn.NAPOLEONIC_ANGER:  # Height diff isn't significant
+                        self.attack(0)
+                        pass
+                    if (self.height_diff < 0) & (abs(self.height_diff) > cn.NAPOLEONIC_ANGER):  # Dummy is shorter,
+                        # Napoleon's Wrath has been Incurred
+                        self.attack(1)
+                        pass
+                    else:
+                        self.attack(-1)
+                        pass
+                    pass
+                elif self.anger_management > self.freezing_point:  # Decrease freezing_point when hit
+                    self.freezing_point += 1
+                    self.retreat()
+                else:
+                    self.boiling_point += 1
+                    self.advance()
+
+    def whermst(self):
+        dir_mod = 0
+        if self.puppet.right:
+            dir_mod = 1
+        else:
+            dir_mod = -1
+        return dir_mod
+
+    def reset_states(self):
+        self.puppet.jumping = False
+
+        self.puppet.sprinting = False
+
+        self.puppet.lefting = False
+        self.puppet.righting = False
+        self.puppet.blocking = False
 
     def attack(self, direction):
-        if direction == 0:
-            # ATTACK FORWARD
-            pass
-        elif direction < 0:
-            # ATTACK DOWN
-            pass
-        else:
+        pos = self.whermst()
+        if direction > 0:
             # ATTACK UP
-            pass
+            self.puppet.state = p.State.lp_punch  # LOW-PROFILE PUNCH
+            self.puppet.state_counter = cn.L_HIT_LENGTH
+        else:
+            # ATTACK FORWARD
+            choice = rn.randint(0, 100)
+            if choice < 10:  # Special
+                self.puppet.state = p.State.aa_punch  # ANTI-AIR PUNCH
+                self.puppet.state_counter = cn.S_HIT_LENGTH
+            elif choice < 35:  # Heavy
+                self.puppet.state = p.State.h_punch  # HEAVY PUNCH
+                self.puppet.state_counter = cn.H_HIT_LENGTH
+            else:  # Poke
+                self.puppet.state = p.State.l_punch  # LIGHT PUNCH
+                self.puppet.state_counter = cn.L_HIT_LENGTH
 
     def retreat(self):
-        pass
+        meth = rn.randint(0, 100)
+        if meth <= 2:
+            # JUMP
+            self.puppet.jumping = True
+            if self.puppet.right:
+                self.puppet.right_jump = True
+            else:
+                self.puppet.left_jump = True
+        else:
+            # WALK
+            if self.puppet.right:
+                self.puppet.lefting = True
+                self.puppet.righting = False
+                self.puppet.state = p.State.blocking
+                self.puppet.blocking = True
+                self.puppet.change_x = -int(3 * cn.PLAYER_SPEED / 5)
+            else:
+                self.puppet.righting = True
+                self.puppet.lefting = False
+                self.puppet.state = p.State.blocking
+                self.puppet.blocking = True
+                self.puppet.change_x = int(3 * cn.PLAYER_SPEED / 5)
 
     def advance(self):
-        pass
+        meth = rn.randint(0, 100)
+        if meth <= 1:
+            # DASH
+            self.puppet.sprinting = True
+            if self.puppet.right:
+                self.puppet.left_dash = True
+            else:
+                self.puppet.right_dash = True
+        elif meth <= 3:
+            # JUMP
+            self.puppet.jumping = True
+            if self.puppet.right:
+                self.puppet.left_jump = True
+            else:
+                self.puppet.right_jump = True
+        else:
+            # WALK
+            if self.puppet.right:
+                self.puppet.lefting = True
+                self.puppet.righting = False
+                self.puppet.change_x = -cn.PLAYER_SPEED
+            else:
+                self.puppet.righting = True
+                self.puppet.lefting = False
+                self.puppet.change_x = cn.PLAYER_SPEED
