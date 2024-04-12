@@ -14,6 +14,7 @@ class InstructionView(arcade.View):
 
     def __init__(self):
         super().__init__()
+        self.window.set_mouse_visible(True)
         self.enable_computer = None
         self.enable_pvp = None
         self.pointer = None
@@ -35,6 +36,7 @@ class InstructionView(arcade.View):
                                                [255, 255, 255])
         self.pointer.center_x = cn.SCREEN_WIDTH / 2
         self.pointer.center_y = cn.SCREEN_HEIGHT / 2
+        self.pointer.alpha = 0
 
     def on_show_view(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
@@ -105,7 +107,7 @@ class StageView(arcade.View):
     def __init__(self):
         # Call the parent class initializer
         super().__init__()
-
+        self.window.set_mouse_visible(False)
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None

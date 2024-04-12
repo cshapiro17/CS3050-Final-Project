@@ -9,6 +9,7 @@ class InstructionView(arcade.View):
 
     def __init__(self):
         super().__init__()
+        self.window.set_mouse_visible(True)
         self.enable_computer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
                                                        int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
                                                        [255, 255, 100])
@@ -24,6 +25,7 @@ class InstructionView(arcade.View):
                                                [255, 255, 255])
         self.pointer.center_x = cn.SCREEN_WIDTH / 2
         self.pointer.center_y = cn.SCREEN_HEIGHT / 2
+        self.pointer.alpha = 0
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
