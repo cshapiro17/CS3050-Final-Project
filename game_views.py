@@ -44,7 +44,7 @@ class PauseView(arcade.View):
         self.stage_view = stage_view
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
+        arcade.set_background_color(arcade.color_from_hex_string(cn.BACKGROUND_COLOR))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -54,15 +54,20 @@ class PauseView(arcade.View):
         self.clear()
 
         arcade.draw_text("Game Paused ", self.window.width / 2, self.window.height / 2 + 150,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=50, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Go back [ESC]", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Reset fight [R]", self.window.width / 2, self.window.height / 2,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Help [H]", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("End game [E]", self.window.width / 2, self.window.height / 2 - 150,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # resume game
@@ -92,7 +97,7 @@ class HelpView(arcade.View):
         self.pause_view = pause_view
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
+        arcade.set_background_color(arcade.color_from_hex_string(cn.BACKGROUND_COLOR))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -102,15 +107,20 @@ class HelpView(arcade.View):
         self.clear()
 
         arcade.draw_text("Help Page", self.window.width / 2, self.window.height / 2 + 150,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=50, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Go back [ESC]", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Player 1 Commands", self.window.width / 6, self.window.height / 2 + 50,
-                         arcade.color.WHITE, font_size=25, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=25, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Jump [Space]", self.window.width / 6, self.window.height / 2 + 20,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Sprint [LShift]", self.window.width / 6, self.window.height / 2 - 10,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # resume game
@@ -134,7 +144,7 @@ class GameOverView(arcade.View):
 
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color_from_hex_string("#000000"))
+        arcade.set_background_color(arcade.color_from_hex_string(cn.BACKGROUND_COLOR))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -163,31 +173,56 @@ class GameOverView(arcade.View):
     def on_draw(self):
         self.clear()
 
+        arcade.set_background_color(arcade.color_from_hex_string(cn.BACKGROUND_COLOR)) # Make background grey
+
         if (self.game_end_state == "timeout"):
-            arcade.draw_text("Match Timed Out", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+            arcade.draw_text("Match Timed Out", self.window.width / 2, self.window.height / 2 + 115,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                         font_name= cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "1"):
-            arcade.draw_text("Lisa Wins!", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+            arcade.set_background_color(arcade.color_from_hex_string(cn.LISA_WIN_COLOR)) # Make background grey
+
+            arcade.draw_text("Lisa Wins!", self.window.width / 2, self.window.height / 2 + 115,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "2"):
-            arcade.draw_text("Jackie Wins!", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+            arcade.set_background_color(arcade.color_from_hex_string(cn.JACKIE_WIN_COLOR)) # Make background grey
+
+            arcade.draw_text("Jackie Wins!", self.window.width / 2, self.window.height / 2 + 115,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "3"):
-            arcade.draw_text("Jason Wins!", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+            arcade.set_background_color(arcade.color_from_hex_string(cn.JASON_WIN_COLOR)) # Make background grey
+
+            arcade.draw_text("Jason Wins!", self.window.width / 2, self.window.height / 2 + 115,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "4"):
-            arcade.draw_text("Chris Wins", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+            arcade.set_background_color(arcade.color_from_hex_string(cn.CHRIS_WIN_COLOR)) # Make background grey
+
+            arcade.draw_text("Chris Wins!", self.window.width / 2, self.window.height / 2 + 115,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT, bold=True)
+        elif (self.game_end_state == "5"):
+            arcade.set_background_color(arcade.color_from_hex_string(cn.ROBOT_WIN_COLOR)) # Make background grey
+
+            arcade.draw_text("Robot Wins!", self.window.width / 2, self.window.height / 2 + 115,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT, bold=True)
         else:
-            arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2 + 75,
-                            arcade.color.WHITE, font_size=50, anchor_x="center")
+            arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2 + 115,
+                            arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
+                            font_name=cn.GE_TXT_FONT, bold=True)
             
         arcade.draw_text("Pick new characters [Y]", self.window.width / 2, self.window.height / 2,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=30, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Restart game [R]", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=30, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
         arcade.draw_text("Exit game [ESC]", self.window.width / 2, self.window.height / 2 - 150,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=30, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT)
         
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.Y:   # Pick new characters
