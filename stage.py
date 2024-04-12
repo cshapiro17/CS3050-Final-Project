@@ -137,7 +137,7 @@ class StageView(arcade.View):
 
         p1_center = [int(4 * cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         d_center = [int(cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
-        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 10)]  # STAGE FLOOR CENTER
+        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 15)]  # STAGE FLOOR CENTER
 
         # -- PLAYER HURTBOXES --
         self.player_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Main Player Health/Body Hit Box

@@ -234,17 +234,28 @@ class Player(object):
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/Slide.png")
             self.crouching_sprites.append(self.sprite2)
-     ###Attack####
-        self.attack_sprites=[]
+     ### Heavy Attack####
+        self.Hattack_sprites=[]
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png",flipped_horizontally = True)
-            self.attack_sprites.append(self.sprite2)
+            self.sprite2=arcade.load_texture(f"images/{character}/HAttack00{i}.png",flipped_horizontally = True)
+            self.Hattack_sprites.append(self.sprite2)
 
        ###Left 
        ##9-17
         for i in range(9):
-            self.sprite2=arcade.load_texture(f"images/{character}/Attack00{i}.png")
-            self.attack_sprites.append(self.sprite2)
+            self.sprite2=arcade.load_texture(f"images/{character}/HAttack00{i}.png")
+            self.Hattack_sprites.append(self.sprite2)
+     ### Light Attack####
+        self.Lattack_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/LAttack00{i}.png",flipped_horizontally = True)
+            self.Lattack_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/LAttack00{i}.png")
+            self.Lattack_sprites.append(self.sprite2)
 
         ###Jump Attack####
         self.jattack_sprites=[]
@@ -559,8 +570,9 @@ class Player(object):
         elif self.crouching:
             self.cur_sprites = self.crouching_sprites
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
-            arcade.play_sound(self.sword_sound)
-            self.cur_sprites = self.attack_sprites  
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
+            self.cur_sprites = self.Hattack_sprites  
         elif self.state==State.h_punch:
             self.cur_sprites = self.idle_sprite
         elif self.state==State.blocking:
@@ -1087,7 +1099,8 @@ class Player(object):
         Checks the block value when hit, if there is a block value subtract damage from that,
             if not then take damage value from health.
         """
-        arcade.play_sound(self.hurt_sound)
+        if self.player_sprites.visible:
+            arcade.play_sound(self.hurt_sound)
         if self.blocking:
             p_block_health = self.block_health  # prev block health
             c_block_health = self.block_health-hit_damage  # new 'current' block health
