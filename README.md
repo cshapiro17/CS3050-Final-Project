@@ -24,7 +24,7 @@ The control scheme is listed below. There are three different schemes, we have t
       - A simple and fast basic attack.
     - **Look up** and **Punch**: Short Punch
       - A high damage attack, but long startup and short range (easy to punish).
-    - **Crouch** and **Z**: Anti-air Punch
+    - **Crouch** and **Punch**: Anti-air Punch
       - Jump punisher, attacks into the air.
 
 ### Non-implemented/ Idea Keys:
