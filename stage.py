@@ -63,7 +63,11 @@ class InstructionView(arcade.View):
         arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 45,
                          arcade.color.WHITE, font_size=15, anchor_x="center")
         self.enable_computer.draw()
+        arcade.draw_text("PvC", self.enable_computer.center_x, self.enable_computer.center_y - 20,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
         self.enable_pvp.draw()
+        arcade.draw_text("PvP", self.enable_pvp.center_x, self.enable_pvp.center_y - 20,
+                         arcade.color.BLACK, font_size=40, anchor_x="center")
         self.pointer.draw()
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
