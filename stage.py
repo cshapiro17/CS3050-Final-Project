@@ -189,7 +189,7 @@ class StageView(arcade.View):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, self.player_controller_num,3)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, self.player_controller_num,4)  # input_map = 2 for right split keymap
 
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
@@ -212,9 +212,22 @@ class StageView(arcade.View):
         # DUMMY TRACKER UI
 
         # TODO Replace portrait with image of fighter
-        self.d_portrait = arcade.SpriteSolidColor(cn.PORTRAIT_DIMENSIONS[0],
-                                                  cn.PORTRAIT_DIMENSIONS[1],
-                                                  [0, 0, 250])
+        if (self.dummy.character_input == 1):
+            self.d_portrait = arcade.Sprite("images/Lisa/pfp.png",
+                                            scale=0.35)
+        elif (self.dummy.character_input == 2):
+            self.d_portrait = arcade.Sprite("images/Jackie/pfp.png",
+                                            scale=0.4)
+        elif (self.dummy.character_input == 3):
+            self.d_portrait = arcade.Sprite("images/Jason/pfp.png",
+                                            scale=0.45)
+        elif (self.dummy.character_input == 4):
+            self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
+                                            scale=0.4)
+        else:
+            self.d_portrait = arcade.Sprite("image/Robot/pfp.png",
+                                            scale=0.5)
+
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.d_health = arcade.SpriteSolidColor(int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
@@ -237,9 +250,22 @@ class StageView(arcade.View):
         # PLAYER TRACKER UI
 
         # TODO Replace portrait with image of fighter
-        self.p_1_portrait = arcade.SpriteSolidColor(cn.PORTRAIT_DIMENSIONS[0],
-                                                    cn.PORTRAIT_DIMENSIONS[1],
-                                                    [0, 255, 0])
+        if (self.player_1.character_input == 1):
+            self.p_1_portrait = arcade.Sprite("images/Lisa/pfp.png",
+                                            scale=0.35)
+        elif (self.player_1.character_input == 2):
+            self.p_1_portrait = arcade.Sprite("images/Jackie/pfp.png",
+                                            scale=0.4)
+        elif (self.player_1.character_input == 3):
+            self.p_1_portrait = arcade.Sprite("images/Jason/pfp.png",
+                                            scale=0.45)
+        elif (self.player_1.character_input == 4):
+            self.p_1_portrait = arcade.Sprite("images/Chris/pfp.png",
+                                            scale=0.4)
+        else:
+            self.p_1_portrait = arcade.Sprite("images/Robot/pfp.png",
+                                              scale=0.5)
+            
         self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.p_1_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.p_1_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
@@ -289,10 +315,11 @@ class StageView(arcade.View):
         self.timer_text = arcade.Text(
             text = str(cn.MAX_MATCH_TIME),
             start_x = cn.SCREEN_WIDTH/2,
-            start_y = cn.SCREEN_HEIGHT - 85,
+            start_y = cn.SCREEN_HEIGHT - 80,
             color=arcade.color.BLACK,
-            font_size= 25,
+            font_size= 50,
             anchor_x="center",
+            font_name=cn.TIMER_FONT
         )
 
         # Set up the start countdown
@@ -640,7 +667,7 @@ class StageView(arcade.View):
             Update the game clock
             """
 
-            minutes = int(self.total_time) // 60
+            minutes = int(self.total_time) / 60
             seconds = int(self.total_time) % 60
 
             if minutes == 0.0 and seconds == 0.0:
@@ -654,7 +681,7 @@ class StageView(arcade.View):
                 self.total_time -= delta_time
 
             # Create the text for the timer
-            self.timer_text.text = f"{minutes:02d}:{seconds:02d}"
+            self.timer_text.text = f"{seconds:02d}"
 
         self.start_time -= delta_time
 
