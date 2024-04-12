@@ -129,7 +129,7 @@ class Player(object):
         self.lefting = False
         self.righting = False
         self.punching = False
-        self.kicking = False
+       ## self.kicking = False
 
         self.blocking = False
 
@@ -326,7 +326,7 @@ class Player(object):
         self.LEFT = self.keymap['LEFT']
         self.RIGHT = self.keymap['RIGHT']
         self.PUNCH = self.keymap['PUNCH']
-        self.KICK = self.keymap['KICK']
+      ##  self.KICK = self.keymap['KICK']
 
     def update(self, floors):
         """
@@ -533,10 +533,10 @@ class Player(object):
                 else:
                     self.cur_index+=1
 
-       
+        
 
                 ####Where sprite changes with movement##############
-        print(self.health)
+        
         if self.health<=0:
             self.cur_sprites = self.dead_sprites
         elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
