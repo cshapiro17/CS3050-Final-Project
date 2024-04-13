@@ -181,7 +181,7 @@ class Player(object):
         elif (character_input==4):
             character="Chris"
         else:
-            character="Robot"  # The code expects the character input for robot to be "5"
+            character="Elon"  # The code expects the character input for robot to be "5"
 
         ###Running
         ##Running left 0-8
