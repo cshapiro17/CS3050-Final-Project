@@ -139,12 +139,12 @@ class StageView(arcade.View):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, self.player_controller_num,4)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, self.player_controller_num,3)  # input_map = 2 for right split keymap
 
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, self.dummy_controller_num,1)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, self.dummy_controller_num,3)  # input_map = 1 for left split keymap
 
         if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
             self.controller = c.Controller(self.dummy, self.player_1)

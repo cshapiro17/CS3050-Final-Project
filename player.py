@@ -628,35 +628,40 @@ class Player(object):
         
         if self.health<=0:
             self.cur_sprites = self.dead_sprites
-
         elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting:
             self.cur_sprites = self.idle_sprite
 
-        elif self.jumping and self.state==State.h_punch or self.state==State.l_punch:
-            self.cur_sprites = self.jattack_sprites
-
+        ##All the Jumping Sprites
         elif self.jumping and self.punching:
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
+            self.cur_sprites = self.jattack_sprites
+        elif  self.state==State.aa_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.UPjattack_sprites
-
         elif self.jumping:
             self.cur_sprites = self.jumping_sprites
 
 
-        elif (self.state==State.lp_punch and self.state_counter > 0):
+        ##All the Crouching Sprites
+        elif (self.righting or self.lefting) and self.crouching and self.punching:
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.crouchHeavy
-        
-        
-        elif self.crouching and self.state==State.l_punch:
+        elif self.crouching and self.state==State.lp_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.crouchLight
-        
-        elif self.crouching and self.state==State.aa_punch:
+        elif self.crouching and self.state==State.aa_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.crouchUP
-        
-        elif self.crouching:
+        elif self.crouching: 
             self.cur_sprites = self.crouching_sprites
         
         
-
+        ###Single Attack Sprites
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
             if self.player_sprites.visible:
                 arcade.play_sound(self.sword_sound)
@@ -672,14 +677,14 @@ class Player(object):
                 arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.upperCut
 
-        elif self.state==State.h_punch or self.state==State.l_punch or self.state==State.aa_punch:
+
+        #####Other
+        elif self.state==State.h_punch or self.state==State.l_punch or self.state==State.aa_punch or self.state==State.lp_punch:
             self.cur_sprites = self.idle_sprite
 
         elif self.state==State.blocking:
             self.cur_sprites = self.block_sprite
-
-        
-        elif self.state!=self.punching:
+        else:
             self.cur_sprites = self.running_sprites
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
 
@@ -1165,16 +1170,21 @@ class Player(object):
         match key:
             case self.SPRINT:
                 print("NO SPRINTING")
+                self.cur_sprites = self.idle_sprite
             case self.JUMP:
                 print("NO JUMPING")
+                self.cur_sprites = self.idle_sprite
             case self.DAFOE:
                 print("NO DAFOEING")
                 self.dafoeing = False
+                self.cur_sprites = self.idle_sprite
             case self.CROUCH:
                 print("NO CROUCHING")
                 self.crouching = False
+                self.cur_sprites = self.idle_sprite
             case self.LEFT:
                 print("NO LEFTING")
+                self.cur_sprites = self.idle_sprite
                 self.lefting = False
                 self.change_x_L = 0
                 if self.state == State.blocking:
@@ -1189,9 +1199,11 @@ class Player(object):
                     self.state = State.idle
                     self.blocking = False
                     print("NO BLOCKING")
+                    self.cur_sprites = self.idle_sprite
             case self.PUNCH:
                 print("NO PUNCHING")
                 self.punching = False
+                self.cur_sprites = self.idle_sprite
             #case self.KICK:
             #    print("NO KICKING")
             #    self.kicking = False
