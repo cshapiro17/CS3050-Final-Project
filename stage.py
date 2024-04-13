@@ -219,7 +219,7 @@ class StageView(arcade.View):
             self.p_1_portrait = arcade.Sprite("images/Elon/pfp.png",
                                               scale=0.5)
             
-        self.p_1_portrait.center_x = cn.SCREEN_2IDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
+        self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.p_1_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.p_1_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
                                                   30,  # HEIGHT OF HEALTH BAR
