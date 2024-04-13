@@ -170,16 +170,16 @@ class StageView(arcade.View):
                                             scale=0.35)
         elif (self.dummy.character_input == 2):
             self.d_portrait = arcade.Sprite("images/Jackie/pfp.png",
-                                            scale=0.4)
+                                            scale=0.35)
         elif (self.dummy.character_input == 3):
             self.d_portrait = arcade.Sprite("images/Jason/pfp.png",
-                                            scale=0.45)
+                                            scale=0.35)
         elif (self.dummy.character_input == 4):
             self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
-                                            scale=0.4)
+                                            scale=0.35)
         else:
             self.d_portrait = arcade.Sprite("image/Elon/pfp.png",
-                                            scale=0.5)
+                                            scale=0.35)
 
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
@@ -219,7 +219,7 @@ class StageView(arcade.View):
             self.p_1_portrait = arcade.Sprite("images/Elon/pfp.png",
                                               scale=0.5)
             
-        self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
+        self.p_1_portrait.center_x = cn.SCREEN_2IDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.p_1_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.p_1_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
                                                   30,  # HEIGHT OF HEALTH BAR

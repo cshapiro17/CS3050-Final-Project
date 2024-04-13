@@ -385,6 +385,7 @@ class Player(object):
 
         self.sword_sound=arcade.load_sound("SoundEffect/Sword3.wav")
         self.hurt_sound=arcade.load_sound("SoundEffect/hurt.wav")
+       
         
         if input_map >= 0:
             if input_map == 0:
@@ -630,6 +631,7 @@ class Player(object):
                 ####Where sprite changes with movement##############
         
         if self.health<=0:
+           
             self.cur_sprites = self.dead_sprites
         elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting:
             self.cur_sprites = self.idle_sprite
