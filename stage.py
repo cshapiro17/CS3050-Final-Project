@@ -90,7 +90,7 @@ class StageView(arcade.View):
 
         p1_center = [int(4 * cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         d_center = [int(cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
-        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 10)]  # STAGE FLOOR CENTER
+        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 15)]  # STAGE FLOOR CENTER
 
         # -- PLAYER HURTBOXES --
         self.player_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Main Player Health/Body Hit Box
@@ -142,12 +142,12 @@ class StageView(arcade.View):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, self.player_controller_num,4)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, self.player_controller_num,1)  # input_map = 2 for right split keymap
 
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, self.dummy_controller_num,1)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, self.dummy_controller_num,3)  # input_map = 1 for left split keymap
 
         if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
             self.controller = c.Controller(self.dummy, self.player_1)
@@ -170,16 +170,16 @@ class StageView(arcade.View):
                                             scale=0.35)
         elif (self.dummy.character_input == 2):
             self.d_portrait = arcade.Sprite("images/Jackie/pfp.png",
-                                            scale=0.4)
+                                            scale=0.35)
         elif (self.dummy.character_input == 3):
             self.d_portrait = arcade.Sprite("images/Jason/pfp.png",
-                                            scale=0.45)
+                                            scale=0.35)
         elif (self.dummy.character_input == 4):
             self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
-                                            scale=0.4)
+                                            scale=0.35)
         else:
-            self.d_portrait = arcade.Sprite("image/Robot/pfp.png",
-                                            scale=0.5)
+            self.d_portrait = arcade.Sprite("image/Elon/pfp.png",
+                                            scale=0.35)
 
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
@@ -216,7 +216,7 @@ class StageView(arcade.View):
             self.p_1_portrait = arcade.Sprite("images/Chris/pfp.png",
                                             scale=0.4)
         else:
-            self.p_1_portrait = arcade.Sprite("images/Robot/pfp.png",
+            self.p_1_portrait = arcade.Sprite("images/Elon/pfp.png",
                                               scale=0.5)
             
         self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
