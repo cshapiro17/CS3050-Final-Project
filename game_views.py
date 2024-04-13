@@ -81,73 +81,134 @@ class PlayVsPlay(arcade.View):
     def on_show(self):
         arcade.set_background_color(cn.K_ORANGE)
         self.character_image ={
-            "Jason Hibbeler": arcade.load_texture("images/Jason/idle.png"),
             "Lisa Dion": arcade.load_texture("images/Lisa/idle.png"),
             "Jackie Horton": arcade.load_texture("images/Jackie/idle.png"),
+            "Jason Hibbeler": arcade.load_texture("images/Jason/idle.png"),
             "Chris Skalka": arcade.load_texture("images/Chris/idle.png")
         }
+        self.banner_image = arcade.load_texture("images/backgrounds/ChooseUrFighter.png")
         #default is Jason incase no one chooses
         self.p1_character = "Jason Hibbeler"
         self.p2_character = "Jason Hibbeler"
 
+
     def on_draw(self):
         arcade.start_render()
-        # Draw character options for player 1
-        arcade.draw_texture_rectangle(200, cn.SCREEN_HEIGHT - 100,
-                                      self.character_image["Jason Hibbeler"].width,
-                                      self.character_image["Jason Hibbeler"].height,
-                                      self.character_image["Jason Hibbeler"], 0)
-        arcade.draw_texture_rectangle(400, cn.SCREEN_HEIGHT - 100,
-                                      self.character_image["Lisa Dion"].width,
-                                      self.character_image["Lisa Dion"].height,
+        #Text
+        arcade.draw_texture_rectangle(700, cn.SCREEN_HEIGHT - 100,
+                                      self.banner_image.width,
+                                      self.banner_image.height,
+                                      self.banner_image, 0)
+        arcade.draw_text("Player 1 use ASDF and Player 2 Use HJKL, Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6,
+                         arcade.color.BLACK, font_size=45, anchor_x="center",
+                         font_name=cn.START_TXT_FONT)
+
+        #character options
+        arcade.draw_texture_rectangle(250, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Lisa Dion"].width *.19,
+                                      self.character_image["Lisa Dion"].height *.19,
                                       self.character_image["Lisa Dion"], 0)
-        arcade.draw_texture_rectangle(1000, cn.SCREEN_HEIGHT - 100,
+        arcade.draw_texture_rectangle(550, cn.SCREEN_HEIGHT - 500,
                                       self.character_image["Jackie Horton"].width,
                                       self.character_image["Jackie Horton"].height,
                                       self.character_image["Jackie Horton"], 0)
-        arcade.draw_texture_rectangle(1200, cn.SCREEN_HEIGHT - 100,
+        arcade.draw_texture_rectangle(850, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jason Hibbeler"].width,
+                                      self.character_image["Jason Hibbeler"].height,
+                                      self.character_image["Jason Hibbeler"], 0)
+        arcade.draw_texture_rectangle(1150, cn.SCREEN_HEIGHT - 500,
                                       self.character_image["Chris Skalka"].width,
                                       self.character_image["Chris Skalka"].height,
                                       self.character_image["Chris Skalka"], 0)
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
-            self.p1_character = "Jason Hibbeler"
-        elif key == arcade.key.S:
             self.p1_character = "Lisa Dion"
-        elif key == arcade.key.D:
+        elif key == arcade.key.S:
             self.p1_character = "Jackie Horton"
+        elif key == arcade.key.D:
+            self.p1_character = "Jason Hibbeler"
         elif key == arcade.key.F:
             self.p1_character = "Chris Skalka"
 
         if key == arcade.key.H:
-            self.p2_character = "Jason Hibbeler"
-        elif key == arcade.key.J:
             self.p2_character = "Lisa Dion"
-        elif key == arcade.key.K:
+        elif key == arcade.key.J:
             self.p2_character = "Jackie Horton"
+        elif key == arcade.key.K:
+            self.p2_character = "jason Hibbeler"
         elif key == arcade.key.L:
             self.p2_character = "Chris Skalka"
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if self.p1_character and self.p2_character:
-            game_view = s.StageView(self.p1_character, self.p2_character)
-            game_view.setup(self.setup_inputs)
+            game_view = s.StageView()
+            game_view.setup(self.p1_character, self.p2_character)
             self.window.show_view(game_view)
 
 
 
-# class PlayVsComp(arcade.View):
-#     def on_key_press(self, key, modifiers):
-#         if key == arcade.key.KEY_F:
-#             self.player_character = "Jason Hibbeler"
-#         elif key == arcade.key.KEY_G:
-#             self.player_character = "Lisa Dion"
-#         elif key == arcade.key.KEY_H:
-#             self.player_character = "Jackie Horton"
-#         elif key == arcade.key.KEY_J:
-#             self.player_character = "Chris Skalka"
+class PlayVsComp(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(cn.K_ORANGE)
+        self.character_image ={
+            "Lisa Dion": arcade.load_texture("images/Lisa/idle.png"),
+            "Jackie Horton": arcade.load_texture("images/Jackie/idle.png"),
+            "Jason Hibbeler": arcade.load_texture("images/Jason/idle.png"),
+            "Chris Skalka": arcade.load_texture("images/Chris/idle.png")
+        }
+        self.banner_image = arcade.load_texture("images/backgrounds/ChooseUrFighter.png")
+        #default is Jason incase no one chooses
+        self.p1_character = "Jason Hibbeler"
+        self.p2_character = "Jason Hibbeler"
+
+
+    def on_draw(self):
+        arcade.start_render()
+        #Text
+        arcade.draw_texture_rectangle(700, cn.SCREEN_HEIGHT - 100,
+                                      self.banner_image.width,
+                                      self.banner_image.height,
+                                      self.banner_image, 0)
+        arcade.draw_text("Player 1 use ASDF, Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6,
+                         arcade.color.BLACK, font_size=45, anchor_x="center",
+                         font_name=cn.START_TXT_FONT)
+
+        #character options
+        arcade.draw_texture_rectangle(250, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Lisa Dion"].width *.19,
+                                      self.character_image["Lisa Dion"].height *.19,
+                                      self.character_image["Lisa Dion"], 0)
+        arcade.draw_texture_rectangle(550, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jackie Horton"].width,
+                                      self.character_image["Jackie Horton"].height,
+                                      self.character_image["Jackie Horton"], 0)
+        arcade.draw_texture_rectangle(850, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jason Hibbeler"].width,
+                                      self.character_image["Jason Hibbeler"].height,
+                                      self.character_image["Jason Hibbeler"], 0)
+        arcade.draw_texture_rectangle(1150, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Chris Skalka"].width,
+                                      self.character_image["Chris Skalka"].height,
+                                      self.character_image["Chris Skalka"], 0)
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.A:
+            self.p1_character = "Lisa Dion"
+        elif key == arcade.key.S:
+            self.p1_character = "Jackie Horton"
+        elif key == arcade.key.D:
+            self.p1_character = "Jason Hibbeler"
+        elif key == arcade.key.F:
+            self.p1_character = "Chris Skalka"
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ If the user presses the mouse button, start the game. """
+        if self.p1_character and self.p2_character:
+            game_view = s.StageView()
+            game_view.setup(self.p1_character, self.p2_character)
+            self.window.show_view(game_view)
 
 class PauseView(arcade.View):
     """
