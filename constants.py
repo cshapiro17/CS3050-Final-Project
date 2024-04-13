@@ -1,6 +1,8 @@
 from enum import IntEnum
 import arcade
 
+# Load game font
+arcade.load_font("fonts/Press_Start_2P/PressStart2P-Regular.ttf")
 
 # Display-based Constants:
 SCREEN_WIDTH = 1400
@@ -13,9 +15,11 @@ DEFAULT_LINE_HEIGHT = 45
 DEFAULT_FONT_SIZE = 30
 
 MAX_MATCH_TIME = 60.0
-TIMER_FONT = "Kenney Pixel"
+TIMER_FONT = "Press Start 2P"
 
+# COUNTDOWN constants
 COUNTDOWN_TIME = 4.0
+VICTORY_COUNTDOWN = 3.0
 
 
 # Stage UI Constants:
@@ -23,6 +27,7 @@ PORTRAIT_DIMENSIONS = [75, 75]
 HEALTH_BAR_PIXEL_CONSTANT = 4.5
 BLOCK_BAR_PIXEL_CONSTANT = 5
 SUPER_BAR_PIXEL_CONSTANT = 1
+FLOOR_COLOR = "#007155"
 
 # Balance-based Constants:
 PLAYER_HEALTH = 100
@@ -54,20 +59,19 @@ BOILING_BLOOD = 500      # DEFAULT VALUE FOR ATTACK DRIVER
 ENTER_THE_FROZONE = 250  # DEFAULT VALUE FOR RETREAT DRIVER
 
 # MENU UI constants
-GE_TXT_COLOR = "#007155"
-GE_TXT_FONT = "Kenney Pixel"
-BACKGROUND_COLOR = "#FFD416"
-JACKIE_WIN_COLOR = "#OE4D92"
-LISA_WIN_COLOR = "#592693"
-JASON_WIN_COLOR = "#008631"
-CHRIS_WIN_COLOR = "#101D6B"
-ROBOT_WIN_COLOR = "#A9A9A9"
+GE_TXT_COLOR = "#007155"            # UVM green
+GE_TXT_FONT = "Press Start 2P"
+BACKGROUND_COLOR = "#FFD416"        # UVM yellow
+JACKIE_WIN_COLOR = "#OE4D92"        # Dark blue
+LISA_WIN_COLOR = "#592693"          # Purple
+JASON_WIN_COLOR = "#008631"         # Green
+CHRIS_WIN_COLOR = "#101D6B"         # Royal blue
+ROBOT_WIN_COLOR = "#A9A9A9"         # Grey
 
 # START SCREEN UI constants
-START_TXT_FONT = "Kenney Pixel"
+START_TXT_FONT = "Press Start 2P"
 START_TXT_COLOR = "#007155"
 START_BACKGROUND_COLOR = "#FFD416"
-
 
 # Enums:
 class State(IntEnum):

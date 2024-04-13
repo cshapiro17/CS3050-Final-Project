@@ -41,21 +41,21 @@ class WelcomeView(arcade.View):
         self.clear()
 
         arcade.draw_text("Komputer Science", self.window.width / 2, self.window.height / 2 + 150,
-                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=150, anchor_x="center",
+                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=60, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
         arcade.draw_text("Kombat", self.window.width / 2, self.window.height / 2 + 20,
-                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=150, anchor_x="center",
+                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=60, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
         arcade.draw_text("Click to advance", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=20, anchor_x="center",
+                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
         self.enable_computer.draw()
-        arcade.draw_text("PvC", self.enable_computer.center_x, self.enable_computer.center_y - 15,
-                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=40, anchor_x="center",
+        arcade.draw_text("PvC", self.enable_computer.center_x, self.enable_computer.center_y - 17.5,
+                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=25, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
         self.enable_pvp.draw()
-        arcade.draw_text("PvP", self.enable_pvp.center_x, self.enable_pvp.center_y - 15,
-                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=40, anchor_x="center",
+        arcade.draw_text("PvP", self.enable_pvp.center_x, self.enable_pvp.center_y - 17.5,
+                         arcade.color_from_hex_string(cn.START_TXT_COLOR), font_size=25, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
         self.pointer.draw()
 
@@ -101,20 +101,20 @@ class PauseView(arcade.View):
     def on_draw(self):
         self.clear()
 
-        arcade.draw_text("Game Paused ", self.window.width / 2, self.window.height / 2 + 150,
+        arcade.draw_text("Game Paused ", self.window.width / 2 + 15, self.window.height / 2 + 150,
                          arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=50, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Go back [ESC]", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("Go back [ESC]", self.window.width / 2, self.window.height / 2 + 50,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Reset fight [R]", self.window.width / 2, self.window.height / 2,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("Reset fight [R]", self.window.width / 2, self.window.height / 2 - 25,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Help [H]", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("Help [H]", self.window.width / 2, self.window.height / 2 - 100,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("End game [E]", self.window.width / 2, self.window.height / 2 - 150,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("End game [E]", self.window.width / 2, self.window.height / 2 - 175,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
         
     def on_key_press(self, key, _modifiers):
@@ -154,21 +154,127 @@ class HelpView(arcade.View):
     def on_draw(self):
         self.clear()
 
-        arcade.draw_text("Help Page", self.window.width / 2, self.window.height / 2 + 150,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=50, anchor_x="center",
+        arcade.draw_text("Help Page", self.window.width / 2, self.window.height - 50,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=30, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Go back [ESC]", self.window.width / 2, self.window.height / 2 + 75,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("Go back [ESC]", self.window.width / 2, self.window.height / 2 + 260,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Player 1 Commands", self.window.width / 6, self.window.height / 2 + 50,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=25, anchor_x="center",
+        
+        # PVP Command Text
+        arcade.draw_text("PVP Commands   Left Player = [], Right Player = ()", self.window.width / 2, self.window.height / 2 + 225,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Jump [Space]", self.window.width / 6, self.window.height / 2 + 20,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("Look up", self.window.width / 4, self.window.height / 2 + 195,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Sprint [LShift]", self.window.width / 6, self.window.height / 2 - 10,
-                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=20, anchor_x="center",
+        arcade.draw_text("[I] (W)", self.window.width / 3, self.window.height / 2 + 195,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
                          font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Move left", self.window.width / 4, self.window.height / 2 + 170,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[J] (A)", self.window.width / 3, self.window.height / 2 + 170,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Crouch", self.window.width / 4, self.window.height / 2 + 145,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[K] (S)", self.window.width / 3, self.window.height / 2 + 145,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Move right", self.window.width / 4, self.window.height / 2 + 125,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[L] (D)", self.window.width / 3, self.window.height / 2 + 125,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Jump", self.window.width / 4, self.window.height / 2 + 100,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[R ALT] (L ALT)", self.window.width / 3, self.window.height / 2 + 100,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Punch", self.window.width / 4, self.window.height / 2 + 75,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[M] (Z)", self.window.width / 3, self.window.height / 2 + 75,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Dash", self.window.width / 4, self.window.height / 2 + 50,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[Space] (Shift)", self.window.width / 3, self.window.height / 2 + 50,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        
+        # PVC Command Text
+        arcade.draw_text("PVC Commands", self.window.width / 5 + 40, self.window.height / 2,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Look up", self.window.width / 4, self.window.height / 2 - 30,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[W]", self.window.width / 3, self.window.height / 2 - 30,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Move left", self.window.width / 4, self.window.height / 2 - 55,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[A]", self.window.width / 3, self.window.height / 2 - 55,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Crouch", self.window.width / 4, self.window.height / 2 - 80,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[S]", self.window.width / 3, self.window.height / 2 - 80,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Move right", self.window.width / 4, self.window.height / 2 - 105,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[D]", self.window.width / 3, self.window.height / 2 - 105,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Jump", self.window.width / 4, self.window.height / 2 - 130,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[Space]", self.window.width / 3, self.window.height / 2 - 130,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Punch", self.window.width / 4, self.window.height / 2 - 155,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[J]", self.window.width / 3, self.window.height / 2 - 155,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Dash", self.window.width / 4, self.window.height / 2 - 180,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("[Shift]", self.window.width / 3, self.window.height / 2 - 180,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, width=250, align="right",
+                         font_name=cn.GE_TXT_FONT)
+        
+        arcade.draw_text("Game Notes", self.window.width / 5 + 20, self.window.height / 2 - 225,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center", align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("1. Blocking occurs when moving backwards away from enemy", self.window.width / 4, self.window.height / 2 - 250,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("2. Punching while moving towards enemy produces a light, fast punch", self.window.width / 4, self.window.height / 2 - 275,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("3. Punching while looking up produces a short range, high damage punch", self.window.width / 4, self.window.height / 2 - 300,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("4. Punching while crouching punishes jumping attacks from enemy", self.window.width / 4, self.window.height / 2 - 325,
+                         arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=10, align="left",
+                         font_name=cn.GE_TXT_FONT)
+        
+        
+        
+
+
         
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # resume game
@@ -224,6 +330,16 @@ class GameOverView(arcade.View):
 
         arcade.set_background_color(arcade.color_from_hex_string(cn.BACKGROUND_COLOR)) # Make background grey
 
+        arcade.draw_text("Pick new characters [Y]", self.window.width / 2, self.window.height / 2 - 25,
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=15, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Restart game [R]", self.window.width / 2, self.window.height / 2 - 100,
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=15, anchor_x="center",
+                         font_name=cn.GE_TXT_FONT)
+        arcade.draw_text("Exit game [ESC]", self.window.width / 2, self.window.height / 2 - 175,
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=15, anchor_x="center", 
+                         font_name=cn.GE_TXT_FONT)
+
         if (self.game_end_state == "timeout"):
             arcade.draw_text("Match Timed Out", self.window.width / 2, self.window.height / 2 + 115,
                          arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
@@ -260,18 +376,19 @@ class GameOverView(arcade.View):
                          font_name=cn.GE_TXT_FONT, bold=True)
         else:
             arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2 + 115,
-                            arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                            arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
                             font_name=cn.GE_TXT_FONT, bold=True)
             
-        arcade.draw_text("Pick new characters [Y]", self.window.width / 2, self.window.height / 2,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=30, anchor_x="center", 
+            arcade.draw_text("Pick new characters [Y]", self.window.width / 2, self.window.height / 2 - 25,
+                            arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center", 
+                            font_name=cn.GE_TXT_FONT)
+            arcade.draw_text("Restart game [R]", self.window.width / 2, self.window.height / 2 - 100,
+                            arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
                          font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Restart game [R]", self.window.width / 2, self.window.height / 2 - 75,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=30, anchor_x="center",
-                         font_name=cn.GE_TXT_FONT)
-        arcade.draw_text("Exit game [ESC]", self.window.width / 2, self.window.height / 2 - 150,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=30, anchor_x="center", 
-                         font_name=cn.GE_TXT_FONT)
+            arcade.draw_text("Exit game [ESC]", self.window.width / 2, self.window.height / 2 - 175,
+                            arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center", 
+                            font_name=cn.GE_TXT_FONT)
+        
         
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.Y:   # Pick new characters
