@@ -156,7 +156,7 @@ class StageView(arcade.View):
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
                                              int(cn.SCREEN_HEIGHT / 3),
-                                             [114, 164, 164])
+                                             arcade.color_from_hex_string(cn.FLOOR_COLOR))
         self.floor.center_x = f_center[0]
         self.floor.center_y = f_center[1]
         self.floors.append(self.floor)
