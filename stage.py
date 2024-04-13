@@ -7,90 +7,6 @@ import computer_controller as c
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
-
-class InstructionView(arcade.View):
-    # As of right now this is an example of a intro screen view. my plan as
-    # of now is to include all of the views in this file (depending on if it will negatively influence the mechanics)
-
-    def __init__(self):
-        super().__init__()
-        self.enable_computer = None
-        self.enable_pvp = None
-        self.pointer = None
-        self.setup()
-
-    def setup(self):
-        self.enable_computer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
-                                                       int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
-                                                       [255, 255, 100])
-        self.enable_computer.center_x = (cn.SCREEN_WIDTH / 2) + 180
-        self.enable_computer.center_y = (cn.SCREEN_HEIGHT / 5) - 10
-        self.enable_pvp = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
-                                                  int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
-                                                  [255, 0, 0])
-        self.enable_pvp.center_x = (cn.SCREEN_WIDTH / 2) - 180
-        self.enable_pvp.center_y = (cn.SCREEN_HEIGHT / 5) - 10
-        self.pointer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 0.25),
-                                               int(cn.PORTRAIT_DIMENSIONS[1] * 0.25),
-                                               [255, 255, 255])
-        self.pointer.center_x = cn.SCREEN_WIDTH / 2
-        self.pointer.center_y = cn.SCREEN_HEIGHT / 2
-
-    def on_show_view(self):
-        arcade.set_background_color(arcade.csscolor.BLACK)
-         # Reset the viewport
-        arcade.set_viewport(0, self.window.width, 0, self.window.height)
-
-    def on_draw(self):
-        self.clear()
-        start_y = cn.SCREEN_HEIGHT - cn.DEFAULT_LINE_HEIGHT * 6
-
-        arcade.draw_text("                   Welcome to Faculty Fighting!\n"
-                         "                         Here are the rules:\n"
-                         "      Player 1 has the controls a-s-d-w, left-crouch-right-jump\n"
-                         "      Player 2's controls are j-k-l-i, left-crouch-right-jump\n"
-                         "                       Press (p) to pause the fight\n" 
-                         "      You have 60 seconds to fight, do your best and fight our faculty!\n",
-                         self.window.width / 3.2, start_y,
-                         arcade.color.WHITE,
-                         cn.DEFAULT_FONT_SIZE / 2,
-                         multiline=True,
-                         width=700)
-
-        arcade.draw_text("Instructions Screen", self.window.width / 2, self.window.height / 4,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
-
-        arcade.draw_text("(Click to advance)", self.window.width / 2, self.window.height / 4 - 45,
-                         arcade.color.WHITE, font_size=15, anchor_x="center")
-        self.enable_computer.draw()
-        arcade.draw_text("PvC", self.enable_computer.center_x, self.enable_computer.center_y - 20,
-                         arcade.color.BLACK, font_size=40, anchor_x="center")
-        self.enable_pvp.draw()
-        arcade.draw_text("PvP", self.enable_pvp.center_x, self.enable_pvp.center_y - 20,
-                         arcade.color.BLACK, font_size=40, anchor_x="center")
-        self.pointer.draw()
-
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
-        """ If the user presses the mouse button, start the game. """
-        if arcade.check_for_collision(self.pointer, self.enable_computer):
-            stage_setup_inputs = [0, -1]
-            game_view = StageView()
-            game_view.setup(stage_setup_inputs)
-            self.window.show_view(game_view)
-        elif arcade.check_for_collision(self.pointer, self.enable_pvp):
-            stage_setup_inputs = [2, 1]
-            game_view = StageView()
-            game_view.setup(stage_setup_inputs)
-            self.window.show_view(game_view)
-        else:
-            pass
-
-    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
-        self.pointer.center_x = x
-        self.pointer.center_y = y
-
-
-
 # --- Constants ---
 SCREEN_TITLE = "Fight Stage"
 
@@ -624,7 +540,7 @@ class StageView(arcade.View):
         """
         if key == arcade.key.P:   # pause game
             # pass self, the current view, to preserve this view's state
-            pause = gv.PauseView(self)
+            pause = gv.PauseView(self, self.player_controller_num, self.dummy_controller_num)
             self.window.show_view(pause)
 
         self.player_1.player_key_press(key, key_modifiers)
@@ -705,7 +621,7 @@ class StageView(arcade.View):
 
             if minutes == 0.0 and seconds == 0.0:
                 # Change the view to "Game Over" view
-                self.window.show_view(gv.GameOverView("timeout"))
+                self.window.show_view(gv.GameOverView("timeout",self.player_controller_num, self.dummy_controller_num))
 
                 # Make sure time does not decrease
                 self.total_time = 0.0
@@ -722,7 +638,7 @@ class StageView(arcade.View):
         if self.dummy.health < 1:
             self.d_health.alpha = 0
 
-            game_end = gv.GameOverView(str(self.player_1.character_input))
+            game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
 
             # Change the view to "Game Over" view
             self.window.show_view(game_end)            
@@ -744,7 +660,7 @@ class StageView(arcade.View):
         if self.player_1.health < 1:
             self.p_1_health.alpha = 0
 
-            game_end = gv.GameOverView(str(self.dummy.character_input))
+            game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
 
             # Change the view to "Game Over" view
             self.window.show_view(game_end)
