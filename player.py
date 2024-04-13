@@ -230,10 +230,11 @@ class Player(object):
             self.crouching_sprites.append(self.sprite2)
 
        ###Left 
-       ##9-17
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/Slide.png")
             self.crouching_sprites.append(self.sprite2)
+
+
      ### Heavy Attack####
         self.Hattack_sprites=[]
         for i in range(9):
@@ -241,10 +242,11 @@ class Player(object):
             self.Hattack_sprites.append(self.sprite2)
 
        ###Left 
-       ##9-17
+      
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/HAttack00{i}.png")
             self.Hattack_sprites.append(self.sprite2)
+
      ### Light Attack####
         self.Lattack_sprites=[]
         for i in range(9):
@@ -252,7 +254,6 @@ class Player(object):
             self.Lattack_sprites.append(self.sprite2)
 
        ###Left 
-       ##9-17
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/LAttack00{i}.png")
             self.Lattack_sprites.append(self.sprite2)
@@ -268,6 +269,18 @@ class Player(object):
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/JumpAttack00{i}.png")
             self.jattack_sprites.append(self.sprite2)
+
+        ### Upcut Jump Attack####
+        self.UPjattack_sprites=[]
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpUPAttack00{i}.png",flipped_horizontally = True)
+            self.UPjattack_sprites.append(self.sprite2)
+
+       ###Left 
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/JumpUPAttack00{i}.png")
+            self.UPjattack_sprites.append(self.sprite2)
 
         ##Dying:
         self.dead_sprites=[]
@@ -293,6 +306,60 @@ class Player(object):
         for i in range(9):
             self.sprite2=arcade.load_texture(f"images/{character}/Block.png")
             self.block_sprite.append(self.sprite2)
+
+        ###Crouch fighting
+        self.crouchLight=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/crouchLAttack00{i}.png",flipped_horizontally = True)
+            self.crouchLight.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/crouchLAttack00{i}.png")
+            self.crouchLight.append(self.sprite2)
+            
+        ###Heavy Crouch
+        self.crouchHeavy=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/crouchHAttack00{i}.png",flipped_horizontally = True)
+            self.crouchHeavy.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/crouchHAttack00{i}.png")
+            self.crouchHeavy.append(self.sprite2)
+
+
+         ###UpperCut Crouch
+        self.crouchUP=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/crouchUPAttack00{i}.png",flipped_horizontally = True)
+            self.crouchUP.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/crouchUPAttack00{i}.png")
+            self.crouchUP.append(self.sprite2)
+            
+        ###Upper Cut
+        self.upperCut=[]
+       
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Upperut00{i}.png",flipped_horizontally = True)
+            self.upperCut.append(self.sprite2)
+
+       ###Left####
+       ##9-17
+        for i in range(9):
+            self.sprite2=arcade.load_texture(f"images/{character}/Upperut00{i}.png")
+            self.upperCut.append(self.sprite2)
+            
 
 
 
@@ -561,23 +628,58 @@ class Player(object):
         
         if self.health<=0:
             self.cur_sprites = self.dead_sprites
-        elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting  :
+
+        elif self.state==State.idle and not self.jumping and not self.crouching and not self.lefting and not self.righting:
             self.cur_sprites = self.idle_sprite
-        elif self.jumping and self.punching:
+
+        elif self.jumping and self.state==State.h_punch or self.state==State.l_punch:
             self.cur_sprites = self.jattack_sprites
+
+        elif self.jumping and self.punching:
+            self.cur_sprites = self.UPjattack_sprites
+
         elif self.jumping:
             self.cur_sprites = self.jumping_sprites
+
+
+        elif (self.state==State.lp_punch and self.state_counter > 0):
+            self.cur_sprites = self.crouchHeavy
+        
+        
+        elif self.crouching and self.state==State.l_punch:
+            self.cur_sprites = self.crouchLight
+        
+        elif self.crouching and self.state==State.aa_punch:
+            self.cur_sprites = self.crouchUP
+        
         elif self.crouching:
             self.cur_sprites = self.crouching_sprites
+        
+        
+
         elif self.state==State.h_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
             if self.player_sprites.visible:
                 arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.Hattack_sprites  
-        elif self.state==State.h_punch:
+
+        elif self.state==State.l_punch and (self.state_counter > int(cn.L_HIT_LENGTH)/3):
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
+            self.cur_sprites = self.Lattack_sprites 
+        
+        elif self.state==State.aa_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+            if self.player_sprites.visible:
+                arcade.play_sound(self.sword_sound)
+            self.cur_sprites = self.upperCut
+
+        elif self.state==State.h_punch or self.state==State.l_punch or self.state==State.aa_punch:
             self.cur_sprites = self.idle_sprite
+
         elif self.state==State.blocking:
             self.cur_sprites = self.block_sprite
-        else:
+
+        
+        elif self.state!=self.punching:
             self.cur_sprites = self.running_sprites
         self.player_sprite.texture = self.cur_sprites[self.cur_index]
 
