@@ -99,7 +99,7 @@ class Player(object):
                  width: int, height: int,
                  main_hurtbox: arcade.SpriteSolidColor, extended_hurtbox: arcade.SpriteSolidColor,
                  hitbox: arcade.SpriteSolidColor,
-                 input_map: int, character_input:int):
+                 input_map: int, character_input:int, player_Num:int):
         """
         CONTAINS ALL SET-UP AND VARIABLE DECLARATION FOR THE PLAYER CLASS
         """
@@ -600,11 +600,14 @@ class Player(object):
             
             
             if self.cur_index>=8:
+
                 if self.cur_sprites != self.dead_sprites:
                     self.cur_index=0
                 else:
                     ##Keep the sprite on the floor
                     self.cur_index=8
+
+                    
             else:
                     self.cur_index+=1
             
@@ -612,14 +615,14 @@ class Player(object):
             self.player_hurtboxes[1].center_x = int(self.center_x + (1.5*cn.SPRITE_PLAYER_WIDTH / 6))
 
             if self.cur_index>=17:
+
                 if self.cur_sprites != self.dead_sprites:
                     self.cur_index=9
                 else:
                     self.cur_index=17
+
+
             else:
-                if self.cur_sprites != self.dead_sprites:
-                    self.cur_index=17
-                else:
                     self.cur_index+=1
 
         
