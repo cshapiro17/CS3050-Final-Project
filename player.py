@@ -636,7 +636,7 @@ class Player(object):
             if self.player_sprites.visible:
                 arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.jattack_sprites
-        elif  self.state==State.aa_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
+        elif self.jumping and  self.state==State.aa_punch and (self.state_counter > int(cn.H_HIT_LENGTH)/3):
             if self.player_sprites.visible:
                 arcade.play_sound(self.sword_sound)
             self.cur_sprites = self.UPjattack_sprites
