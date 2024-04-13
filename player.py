@@ -99,7 +99,7 @@ class Player(object):
                  width: int, height: int,
                  main_hurtbox: arcade.SpriteSolidColor, extended_hurtbox: arcade.SpriteSolidColor,
                  hitbox: arcade.SpriteSolidColor,
-                 input_map: int, character_input:int, player_Num:int):
+                 input_map: int, character_input:int):
         """
         CONTAINS ALL SET-UP AND VARIABLE DECLARATION FOR THE PLAYER CLASS
         """
