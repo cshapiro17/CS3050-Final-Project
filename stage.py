@@ -7,13 +7,6 @@ import computer_controller as c
 import os
 import datetime as dt  # TIMER FOR MAX MATCH TIME
 
-
-
-# TODO / Important Stuff:
-#       UI SPRITES AREN'T CONNECTED TO THE VALUES THEY REPRESENT YET
-#       Slow-down from collision detection makes tics vary in speed, which can vary the speed of attacks based on
-#           how much is happening in the code
-
 # --- Constants ---
 SCREEN_TITLE = "Fight Stage"
 
@@ -28,7 +21,7 @@ class StageView(arcade.View):
     def __init__(self):
         # Call the parent class initializer
         super().__init__()
-
+        self.window.set_mouse_visible(False)
         # Player and Computer(?)
         self.player_1 = None
         self.dummy = None
@@ -88,7 +81,7 @@ class StageView(arcade.View):
         self.dummy_controller_num = None
         self.controller = None
 
-    def setup(self):
+    def setup(self, setup_inputs):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
 
@@ -102,8 +95,7 @@ class StageView(arcade.View):
                                                            [0, 255, 0])
         self.player_main_hurtbox.center_x = p1_center[0]
         self.player_main_hurtbox.center_y = p1_center[1]
-        self.player_extended_hurtbox = arcade.SpriteSolidColor(int(cn.SPRITE_PLAYER_WIDTH / 3),
-                                                               # Extended Player Health/Body Hit Box
+        self.player_extended_hurtbox = arcade.SpriteSolidColor(int(cn.SPRITE_PLAYER_WIDTH / 3), # Extended Player Health/Body Hit Box
                                                                10,
                                                                [255, 255, 255])
         self.player_extended_hurtbox.center_x = p1_center[0]
@@ -117,7 +109,7 @@ class StageView(arcade.View):
         self.player_hitbox.center_y = 0
 
         # ===
-
+        
 
         # -- DUMMY HURTBOXES --
         self.dummy_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Test Dummy Health/Body Hit Box
@@ -140,8 +132,8 @@ class StageView(arcade.View):
 
         # TODO: Sync this with the UI, so different setups can be selected
         # For controller_nums, 0 is full keymap, 1 is left split, 2 is right split, < 0 is mister roboto
-        self.player_controller_num = 0  # input_map = 2 for right split keymap
-        self.dummy_controller_num = -1  # input_map = 1 for left split keymap
+        self.player_controller_num = setup_inputs[0]  # input_map = 2 for right split keymap
+        self.dummy_controller_num = setup_inputs[1]  # input_map = 1 for left split keymap
 
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
@@ -167,11 +159,25 @@ class StageView(arcade.View):
         self.floors.append(self.floor)
 
         # -- STAGE UI SETUP --
-        # TODO: SETUP ALL THE UI ASPECTS AS SPRITES
         # DUMMY TRACKER UI
-        self.d_portrait = arcade.SpriteSolidColor(cn.PORTRAIT_DIMENSIONS[0],
-                                                  cn.PORTRAIT_DIMENSIONS[1],
-                                                  [0, 0, 250])
+
+        # TODO Replace portrait with image of fighter
+        if (self.dummy.character_input == 1):
+            self.d_portrait = arcade.Sprite("images/Lisa/pfp.png",
+                                            scale=0.35)
+        elif (self.dummy.character_input == 2):
+            self.d_portrait = arcade.Sprite("images/Jackie/pfp.png",
+                                            scale=0.4)
+        elif (self.dummy.character_input == 3):
+            self.d_portrait = arcade.Sprite("images/Jason/pfp.png",
+                                            scale=0.45)
+        elif (self.dummy.character_input == 4):
+            self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
+                                            scale=0.4)
+        else:
+            self.d_portrait = arcade.Sprite("image/Robot/pfp.png",
+                                            scale=0.5)
+
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.d_health = arcade.SpriteSolidColor(int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
@@ -192,9 +198,24 @@ class StageView(arcade.View):
         # 20px is for offset for block bar
 
         # PLAYER TRACKER UI
-        self.p_1_portrait = arcade.SpriteSolidColor(cn.PORTRAIT_DIMENSIONS[0],
-                                                    cn.PORTRAIT_DIMENSIONS[1],
-                                                    [0, 255, 0])
+
+        # TODO Replace portrait with image of fighter
+        if (self.player_1.character_input == 1):
+            self.p_1_portrait = arcade.Sprite("images/Lisa/pfp.png",
+                                            scale=0.35)
+        elif (self.player_1.character_input == 2):
+            self.p_1_portrait = arcade.Sprite("images/Jackie/pfp.png",
+                                            scale=0.4)
+        elif (self.player_1.character_input == 3):
+            self.p_1_portrait = arcade.Sprite("images/Jason/pfp.png",
+                                            scale=0.45)
+        elif (self.player_1.character_input == 4):
+            self.p_1_portrait = arcade.Sprite("images/Chris/pfp.png",
+                                            scale=0.4)
+        else:
+            self.p_1_portrait = arcade.Sprite("images/Robot/pfp.png",
+                                              scale=0.5)
+            
         self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.p_1_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
         self.p_1_health = arcade.SpriteSolidColor(int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT),
@@ -242,21 +263,21 @@ class StageView(arcade.View):
         
         # Set up game clock info
         self.timer_text = arcade.Text(
-            text = "00:00",
+            text = str(cn.MAX_MATCH_TIME),
             start_x = cn.SCREEN_WIDTH/2,
-            start_y = cn.SCREEN_HEIGHT - 85,
+            start_y = cn.SCREEN_HEIGHT - 80,
             color=arcade.color.BLACK,
-            font_size= 25,
+            font_size= 50,
             anchor_x="center",
+            font_name=cn.TIMER_FONT
         )
 
         # Set up the start countdown
         self.start_time = cn.COUNTDOWN_TIME
 
-        # Set up the countdown sprite
-        self.countdown_sprite = arcade.Sprite("sprites/three.png",
+        self.countdown_sprite = arcade.Sprite("sprites/get_ready_sprite.png",
                                               center_x=cn.SCREEN_WIDTH/2,
-                                              center_y=cn.SCREEN_HEIGHT/2)
+                                              center_y=cn.SCREEN_HEIGHT/2 - 100)
 
         # UI APPEND TO LIST
         self.ui.append(self.player_health_bar_sprite)
@@ -270,17 +291,14 @@ class StageView(arcade.View):
         self.ui.append(self.p_1_block)
 
 
-
+       
         """
         self.ui.append(self.d_super)
         self.ui.append(self.p_1_super)
         """
 
-        # Set the background to the desired image (default as Waterman green)
-        self.background = arcade.load_texture("images/backgrounds/votey.jpg")
-
         # Set up the game clock
-        self.total_time = 60.0
+        self.total_time = cn.MAX_MATCH_TIME
 
     def on_draw(self):
         """
@@ -301,15 +319,12 @@ class StageView(arcade.View):
         self.player_1.player_sprites.draw()
         #self.player_1.player_hitboxes.draw()
 
-
       #  self.dummy.player_hurtboxes.draw()
        # self.dummy.player_hitboxes.draw()
         self.dummy.player_sprites.draw()
 
-
         self.floors.draw()
         self.ui.draw()
-        self.timer_text.draw()
         self.timer_text.draw()
         self.countdown_sprite.draw()
 
@@ -325,7 +340,8 @@ class StageView(arcade.View):
         self.floors.update()
         self.ui.update()
 
-        self.controller.update()
+        if not (self.controller is None):
+            self.controller.update()
 
         self.player_1.grav_cycle(floors=self.floors)
         self.dummy.grav_cycle(floors=self.floors)
@@ -524,7 +540,7 @@ class StageView(arcade.View):
         """
         if key == arcade.key.P:   # pause game
             # pass self, the current view, to preserve this view's state
-            pause = gv.PauseView(self)
+            pause = gv.PauseView(self, self.player_controller_num, self.dummy_controller_num)
             self.window.show_view(pause)
 
         self.player_1.player_key_press(key, key_modifiers)
@@ -564,24 +580,28 @@ class StageView(arcade.View):
         """
         Updates the UI
         """
+
         """
         Update the countdown sequence
         """
-
-        self.start_time -= delta_time
         self.player_1.player_sprites.visible=False
         self.dummy.player_sprites.visible=False
 
-        if self.start_time <= cn.COUNTDOWN_TIME and self.start_time > 2.5:
+        if self.start_time <= cn.COUNTDOWN_TIME and self.start_time > (cn.COUNTDOWN_TIME*0.75):
+            self.countdown_sprite = arcade.Sprite("sprites/get_ready_sprite.png",
+                                            center_x=cn.SCREEN_WIDTH/2,
+                                            center_y=cn.SCREEN_HEIGHT/2)
+
+        elif self.start_time <= (cn.COUNTDOWN_TIME*0.75) and self.start_time > (cn.COUNTDOWN_TIME*0.5):
             self.countdown_sprite = arcade.Sprite("sprites/three.png",
                                                   center_x=cn.SCREEN_WIDTH/2,
                                                   center_y=cn.SCREEN_HEIGHT/2)
-        elif self.start_time <= 2.5 and self.start_time > 1.25:
+        elif self.start_time <= (cn.COUNTDOWN_TIME*0.5) and self.start_time > (cn.COUNTDOWN_TIME*0.25):
             self.countdown_sprite = arcade.Sprite("sprites/two.png",
                                                   center_x=cn.SCREEN_WIDTH/2 - 1,
                                                   center_y=cn.SCREEN_HEIGHT/2 - 12)
                     # Decrement the countdown time
-        elif self.start_time <= 1.25 and self.start_time > 0:
+        elif self.start_time <= (cn.COUNTDOWN_TIME*0.25) and self.start_time > 0:
             self.countdown_sprite = arcade.Sprite("sprites/one.png",
                                                   center_x=cn.SCREEN_WIDTH/2 + 4,
                                                   center_y=cn.SCREEN_HEIGHT/2 + 2) 
@@ -596,12 +616,12 @@ class StageView(arcade.View):
             Update the game clock
             """
 
-            minutes = int(self.total_time) // 60
+            minutes = int(self.total_time) / 60
             seconds = int(self.total_time) % 60
 
             if minutes == 0.0 and seconds == 0.0:
                 # Change the view to "Game Over" view
-                self.window.show_view(gv.GameOverView())
+                self.window.show_view(gv.GameOverView("timeout",self.player_controller_num, self.dummy_controller_num))
 
                 # Make sure time does not decrease
                 self.total_time = 0.0
@@ -610,10 +630,18 @@ class StageView(arcade.View):
                 self.total_time -= delta_time
 
             # Create the text for the timer
-            self.timer_text.text = f"{minutes:02d}:{seconds:02d}"
+            self.timer_text.text = f"{seconds:02d}"
+
+        self.start_time -= delta_time
+
         # --- DUMMY UI REFRESH ---
         if self.dummy.health < 1:
             self.d_health.alpha = 0
+
+            game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
+
+            # Change the view to "Game Over" view
+            self.window.show_view(game_end)            
         else:
             self.d_health.alpha = 255
             self.d_health.width = int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
@@ -631,6 +659,11 @@ class StageView(arcade.View):
         # --- PLAYER UI REFRESH ---
         if self.player_1.health < 1:
             self.p_1_health.alpha = 0
+
+            game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
+
+            # Change the view to "Game Over" view
+            self.window.show_view(game_end)
         else:
             self.p_1_health.alpha = 255
             self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
