@@ -81,6 +81,9 @@ class StageView(arcade.View):
         self.dummy_controller_num = None
         self.controller = None
 
+        # Countdown after a player has won
+        self.victory_countdown = None
+
     def setup(self, setup_inputs):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
@@ -153,7 +156,7 @@ class StageView(arcade.View):
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
                                              int(cn.SCREEN_HEIGHT / 3),
-                                             [114, 164, 164])
+                                             arcade.color_from_hex_string(cn.FLOOR_COLOR))
         self.floor.center_x = f_center[0]
         self.floor.center_y = f_center[1]
         self.floors.append(self.floor)
@@ -263,11 +266,11 @@ class StageView(arcade.View):
         
         # Set up game clock info
         self.timer_text = arcade.Text(
-            text = str(cn.MAX_MATCH_TIME),
+            text = "60",
             start_x = cn.SCREEN_WIDTH/2,
-            start_y = cn.SCREEN_HEIGHT - 80,
+            start_y = cn.SCREEN_HEIGHT - 85,
             color=arcade.color.BLACK,
-            font_size= 50,
+            font_size= 25,
             anchor_x="center",
             font_name=cn.TIMER_FONT
         )
@@ -299,6 +302,9 @@ class StageView(arcade.View):
 
         # Set up the game clock
         self.total_time = cn.MAX_MATCH_TIME
+
+        # Set up victory countdown 
+        self.victory_countdown = cn.VICTORY_COUNTDOWN
 
     def on_draw(self):
         """
@@ -638,10 +644,17 @@ class StageView(arcade.View):
         if self.dummy.health < 1:
             self.d_health.alpha = 0
 
-            game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
+            print("Victory countdown " + str(self.victory_countdown))
 
-            # Change the view to "Game Over" view
-            self.window.show_view(game_end)            
+            countdown_check = round(self.victory_countdown, 2)
+
+            if (countdown_check <= 0.0):
+                game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
+
+                # Change the view to "Game Over" view
+                self.window.show_view(game_end)  
+            else:
+                self.victory_countdown -= delta_time         
         else:
             self.d_health.alpha = 255
             self.d_health.width = int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
@@ -660,10 +673,17 @@ class StageView(arcade.View):
         if self.player_1.health < 1:
             self.p_1_health.alpha = 0
 
-            game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
+            print("Victory countdown " + str(self.victory_countdown))
 
-            # Change the view to "Game Over" view
-            self.window.show_view(game_end)
+            countdown_check = round(self.victory_countdown, 2)
+
+            if (countdown_check <= 0.0):
+                game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
+
+                # Change the view to "Game Over" view
+                self.window.show_view(game_end)
+            else:
+                self.victory_countdown -= delta_time
         else:
             self.p_1_health.alpha = 255
             self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
