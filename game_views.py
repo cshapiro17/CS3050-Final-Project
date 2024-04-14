@@ -60,14 +60,10 @@ class WelcomeView(arcade.View):
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if arcade.check_for_collision(self.pointer, self.enable_computer):
-            stage_setup_inputs = [0, -1]
-            game_view = s.StageView()
-            game_view.setup(stage_setup_inputs)
+            game_view = PlayVsComp()
             self.window.show_view(game_view)
         elif arcade.check_for_collision(self.pointer, self.enable_pvp):
-            stage_setup_inputs = [2, 1]
-            game_view = s.StageView()
-            game_view.setup(stage_setup_inputs)
+            game_view = PlayVsPlay()
             self.window.show_view(game_view)
         else:
             pass
@@ -88,9 +84,8 @@ class PlayVsPlay(arcade.View):
         }
         self.banner_image = arcade.load_texture("images/backgrounds/ChooseUrFighter.png")
         #default is Jason incase no one chooses
-        self.p1_character = "Jason Hibbeler"
-        self.p2_character = "Jason Hibbeler"
-
+        self.p1_character = 3
+        self.p2_character = 3
 
     def on_draw(self):
         arcade.start_render()
@@ -123,28 +118,29 @@ class PlayVsPlay(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
-            self.p1_character = "Lisa Dion"
+            self.p1_character = 1
         elif key == arcade.key.S:
-            self.p1_character = "Jackie Horton"
+            self.p1_character = 2
         elif key == arcade.key.D:
-            self.p1_character = "Jason Hibbeler"
+            self.p1_character = 3
         elif key == arcade.key.F:
-            self.p1_character = "Chris Skalka"
+            self.p1_character = 4
 
         if key == arcade.key.H:
-            self.p2_character = "Lisa Dion"
+            self.p2_character = 1
         elif key == arcade.key.J:
-            self.p2_character = "Jackie Horton"
+            self.p2_character = 2
         elif key == arcade.key.K:
-            self.p2_character = "jason Hibbeler"
+            self.p2_character = 3
         elif key == arcade.key.L:
-            self.p2_character = "Chris Skalka"
+            self.p2_character = 4
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if self.p1_character and self.p2_character:
+            stage_setup_inputs = [self.p1_character, self.p2_character]
             game_view = s.StageView()
-            game_view.setup(self.p1_character, self.p2_character)
+            game_view.setup(stage_setup_inputs)
             self.window.show_view(game_view)
 
 
@@ -160,8 +156,8 @@ class PlayVsComp(arcade.View):
         }
         self.banner_image = arcade.load_texture("images/backgrounds/ChooseUrFighter.png")
         #default is Jason incase no one chooses
-        self.p1_character = "Jason Hibbeler"
-        self.p2_character = "Jason Hibbeler"
+        self.p1_character = 3
+        self.p2_character = 3
 
 
     def on_draw(self):
@@ -195,19 +191,20 @@ class PlayVsComp(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.A:
-            self.p1_character = "Lisa Dion"
+            self.p1_character = 1
         elif key == arcade.key.S:
-            self.p1_character = "Jackie Horton"
+            self.p1_character = 2
         elif key == arcade.key.D:
-            self.p1_character = "Jason Hibbeler"
+            self.p1_character = 3
         elif key == arcade.key.F:
-            self.p1_character = "Chris Skalka"
+            self.p1_character = 4
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if self.p1_character and self.p2_character:
+            stage_setup_inputs = [self.p1_character, -1]
             game_view = s.StageView()
-            game_view.setup(self.p1_character, self.p2_character)
+            game_view.setup(stage_setup_inputs)
             self.window.show_view(game_view)
 
 class PauseView(arcade.View):
