@@ -9,7 +9,7 @@ SCREEN_TITLE = "Fighting Faculty"
 def main():
     """ Main function """
     window = arcade.Window(cn.SCREEN_WIDTH, cn.SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = gv.PlayVsComp()
+    start_view = gv.WelcomeView()
     window.show_view(start_view)
 
     arcade.run()
