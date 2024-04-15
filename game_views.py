@@ -3,12 +3,18 @@ import constants as cn
 import os
 import stage as s
 
-
+'''
+WelcomeView represents the first screen that the user interacts with
+This view allows the user to choose if they would like to play against
+The computer or against another player
+'''
 class WelcomeView(arcade.View):
 
     def __init__(self):
         super().__init__()
         self.window.set_mouse_visible(True)
+
+        # Set up the solid sprites for the welcome view
         self.enable_computer = arcade.SpriteSolidColor(int(cn.PORTRAIT_DIMENSIONS[1] * 2),
                                                        int(cn.PORTRAIT_DIMENSIONS[1] * 0.75),
                                                        [255, 255, 255])
@@ -73,9 +79,12 @@ class WelcomeView(arcade.View):
         self.pointer.center_y = y
 
 
+'''
+The PlayVsPlay view acts as the view which allows the users to select their players in 2 player mode
+'''
 class PlayVsPlay(arcade.View):
     def on_show(self):
-        arcade.set_background_color(cn.K_ORANGE)
+        arcade.set_background_color(arcade.color_from_hex_string(cn.START_BACKGROUND_COLOR))
         self.character_image ={
             "Lisa Dion": arcade.load_texture("images/Lisa/idle.png"),
             "Jackie Horton": arcade.load_texture("images/Jackie/idle.png"),
@@ -89,19 +98,23 @@ class PlayVsPlay(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        #Text
+        # Create the text for this view
         arcade.draw_texture_rectangle(700, cn.SCREEN_HEIGHT - 100,
                                       self.banner_image.width,
                                       self.banner_image.height,
                                       self.banner_image, 0)
-        arcade.draw_text("Player 1 use ASDF and Player 2 Use HJKL, Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6,
-                         arcade.color.BLACK, font_size=45, anchor_x="center",
+        arcade.draw_text("Player 1 use ASDF and Player 2 Use HJKL", self.window.width / 2, self.window.height / 1.6 + 10,
+                         arcade.color.BLACK, font_size=20, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
+        arcade.draw_text("Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6 - 25,
+                         arcade.color.BLACK, font_size=20, anchor_x="center",
+                         font_name=cn.START_TXT_FONT)
+        
 
         #character options
         arcade.draw_texture_rectangle(250, cn.SCREEN_HEIGHT - 500,
-                                      self.character_image["Lisa Dion"].width *.19,
-                                      self.character_image["Lisa Dion"].height *.19,
+                                      self.character_image["Lisa Dion"].width,
+                                      self.character_image["Lisa Dion"].height,
                                       self.character_image["Lisa Dion"], 0)
         arcade.draw_texture_rectangle(550, cn.SCREEN_HEIGHT - 500,
                                       self.character_image["Jackie Horton"].width,
@@ -138,16 +151,17 @@ class PlayVsPlay(arcade.View):
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if self.p1_character and self.p2_character:
-            stage_setup_inputs = [self.p1_character, self.p2_character]
+            character_selection = [self.p1_character, self.p2_character]
+            setup_inputs = [1,2]
             game_view = s.StageView()
-            game_view.setup(stage_setup_inputs)
+            game_view.setup(setup_inputs, character_selection)
             self.window.show_view(game_view)
 
 
 
 class PlayVsComp(arcade.View):
     def on_show(self):
-        arcade.set_background_color(cn.K_ORANGE)
+        arcade.set_background_color(arcade.color_from_hex_string(cn.START_BACKGROUND_COLOR))
         self.character_image ={
             "Lisa Dion": arcade.load_texture("images/Lisa/idle.png"),
             "Jackie Horton": arcade.load_texture("images/Jackie/idle.png"),
@@ -168,13 +182,13 @@ class PlayVsComp(arcade.View):
                                       self.banner_image.height,
                                       self.banner_image, 0)
         arcade.draw_text("Player 1 use ASDF, Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6,
-                         arcade.color.BLACK, font_size=45, anchor_x="center",
+                         arcade.color.BLACK, font_size=20, anchor_x="center",
                          font_name=cn.START_TXT_FONT)
 
         #character options
         arcade.draw_texture_rectangle(250, cn.SCREEN_HEIGHT - 500,
-                                      self.character_image["Lisa Dion"].width *.19,
-                                      self.character_image["Lisa Dion"].height *.19,
+                                      self.character_image["Lisa Dion"].width,
+                                      self.character_image["Lisa Dion"].height,
                                       self.character_image["Lisa Dion"], 0)
         arcade.draw_texture_rectangle(550, cn.SCREEN_HEIGHT - 500,
                                       self.character_image["Jackie Horton"].width,
@@ -202,9 +216,10 @@ class PlayVsComp(arcade.View):
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if self.p1_character and self.p2_character:
-            stage_setup_inputs = [self.p1_character, -1]
+            character_selection = [self.p1_character, -1]
+            setup_inputs = [0, -1]
             game_view = s.StageView()
-            game_view.setup(stage_setup_inputs)
+            game_view.setup(setup_inputs, character_selection)
             self.window.show_view(game_view)
 
 class PauseView(arcade.View):
@@ -214,10 +229,11 @@ class PauseView(arcade.View):
             Will allow user to pause fight, end fight, reset fight, and access the keymap schema
     """
 
-    def __init__(self, stage_view, player_controller_num, dummy_controller_num):
+    def __init__(self, stage_view, player_controller_num, dummy_controller_num, player1, player2):
         super().__init__()
         self.stage_view = stage_view
         self.setup_inputs = [player_controller_num, dummy_controller_num]
+        self.character_selection = [player1, player2]
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color_from_hex_string(cn.BACKGROUND_COLOR))
@@ -250,14 +266,13 @@ class PauseView(arcade.View):
             self.window.show_view(self.stage_view)
         elif key == arcade.key.R:  # reset game
             game_view = s.StageView()
-            game_view.setup(self.setup_inputs)
+            game_view.setup(self.setup_inputs, self.character_selection)
             self.window.show_view(game_view)
         elif key == arcade.key.H:
             help = HelpView(self)
             self.window.show_view(help)
         elif key == arcade.key.E:
-
-            end_game = GameOverView("manual", self.setup_inputs[0], self.setup_inputs[1])
+            end_game = GameOverView("manual", self.setup_inputs[0], self.setup_inputs[1], self.character_selection[0], self.character_selection[1])
             self.window.show_view(end_game)
 
 
@@ -416,7 +431,7 @@ class GameOverView(arcade.View):
             Will end the game and allow the user to pick new characters or restart the game
     """
 
-    def __init__(self, game_end_state, player_num, dummy_num):
+    def __init__(self, game_end_state, player_num, dummy_num, player1, player2):
         super().__init__()
         self.game_end_state = game_end_state
         self.lisa_win = None
@@ -425,6 +440,7 @@ class GameOverView(arcade.View):
         self.kombat_theme = None
         self.Player = None
         self.setup_inputs = [player_num, dummy_num]
+        self.character_selection = [player1, player2]
 
 
     def on_show_view(self):
@@ -532,7 +548,7 @@ class GameOverView(arcade.View):
             arcade.stop_sound(self.Player)
 
             game_view = s.StageView()
-            game_view.setup(self.setup_inputs)
+            game_view.setup(self.setup_inputs, self.character_selection)
             self.window.show_view(game_view)
         elif key == arcade.key.ESCAPE:
             arcade.exit()
