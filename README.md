@@ -39,5 +39,14 @@ The control scheme is listed below. There are three different schemes, we have t
       - *say goodbye to your toes*
 - C Key (or .): Super Move
 
+## Character Selection
+### PVP
+- When selecting characters in PvP mode, player one chooses a character first using ASDF
+  then player two chooses a character using HJKL
+- When both players have selected a player than click the mouse to advance to the game
+### PVC
+- Choose your player for PvC mode using ASDF and click the mouse to advance to the game to face
+  your surprise opponent!
+
 
 
