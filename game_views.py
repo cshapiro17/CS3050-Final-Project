@@ -496,19 +496,19 @@ class GameOverView(arcade.View):
                          arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "2"):
-            arcade.set_background_color(arcade.color_from_hex_string(cn.JACKIE_WIN_COLOR)) # Make background grey
+            arcade.set_background_color(arcade.color_from_hex_string(cn.JACKIE_WIN_COLOR))
 
             arcade.draw_text("Jackie Wins!", self.window.width / 2, self.window.height / 2 + 115,
                          arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "3"):
-            arcade.set_background_color(arcade.color_from_hex_string(cn.JASON_WIN_COLOR)) # Make background grey
+            arcade.set_background_color(arcade.color_from_hex_string(cn.JASON_WIN_COLOR)) 
 
             arcade.draw_text("Jason Wins!", self.window.width / 2, self.window.height / 2 + 115,
                          arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "4"):
-            arcade.set_background_color(arcade.color_from_hex_string(cn.CHRIS_WIN_COLOR)) # Make background grey
+            arcade.set_background_color(arcade.color_from_hex_string(cn.CHRIS_WIN_COLOR))
 
             arcade.draw_text("Chris Wins!", self.window.width / 2, self.window.height / 2 + 115,
                          arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",

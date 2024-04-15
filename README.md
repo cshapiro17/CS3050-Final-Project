@@ -48,5 +48,7 @@ The control scheme is listed below. There are three different schemes, we have t
 - Choose your player for PvC mode using ASDF and click the mouse to advance to the game to face
   your surprise opponent!
 
+### Note: Press "P" during gameplay to pause the game
+
 
 
