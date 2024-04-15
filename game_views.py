@@ -28,7 +28,7 @@ class WelcomeView(arcade.View):
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
-        arcade.set_background_color(cn.START_BACKGROUND_COLOR)
+        arcade.set_background_color(arcade.color_from_hex_string(cn.START_BACKGROUND_COLOR))
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
