@@ -1,9 +1,7 @@
 import arcade
-import arcade.color
 import constants as cn
 import os
 import stage as s
-import pyglet
 
 
 class WelcomeView(arcade.View):
@@ -30,7 +28,7 @@ class WelcomeView(arcade.View):
 
     def on_show_view(self):
         """ This is run once when we switch to this view """
-        arcade.set_background_color(arcade.color_from_hex_string(cn.START_BACKGROUND_COLOR))
+        arcade.set_background_color(cn.START_BACKGROUND_COLOR)
 
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
@@ -62,14 +60,10 @@ class WelcomeView(arcade.View):
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         if arcade.check_for_collision(self.pointer, self.enable_computer):
-            stage_setup_inputs = [0, -1]
-            game_view = s.StageView()
-            game_view.setup(stage_setup_inputs)
+            game_view = PlayVsComp()
             self.window.show_view(game_view)
         elif arcade.check_for_collision(self.pointer, self.enable_pvp):
-            stage_setup_inputs = [2, 1]
-            game_view = s.StageView()
-            game_view.setup(stage_setup_inputs)
+            game_view = PlayVsPlay()
             self.window.show_view(game_view)
         else:
             pass
@@ -78,6 +72,140 @@ class WelcomeView(arcade.View):
         self.pointer.center_x = x
         self.pointer.center_y = y
 
+
+class PlayVsPlay(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(cn.K_ORANGE)
+        self.character_image ={
+            "Lisa Dion": arcade.load_texture("images/Lisa/idle.png"),
+            "Jackie Horton": arcade.load_texture("images/Jackie/idle.png"),
+            "Jason Hibbeler": arcade.load_texture("images/Jason/idle.png"),
+            "Chris Skalka": arcade.load_texture("images/Chris/idle.png")
+        }
+        self.banner_image = arcade.load_texture("images/backgrounds/ChooseUrFighter.png")
+        #default is Jason incase no one chooses
+        self.p1_character = 3
+        self.p2_character = 3
+
+    def on_draw(self):
+        arcade.start_render()
+        #Text
+        arcade.draw_texture_rectangle(700, cn.SCREEN_HEIGHT - 100,
+                                      self.banner_image.width,
+                                      self.banner_image.height,
+                                      self.banner_image, 0)
+        arcade.draw_text("Player 1 use ASDF and Player 2 Use HJKL, Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6,
+                         arcade.color.BLACK, font_size=45, anchor_x="center",
+                         font_name=cn.START_TXT_FONT)
+
+        #character options
+        arcade.draw_texture_rectangle(250, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Lisa Dion"].width *.19,
+                                      self.character_image["Lisa Dion"].height *.19,
+                                      self.character_image["Lisa Dion"], 0)
+        arcade.draw_texture_rectangle(550, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jackie Horton"].width,
+                                      self.character_image["Jackie Horton"].height,
+                                      self.character_image["Jackie Horton"], 0)
+        arcade.draw_texture_rectangle(850, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jason Hibbeler"].width,
+                                      self.character_image["Jason Hibbeler"].height,
+                                      self.character_image["Jason Hibbeler"], 0)
+        arcade.draw_texture_rectangle(1150, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Chris Skalka"].width,
+                                      self.character_image["Chris Skalka"].height,
+                                      self.character_image["Chris Skalka"], 0)
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.A:
+            self.p1_character = 1
+        elif key == arcade.key.S:
+            self.p1_character = 2
+        elif key == arcade.key.D:
+            self.p1_character = 3
+        elif key == arcade.key.F:
+            self.p1_character = 4
+
+        if key == arcade.key.H:
+            self.p2_character = 1
+        elif key == arcade.key.J:
+            self.p2_character = 2
+        elif key == arcade.key.K:
+            self.p2_character = 3
+        elif key == arcade.key.L:
+            self.p2_character = 4
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ If the user presses the mouse button, start the game. """
+        if self.p1_character and self.p2_character:
+            stage_setup_inputs = [self.p1_character, self.p2_character]
+            game_view = s.StageView()
+            game_view.setup(stage_setup_inputs)
+            self.window.show_view(game_view)
+
+
+
+class PlayVsComp(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(cn.K_ORANGE)
+        self.character_image ={
+            "Lisa Dion": arcade.load_texture("images/Lisa/idle.png"),
+            "Jackie Horton": arcade.load_texture("images/Jackie/idle.png"),
+            "Jason Hibbeler": arcade.load_texture("images/Jason/idle.png"),
+            "Chris Skalka": arcade.load_texture("images/Chris/idle.png")
+        }
+        self.banner_image = arcade.load_texture("images/backgrounds/ChooseUrFighter.png")
+        #default is Jason incase no one chooses
+        self.p1_character = 3
+        self.p2_character = 3
+
+
+    def on_draw(self):
+        arcade.start_render()
+        #Text
+        arcade.draw_texture_rectangle(700, cn.SCREEN_HEIGHT - 100,
+                                      self.banner_image.width,
+                                      self.banner_image.height,
+                                      self.banner_image, 0)
+        arcade.draw_text("Player 1 use ASDF, Click Mouse to Continue", self.window.width / 2, self.window.height / 1.6,
+                         arcade.color.BLACK, font_size=45, anchor_x="center",
+                         font_name=cn.START_TXT_FONT)
+
+        #character options
+        arcade.draw_texture_rectangle(250, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Lisa Dion"].width *.19,
+                                      self.character_image["Lisa Dion"].height *.19,
+                                      self.character_image["Lisa Dion"], 0)
+        arcade.draw_texture_rectangle(550, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jackie Horton"].width,
+                                      self.character_image["Jackie Horton"].height,
+                                      self.character_image["Jackie Horton"], 0)
+        arcade.draw_texture_rectangle(850, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Jason Hibbeler"].width,
+                                      self.character_image["Jason Hibbeler"].height,
+                                      self.character_image["Jason Hibbeler"], 0)
+        arcade.draw_texture_rectangle(1150, cn.SCREEN_HEIGHT - 500,
+                                      self.character_image["Chris Skalka"].width,
+                                      self.character_image["Chris Skalka"].height,
+                                      self.character_image["Chris Skalka"], 0)
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.A:
+            self.p1_character = 1
+        elif key == arcade.key.S:
+            self.p1_character = 2
+        elif key == arcade.key.D:
+            self.p1_character = 3
+        elif key == arcade.key.F:
+            self.p1_character = 4
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ If the user presses the mouse button, start the game. """
+        if self.p1_character and self.p2_character:
+            stage_setup_inputs = [self.p1_character, -1]
+            game_view = s.StageView()
+            game_view.setup(stage_setup_inputs)
+            self.window.show_view(game_view)
 
 class PauseView(arcade.View):
     """
@@ -131,6 +259,7 @@ class PauseView(arcade.View):
 
             end_game = GameOverView("manual", self.setup_inputs[0], self.setup_inputs[1])
             self.window.show_view(end_game)
+
 
 
 class HelpView(arcade.View):
@@ -323,7 +452,7 @@ class GameOverView(arcade.View):
         else:
             self.kombat_theme = arcade.load_sound("SoundEffect/Mortal Kombat.mp3")
             self.Player = arcade.play_sound(self.kombat_theme)
-     
+
 
     def on_draw(self):
         self.clear()
@@ -342,40 +471,42 @@ class GameOverView(arcade.View):
 
         if (self.game_end_state == "timeout"):
             arcade.draw_text("Match Timed Out", self.window.width / 2, self.window.height / 2 + 115,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name= cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "1"):
             arcade.set_background_color(arcade.color_from_hex_string(cn.LISA_WIN_COLOR)) # Make background grey
 
             arcade.draw_text("Lisa Wins!", self.window.width / 2, self.window.height / 2 + 115,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "2"):
             arcade.set_background_color(arcade.color_from_hex_string(cn.JACKIE_WIN_COLOR)) # Make background grey
 
             arcade.draw_text("Jackie Wins!", self.window.width / 2, self.window.height / 2 + 115,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "3"):
             arcade.set_background_color(arcade.color_from_hex_string(cn.JASON_WIN_COLOR)) # Make background grey
 
             arcade.draw_text("Jason Wins!", self.window.width / 2, self.window.height / 2 + 115,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "4"):
             arcade.set_background_color(arcade.color_from_hex_string(cn.CHRIS_WIN_COLOR)) # Make background grey
 
             arcade.draw_text("Chris Wins!", self.window.width / 2, self.window.height / 2 + 115,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         elif (self.game_end_state == "5"):
             arcade.set_background_color(arcade.color_from_hex_string(cn.ROBOT_WIN_COLOR)) # Make background grey
 
             arcade.draw_text("Robot Wins!", self.window.width / 2, self.window.height / 2 + 115,
-                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center", 
+                         arcade.color_from_hex_string("#FFFFFF"), font_size=60, anchor_x="center",
                          font_name=cn.GE_TXT_FONT, bold=True)
         else:
             arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2 + 115,
+
+
                             arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=60, anchor_x="center", 
                             font_name=cn.GE_TXT_FONT, bold=True)
             
@@ -384,6 +515,7 @@ class GameOverView(arcade.View):
                             font_name=cn.GE_TXT_FONT)
             arcade.draw_text("Restart game [R]", self.window.width / 2, self.window.height / 2 - 100,
                             arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center",
+
                          font_name=cn.GE_TXT_FONT)
             arcade.draw_text("Exit game [ESC]", self.window.width / 2, self.window.height / 2 - 175,
                             arcade.color_from_hex_string(cn.GE_TXT_COLOR), font_size=15, anchor_x="center", 
