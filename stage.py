@@ -147,7 +147,7 @@ class StageView(arcade.View):
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, self.dummy_controller_num,3)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, self.dummy_controller_num,5)  # input_map = 1 for left split keymap
 
         if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
             self.controller = c.Controller(self.dummy, self.player_1)
@@ -178,7 +178,7 @@ class StageView(arcade.View):
             self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
                                             scale=0.35)
         else:
-            self.d_portrait = arcade.Sprite("image/Elon/pfp.png",
+            self.d_portrait = arcade.Sprite("images/Elon/pfp.png",
                                             scale=0.35)
 
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
