@@ -81,13 +81,16 @@ class StageView(arcade.View):
         self.dummy_controller_num = None
         self.controller = None
 
+        # Countdown after a player has won
+        self.victory_countdown = None
+
     def setup(self, setup_inputs):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
 
         p1_center = [int(4 * cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         d_center = [int(cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
-        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 10)]  # STAGE FLOOR CENTER
+        f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 15)]  # STAGE FLOOR CENTER
 
         # -- PLAYER HURTBOXES --
         self.player_main_hurtbox = arcade.SpriteSolidColor(cn.SPRITE_PLAYER_WIDTH,  # Main Player Health/Body Hit Box
@@ -139,12 +142,12 @@ class StageView(arcade.View):
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, self.player_controller_num,4)  # input_map = 2 for right split keymap
+                                 self.player_hitbox, self.player_controller_num,1)  # input_map = 2 for right split keymap
 
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, self.dummy_controller_num,1)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, self.dummy_controller_num,3)  # input_map = 1 for left split keymap
 
         if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
             self.controller = c.Controller(self.dummy, self.player_1)
@@ -153,7 +156,7 @@ class StageView(arcade.View):
         # -- STAGE GEOMETRY SETUP --
         self.floor = arcade.SpriteSolidColor(int(3 * cn.SCREEN_WIDTH),  # Main Player Health/Body Hit Box
                                              int(cn.SCREEN_HEIGHT / 3),
-                                             [114, 164, 164])
+                                             arcade.color_from_hex_string(cn.FLOOR_COLOR))
         self.floor.center_x = f_center[0]
         self.floor.center_y = f_center[1]
         self.floors.append(self.floor)
@@ -167,16 +170,16 @@ class StageView(arcade.View):
                                             scale=0.35)
         elif (self.dummy.character_input == 2):
             self.d_portrait = arcade.Sprite("images/Jackie/pfp.png",
-                                            scale=0.4)
+                                            scale=0.35)
         elif (self.dummy.character_input == 3):
             self.d_portrait = arcade.Sprite("images/Jason/pfp.png",
-                                            scale=0.45)
+                                            scale=0.35)
         elif (self.dummy.character_input == 4):
             self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
-                                            scale=0.4)
+                                            scale=0.35)
         else:
-            self.d_portrait = arcade.Sprite("image/Robot/pfp.png",
-                                            scale=0.5)
+            self.d_portrait = arcade.Sprite("image/Elon/pfp.png",
+                                            scale=0.35)
 
         self.d_portrait.center_x = int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
         self.d_portrait.center_y = cn.SCREEN_HEIGHT - int(cn.PORTRAIT_DIMENSIONS[1] * 0.9) - 3
@@ -213,7 +216,7 @@ class StageView(arcade.View):
             self.p_1_portrait = arcade.Sprite("images/Chris/pfp.png",
                                             scale=0.4)
         else:
-            self.p_1_portrait = arcade.Sprite("images/Robot/pfp.png",
+            self.p_1_portrait = arcade.Sprite("images/Elon/pfp.png",
                                               scale=0.5)
             
         self.p_1_portrait.center_x = cn.SCREEN_WIDTH - int(cn.PORTRAIT_DIMENSIONS[0] * 1.1)
@@ -263,11 +266,11 @@ class StageView(arcade.View):
         
         # Set up game clock info
         self.timer_text = arcade.Text(
-            text = str(cn.MAX_MATCH_TIME),
+            text = "60",
             start_x = cn.SCREEN_WIDTH/2,
-            start_y = cn.SCREEN_HEIGHT - 80,
+            start_y = cn.SCREEN_HEIGHT - 85,
             color=arcade.color.BLACK,
-            font_size= 50,
+            font_size= 25,
             anchor_x="center",
             font_name=cn.TIMER_FONT
         )
@@ -299,6 +302,9 @@ class StageView(arcade.View):
 
         # Set up the game clock
         self.total_time = cn.MAX_MATCH_TIME
+
+        # Set up victory countdown 
+        self.victory_countdown = cn.VICTORY_COUNTDOWN
 
     def on_draw(self):
         """
@@ -638,10 +644,17 @@ class StageView(arcade.View):
         if self.dummy.health < 1:
             self.d_health.alpha = 0
 
-            game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
+            print("Victory countdown " + str(self.victory_countdown))
 
-            # Change the view to "Game Over" view
-            self.window.show_view(game_end)            
+            countdown_check = round(self.victory_countdown, 2)
+
+            if (countdown_check <= 0.0):
+                game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
+
+                # Change the view to "Game Over" view
+                self.window.show_view(game_end)  
+            else:
+                self.victory_countdown -= delta_time         
         else:
             self.d_health.alpha = 255
             self.d_health.width = int(self.dummy.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
@@ -660,10 +673,17 @@ class StageView(arcade.View):
         if self.player_1.health < 1:
             self.p_1_health.alpha = 0
 
-            game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
+            print("Victory countdown " + str(self.victory_countdown))
 
-            # Change the view to "Game Over" view
-            self.window.show_view(game_end)
+            countdown_check = round(self.victory_countdown, 2)
+
+            if (countdown_check <= 0.0):
+                game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
+
+                # Change the view to "Game Over" view
+                self.window.show_view(game_end)
+            else:
+                self.victory_countdown -= delta_time
         else:
             self.p_1_health.alpha = 255
             self.p_1_health.width = int(self.player_1.health * cn.HEALTH_BAR_PIXEL_CONSTANT)
