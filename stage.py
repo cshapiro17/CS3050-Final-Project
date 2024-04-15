@@ -84,10 +84,13 @@ class StageView(arcade.View):
         # Countdown after a player has won
         self.victory_countdown = None
 
-    def setup(self, setup_inputs):
+        # Keep track of current players
+        self.current_p1 = None
+        self.current_p2 = None
+
+    def setup(self, setup_inputs, character_selection):
         """ Set up the game variables. Call to re-start the game. """
         # Startup Locations
-
         p1_center = [int(4 * cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         d_center = [int(cn.SCREEN_WIDTH / 5), int(2 * cn.SCREEN_HEIGHT / 5)]
         f_center = [int(cn.SCREEN_WIDTH / 2), int(cn.SCREEN_HEIGHT / 15)]  # STAGE FLOOR CENTER
@@ -138,16 +141,18 @@ class StageView(arcade.View):
         self.player_controller_num = setup_inputs[0]  # input_map = 2 for right split keymap
         self.dummy_controller_num = setup_inputs[1]  # input_map = 1 for left split keymap
 
+        self.current_p1 = character_selection[0]
+        self.current_p2 = character_selection[1]
+
         # -- PLAYER INITIALIZATION --
         self.player_1 = p.Player(p1_center[0], p1_center[1],
                                  cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                                  self.player_main_hurtbox, self.player_extended_hurtbox,
-                                 self.player_hitbox, self.player_controller_num,1)  # input_map = 2 for right split keymap
-
+                                 self.player_hitbox, self.player_controller_num, self.current_p1)
         self.dummy = p.Player(d_center[0], d_center[1],
                               cn.SPRITE_PLAYER_WIDTH, cn.SPRITE_PLAYER_HEIGHT,
                               self.dummy_main_hurtbox, self.dummy_extended_hurtbox,
-                              self.dummy_hitbox, self.dummy_controller_num,5)  # input_map = 1 for left split keymap
+                              self.dummy_hitbox, self.dummy_controller_num, self.current_p2)  # input_map = 1 for left split keymap
 
         if (self.player_controller_num == 0) & (self.dummy_controller_num < 0):
             self.controller = c.Controller(self.dummy, self.player_1)
@@ -164,7 +169,7 @@ class StageView(arcade.View):
         # -- STAGE UI SETUP --
         # DUMMY TRACKER UI
 
-        # TODO Replace portrait with image of fighter
+        # Add the appropriate portrait of the fighter
         if (self.dummy.character_input == 1):
             self.d_portrait = arcade.Sprite("images/Lisa/pfp.png",
                                             scale=0.35)
@@ -175,8 +180,8 @@ class StageView(arcade.View):
             self.d_portrait = arcade.Sprite("images/Jason/pfp.png",
                                             scale=0.35)
         elif (self.dummy.character_input == 4):
-            self.d_portrait = arcade.Sprite("images/Chris/pfp.png",
-                                            scale=0.35)
+            self.d_portrait = arcade.Sprite("images/Chris/realpfp.png",
+                                            scale=0.5)
         else:
             self.d_portrait = arcade.Sprite("images/Elon/pfp.png",
                                             scale=0.35)
@@ -202,7 +207,7 @@ class StageView(arcade.View):
 
         # PLAYER TRACKER UI
 
-        # TODO Replace portrait with image of fighter
+        # Create profile picture of fighter
         if (self.player_1.character_input == 1):
             self.p_1_portrait = arcade.Sprite("images/Lisa/pfp.png",
                                             scale=0.35)
@@ -213,8 +218,8 @@ class StageView(arcade.View):
             self.p_1_portrait = arcade.Sprite("images/Jason/pfp.png",
                                             scale=0.45)
         elif (self.player_1.character_input == 4):
-            self.p_1_portrait = arcade.Sprite("images/Chris/pfp.png",
-                                            scale=0.4)
+            self.p_1_portrait = arcade.Sprite("images/Chris/realpfp.png",
+                                            scale=0.5)
         else:
             self.p_1_portrait = arcade.Sprite("images/Elon/pfp.png",
                                               scale=0.5)
@@ -546,7 +551,7 @@ class StageView(arcade.View):
         """
         if key == arcade.key.P:   # pause game
             # pass self, the current view, to preserve this view's state
-            pause = gv.PauseView(self, self.player_controller_num, self.dummy_controller_num)
+            pause = gv.PauseView(self, self.player_controller_num, self.dummy_controller_num, self.current_p1, self.current_p2)
             self.window.show_view(pause)
 
         self.player_1.player_key_press(key, key_modifiers)
@@ -627,7 +632,7 @@ class StageView(arcade.View):
 
             if minutes == 0.0 and seconds == 0.0:
                 # Change the view to "Game Over" view
-                self.window.show_view(gv.GameOverView("timeout",self.player_controller_num, self.dummy_controller_num))
+                self.window.show_view(gv.GameOverView("timeout",self.player_controller_num, self.dummy_controller_num, self.current_p1, self.current_p2))
 
                 # Make sure time does not decrease
                 self.total_time = 0.0
@@ -649,7 +654,7 @@ class StageView(arcade.View):
             countdown_check = round(self.victory_countdown, 2)
 
             if (countdown_check <= 0.0):
-                game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num)
+                game_end = gv.GameOverView(str(self.player_1.character_input), self.player_controller_num, self.dummy_controller_num, self.current_p1, self.current_p2)
 
                 # Change the view to "Game Over" view
                 self.window.show_view(game_end)  
@@ -678,7 +683,7 @@ class StageView(arcade.View):
             countdown_check = round(self.victory_countdown, 2)
 
             if (countdown_check <= 0.0):
-                game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num)
+                game_end = gv.GameOverView(str(self.dummy.character_input), self.player_controller_num, self.dummy_controller_num, self.current_p1, self.current_p2)
 
                 # Change the view to "Game Over" view
                 self.window.show_view(game_end)
